@@ -1,6 +1,9 @@
 {
     "name": "Containerlab Workspace",
-    "image": "ghcr.io/srl-labs/clab-devcontainer:latest",
+    "image": "mcr.microsoft.com/devcontainers/universal:2",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    },
     "settings": {},
     "extensions": [
         "ms-azuretools.vscode-docker",
@@ -10,5 +13,5 @@
         "--privileged",
         "--pid=host"
     ],
-    "postStartCommand": "docker info"
+    "postCreateCommand": "curl -sL https://get.containerlab.dev | sudo bash"
 }
