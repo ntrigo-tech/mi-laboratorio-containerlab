@@ -1,0 +1,14 @@
+{
+    "name": "Containerlab Workspace",
+    "image": "ghcr.io/srl-labs/clab-devcontainer:latest",
+    "settings": {},
+    "extensions": [
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml"
+    ],
+    "runArgs": [
+        "--privileged",
+        "--pid=host"
+    ],
+    "postStartCommand": "docker info"
+}
