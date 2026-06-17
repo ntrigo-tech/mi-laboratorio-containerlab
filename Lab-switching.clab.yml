@@ -1,0 +1,41 @@
+name: lab-switching
+
+topology:
+  nodes:
+
+    sw1:
+      kind: cisco_iol
+      image: iosvl2:latest
+
+    sw2:
+      kind: cisco_iol
+      image: iosvl2:latest
+
+    pc1:
+      kind: linux
+      image: alpine:latest
+
+    pc2:
+      kind: linux
+      image: alpine:latest
+
+    pc3:
+      kind: linux
+      image: alpine:latest
+
+    php:
+      kind: linux
+      image: php:apache
+
+  links:
+
+    # PCs en SW1
+    - endpoints: ["pc1:eth1","sw1:Ethernet0/1"]
+    - endpoints: ["pc2:eth1","sw1:Ethernet0/2"]
+
+    # Trunk entre switches
+    - endpoints: ["sw1:Ethernet0/23","sw2:Ethernet0/23"]
+
+    # Equipos en SW2
+    - endpoints: ["pc3:eth1","sw2:Ethernet0/1"]
+    - endpoints: ["php:eth1","sw2:Ethernet0/2"]
