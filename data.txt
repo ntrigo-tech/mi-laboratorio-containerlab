@@ -1,0 +1,2 @@
+https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/main/Lab-switching.clab.yml
+https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/main/Lab-routing.clab.yml
