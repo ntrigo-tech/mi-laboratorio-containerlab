@@ -2,3 +2,4 @@ https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/main/L
 https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/main/Lab-routing.clab.yml
 https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/Practica_packet_tracer.html
 https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/lab-doc-2-inter-vlan.html
+https://thelineman.ca/lab-docs/
