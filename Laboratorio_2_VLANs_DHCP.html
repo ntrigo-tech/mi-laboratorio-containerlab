@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Laboratorio: Segmentación con 3 VLANs y DHCP</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #2d3748; background-color: #f7fafc; margin: 0; padding: 30px; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1 { color: #1a365d; border-bottom: 3px solid #2b6cb0; padding-bottom: 12px; margin-top: 0; font-size: 2.2rem; }
+        h2 { color: #2b6cb0; margin-top: 35px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; font-size: 1.6rem; }
+        h3 { color: #2d3748; margin-top: 25px; font-size: 1.25rem; border-left: 4px solid #4299e1; padding-left: 10px; }
+        p { margin-bottom: 15px; text-align: justify; }
+        ul, ol { margin-bottom: 20px; padding-left: 25px; }
+        li { margin-bottom: 8px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; background-color: #fff; }
+        th { background-color: #2b6cb0; color: white; font-weight: bold; padding: 12px; text-align: left; border: 1px solid #cbd5e0; font-size: 0.95rem; }
+        td { padding: 10px; border: 1px solid #cbd5e0; text-align: left; font-size: 0.9rem; }
+        tr:nth-child(even) { background-color: #f7fafc; }
+        .ccna-box { background-color: #fffaf0; border-left: 4px solid #dd6b20; padding: 20px; border-radius: 4px; margin: 20px 0; font-size: 0.95rem; }
+        .exercise { background-color: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .exercise-title { font-weight: bold; color: #2c5282; font-size: 1.15rem; margin-bottom: 15px; display: flex; align-items: center; }
+        .badge { display: inline-block; padding: 4px 8px; background-color: #4a5568; color: white; border-radius: 4px; font-size: 0.75rem; margin-right: 10px; font-weight: bold; text-transform: uppercase; }
+        .badge.topo { background-color: #319795; }
+        .badge.conf { background-color: #2b6cb0; }
+        .badge.test { background-color: #e53e3e; }
+        code { font-family: 'Courier New', Courier, monospace; background-color: #edf2f7; padding: 2px 6px; border-radius: 4px; font-size: 0.95rem; color: #b83280; font-weight: bold; }
+        pre { background-color: #1a202c; color: #edf2f7; padding: 15px; border-radius: 6px; font-family: 'Courier New', Courier, monospace; overflow-x: auto; font-size: 0.9rem; line-height: 1.4; }
+        details { background-color: #f7fafc; border: 1px solid #edf2f7; border-radius: 4px; padding: 12px 18px; margin-top: 15px; }
+        details summary { font-weight: bold; color: #4a5568; cursor: pointer; user-select: none; }
+        details summary:hover { color: #2b6cb0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Laboratorio 2: Enrutamiento Inter-VLAN y Direccionamiento Híbrido</h1>
+    <p>Este laboratorio práctico profundiza en la segmentación de redes corporativas. Se implementarán tres dominios de difusión independientes utilizando un switch de acceso para cada VLAN, concentrando el enrutamiento en un Router central (Router-on-a-Stick). El esquema de direccionamiento combina hosts estáticos con asignación dinámica por DHCP gestionada por el propio router.</p>
+
+    <div class="ccna-box">
+        <strong>📌 Concepto de Diseño:</strong> Aunque se utilicen switches físicos separados para cada departamento, la configuración de troncales (Trunks) y el etiquetado de tramas bajo el estándar <b>IEEE 802.1Q</b> siguen siendo obligatorios para que el Router pueda identificar y enrutar el tráfico de cada subred de forma aislada.
+    </div>
+
+    <h2>Fase 1: Diseño de la Topología y Plan de Direccionamiento IP</h2>
+    <p>Antes de interactuar con la CLI, es fundamental estructurar las conexiones físicas y el mapa de direccionamiento del escenario.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge topo">Topología</span> Componentes y Matriz de Red</div>
+        
+        <h3>Componentes requeridos en el lienzo:</h3>
+        <ul>
+            <li><b>1 Router (R1):</b> Modelo ISR 4331.</li>
+            <li><b>3 Switches (S1, S2, S3):</b> Modelo clásico 2960 de 24 puertos.</li>
+            <li><b>3 PCs Finales (PC-V10, PC-V20, PC-V30):</b> Una conectada a cada switch.</li>
+        </ul>
+
+        <h3>Tabla de Direccionamiento Lógico</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>VLAN</th>
+                    <th>Nombre</th>
+                    <th>Red / Máscara</th>
+                    <th>Gateway (Router)</th>
+                    <th>Dispositivo (Puerto)</th>
+                    <th>Tipo de IP</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>VLAN 10</b></td>
+                    <td>Ingenieria</td>
+                    <td>192.168.10.0 /24</td>
+                    <td>192.168.10.1</td>
+                    <td>PC-V10 (En S1 Fa0/1)</td>
+                    <td><code>Estática (192.168.10.10)</code></td>
+                </tr>
+                <tr>
+                    <td><b>VLAN 20</b></td>
+                    <td>Administracion</td>
+                    <td>192.168.20.0 /24</td>
+                    <td>192.168.20.1</td>
+                    <td>PC-V20 (En S2 Fa0/1)</td>
+                    <td><code>Estática (192.168.20.10)</code></td>
+                </tr>
+                <tr>
+                    <td><b>VLAN 30</b></td>
+                    <td>Invitados</td>
+                    <td>192.168.30.0 /24</td>
+                    <td>192.168.30.1</td>
+                    <td>PC-V30 (En S3 Fa0/1)</td>
+                    <td><code>Dinámica (DHCP Pool)</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Esquema de Interconexión de Cables (Cables Directos)</h3>
+        <pre>
+Router R1 (Gi0/0/0) ──────> Puerto Gi0/1 en Switch S1 (Troncal)
+Router R1 (Gi0/0/1) ──────> Puerto Gi0/1 en Switch S2 (Troncal)
+Router R1 (Gi0/0/2) ──────> Puerto Gi0/1 en Switch S3 (Troncal)
+        </pre>
+    </div>
+
+    <h2>Fase 2: Scripts de Configuración de Dispositivos</h2>
+    <p>Accedé a la CLI de cada equipo y aplicá las siguientes plantillas de comandos para establecer el plano de datos.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge conf">CLI</span> Configuración en los Switches de Acceso</div>
+        
+        <h3>Switch 1 (S1 - Red de Ingeniería)</h3>
+        <pre>Switch> enable
+Switch# configure terminal
+Switch(config)# hostname S1
+S1(config)# vlan 10
+S1(config-vlan)# name Ingenieria
+S1(config-vlan)# exit
+
+# Puerto de acceso para la PC
+S1(config)# interface fastEthernet 0/1
+S1(config-if)# switchport mode access
+S1(config-if)# switchport access vlan 10
+
+# Enlace Troncal hacia el Router
+S1(config)# interface gigabitEthernet 0/1
+S1(config-if)# switchport mode trunk
+S1(config-if)# switchport trunk allowed vlan 10
+S1(config-if)# exit</pre>
+
+        <h3>Switch 2 (S2 - Red de Administración)</h3>
+        <pre>Switch> enable
+Switch# configure terminal
+Switch(config)# hostname S2
+S2(config)# vlan 20
+S2(config-vlan)# name Administracion
+S2(config-vlan)# exit
+
+S2(config)# interface fastEthernet 0/1
+S2(config-if)# switchport mode access
+S2(config-if)# switchport access vlan 20
+
+S2(config)# interface gigabitEthernet 0/1
+S2(config-if)# switchport mode trunk
+S2(config-if)# switchport trunk allowed vlan 20
+S2(config-if)# exit</pre>
+
+        <h3>Switch 3 (S3 - Red de Invitados)</h3>
+        <pre>Switch> enable
+Switch# configure terminal
+Switch(config)# hostname S3
+S3(config)# vlan 30
+S3(config-vlan)# name Invitados
+S3(config-vlan)# exit
+
+S3(config)# interface fastEthernet 0/1
+S3(config-if)# switchport mode access
+S3(config-if)# switchport access vlan 30
+
+S3(config)# interface gigabitEthernet 0/1
+S3(config-if)# switchport mode trunk
+S3(config-if)# switchport trunk allowed vlan 30
+S3(config-if)# exit</pre>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge conf">CLI</span> Configuración de Router (Gateway & DHCP Server)</div>
+        <p>En R1 se habilitan las interfaces físicas y se levanta el servicio de asignación automática de parámetros IP exclusivamente para la VLAN 30.</p>
+        <pre>Router> enable
+Router# configure terminal
+Router(config)# hostname R1
+
+# --- CONFIGURACIÓN DE SERVIDOR DHCP PARA VLAN 30 ---
+# Excluir las primeras direcciones para uso de administración/infraestructura
+R1(config)# ip dhcp excluded-address 192.168.30.1 192.168.30.10
+
+# Crear el pool de asignación
+R1(config)# ip dhcp pool POOL_INVITADOS
+R1(dhcp-config)# network 192.168.30.0 255.255.255.0
+R1(dhcp-config)# default-router 192.168.30.1
+R1(dhcp-config)# dns-server 8.8.8.8
+R1(dhcp-config)# exit
+
+# --- CONFIGURACIÓN DE INTERFACES EN R1 ---
+# Interfaz hacia S1 (VLAN 10)
+R1(config)# interface gigabitEthernet 0/0/0
+R1(config-if)# no shutdown
+R1(config-if)# interface gigabitEthernet 0/0/0.10
+R1(config-subif)# encapsulation dot1Q 10
+R1(config-subif)# ip address 192.168.10.1 255.255.255.0
+R1(config-subif)# exit
+
+# Interfaz hacia S2 (VLAN 20)
+R1(config)# interface gigabitEthernet 0/0/1
+R1(config-if)# no shutdown
+R1(config-if)# interface gigabitEthernet 0/0/1.20
+R1(config-subif)# encapsulation dot1Q 20
+R1(config-subif)# ip address 192.168.20.1 255.255.255.0
+R1(config-subif)# exit
+
+# Interfaz hacia S3 (VLAN 30)
+R1(config)# interface gigabitEthernet 0/0/2
+R1(config-if)# no shutdown
+R1(config-if)# interface gigabitEthernet 0/0/2.30
+R1(config-subif)# encapsulation dot1Q 30
+R1(config-subif)# ip address 192.168.30.1 255.255.255.0
+R1(config-subif)# exit</pre>
+    </div>
+
+    <h2>Fase 3: Pruebas de Diagnóstico y Verificación Obligatorias</h2>
+    <p>Para garantizar el éxito del despliegue en un entorno real o de examen, se deben ejecutar de manera rigurosa las siguientes pruebas en los dispositivos finales y de red.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge test">Troubleshooting</span> Control de Calidad del Laboratorio</div>
+        
+        <h3>Prueba 1: Verificación del Arrendamiento DHCP (PC-V30)</h3>
+        <p>Ingresá al Escritorio de la <b>PC-V30</b> > <i>IP Configuration</i> y conmutá el botón a <b>DHCP</b>. Debería obtener de inmediato la IP <code>192.168.30.11</code>, la máscara 255.255.255.0 y el Gateway 192.168.30.1.</p>
+        <details>
+            <summary>💬 Comando de Consola en Windows/PC CLI</summary>
+            <p>Abrí el <i>Command Prompt</i> de la PC-V30 y ejecutá:</p>
+            <pre>C:\> ipconfig
+# Si no toma IP correctamente, forzá la renovación con:
+C:\> ipconfig /renew</pre>
+        </details>
+
+        <h3>Prueba 2: Diagnóstico de la Tabla de Concesiones en el Router</h3>
+        <p>Para comprobar desde la perspectiva del plano de control que el router entregó los datos correctamente:</p>
+        <pre>R1# show ip dhcp binding
+# Debe listar la dirección MAC de la PC-V30 asociada a la IP 192.168.30.11</pre>
+
+        <h3>Prueba 3: Trazabilidad y Conectividad Extremo a Extremo (Ping & Traceroute)</h3>
+        <p>Abrí la terminal de comandos de la <b>PC-V10</b> (IP Estática 192.168.10.10) e intentá alcanzar a la PC de la otra VLAN para verificar que R1 está conmutando los paquetes:</p>
+        <pre>C:\> ping 192.168.20.10   # Ping hacia PC-V20
+C:\> ping 192.168.30.11   # Ping hacia PC-V30 (DHCP)</pre>
+        
+        <p>Para visualizar de forma exacta el salto que da el paquete a través de la subinterfaz del Router:</p>
+        <pre>C:\> tracert 192.168.30.11</pre>
+        <p><i>El primer salto de la lista debe ser de manera mandatoria la IP del Gateway local (<code>192.168.10.1</code>).</i></p>
+    </div>
+</div>
+
+</body>
+</html>
