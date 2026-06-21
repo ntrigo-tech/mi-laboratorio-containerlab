@@ -77,4 +77,177 @@
                 </tr>
                 <tr>
                     <td><b>VLAN 20</b> (192.168.20.0/24)</td>
-                    <td>GigabitEthernet 0/
+                    <td>GigabitEthernet 0/0/1</td>
+                    <td>192.168.20.1</td>
+                    <td>PC-V20</td>
+                    <td>Estática: <code>192.168.20.10</code> / DNS: <code>8.8.8.8</code></td>
+                </tr>
+                <tr>
+                    <td><b>VLAN 30</b> (192.168.30.0/24)</td>
+                    <td>GigabitEthernet 0/0/2</td>
+                    <td>192.168.30.1</td>
+                    <td>Server-DHCP<br>PC-V30</td>
+                    <td>Fija: <code>192.168.30.5</code> (Server)<br>Dinámica (PC-V30)</td>
+                </tr>
+                <tr>
+                    <td><b>WAN / Internet</b> (8.0.0.0/8)</td>
+                    <td>GigabitEthernet 0/0/3</td>
+                    <td>8.0.0.1</td>
+                    <td>Server-DNS</td>
+                    <td>Estática: <code>8.8.8.8</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Esquema Actualizado de Enlaces (Cables Directos)</h3>
+        <pre>
+[Switch S1] (Gi0/1) ────────────── (Gi0/0/0) ──────────────> [Router R1]
+[Switch S2] (Gi0/1) ────────────── (Gi0/0/1) ──────────────> [Router R1]
+[Switch S3] (Gi0/1) ────────────── (Gi0/0/2) ──────────────> [Router R1]
+[Server-DNS] (Fa0)  ────────────── (Gi0/0/3) ──────────────> [Router R1]
+        </pre>
+    </div>
+
+    <h2>Fase 2: Guía de Configuración de los Servicios Core</h2>
+    <p>Ajustaremos el Servidor DHCP local para que distribuya el nuevo parámetro DNS, configuraremos las puertas de enlace en el Router y daremos de alta los registros de nombres.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge conf">Servicios</span> Actualización del Server-DHCP (VLAN 30)</div>
+        <ol>
+            <li>Hacé clic en el <b>Server-DHCP</b> de la VLAN 30 e ingresá a <i>Services > DHCP</i>.</li>
+            <li>En el campo <b>Gateway</b> colocá la IP del Router: <code>192.168.30.1</code>.</li>
+            <li>En el campo <b>DNS Server</b> colocá la IP de nuestra futura WAN: <code>8.8.8.8</code>.</li>
+            <li>Hacé clic en <b>Save</b>.</li>
+            <li>Andá a la pestaña <i>Desktop > IP Configuration</i> del servidor y asegurate de agregarle su Gateway manual: <code>192.168.30.1</code>.</li>
+        </ol>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge conf">Servicios</span> Configuración del Servidor DNS Público (Internet)</div>
+        
+        <h3>Paso A: Asignación de la IP Pública</h3>
+        <p>Hacé clic en el nuevo <b>Server-DNS</b>, ingresá a <i>Desktop > IP Configuration</i> y configurá de forma estática:</p>
+        <ul>
+            <li><b>IP Address:</b> <code>8.8.8.8</code></li>
+            <li><b>Subnet Mask:</b> <code>255.0.0.0</code></li>
+            <li><b>Default Gateway:</b> <code>8.0.0.1</code> *(IP de la interfaz Gi0/0/3 de R1)*</li>
+        </ul>
+
+        <h3>Paso B: Alta de Registros de Nombres (A Records)</h3>
+        <ol>
+            <li>Andá a la solapa <b>Services</b> del servidor y seleccioná <b>DNS</b>.</li>
+            <li>Cambiá el estado del servicio a <b>ON</b>.</li>
+            <li>Crearemos un registro para simular una página web en el servidor DHCP (VLAN 30):
+                <ul>
+                    <li><b>Name:</b> <code>www.telecom.lab</code></li>
+                    <li><b>Type:</b> <code>A Record</code></li>
+                    <li><b>Address:</b> <code>192.168.30.5</code> *(La IP de nuestro Server-DHCP, que también tiene HTTP activo por defecto)*</li>
+                </ul>
+            </li>
+            <li>Hacé clic en <b>Add</b> (Añadir).</li>
+        </ol>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge conf">CLI</span> Configuración de Interfaces y Gateways en R1</div>
+        <p>Entrá a la consola CLI del Router R1 para encender las interfaces físicas, asignarles sus respectivas IPs de Gateway por subred y habilitar el enrutamiento directo.</p>
+        <pre>Router> enable
+Router# configure terminal
+Router(config)# hostname R1
+
+# Interfaz hacia VLAN 10 (Ingeniería)
+R1(config)# interface gigabitEthernet 0/0/0
+R1(config-if)# ip address 192.168.10.1 255.255.255.0
+R1(config-if)# no shutdown
+R1(config-if)# exit
+
+# Interfaz hacia VLAN 20 (Administración)
+R1(config)# interface gigabitEthernet 0/0/1
+R1(config-if)# ip address 192.168.20.1 255.255.255.0
+R1(config-if)# no shutdown
+R1(config-if)# exit
+
+# Interfaz hacia VLAN 30 (Invitados y Servidor Local)
+R1(config)# interface gigabitEthernet 0/0/2
+R1(config-if)# ip address 192.168.30.1 255.255.255.0
+R1(config-if)# no shutdown
+R1(config-if)# exit
+
+# Interfaz hacia la WAN / Red del Servidor DNS
+R1(config)# interface gigabitEthernet 0/0/3
+R1(config-if)# ip address 8.0.0.1 255.0.0.0
+R1(config-if)# no shutdown
+R1(config-if)# exit
+
+R1(config)# do write memory</pre>
+    </div>
+
+    <h2>Fase 3: El Concepto de Redes Directamente Conectadas</h2>
+    <p>Una duda común en este punto es: <i>¿Por qué no escribimos ningún comando de enrutamiento estático (como <code>ip route</code>) y aun así las computadoras se comunican entre distintas redes?</i></p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge theory-badge">Teoría CCNA</span> Enrutamiento Implícito de Capa 3</div>
+        <p>Los routers construyen su plano de reenvío basándose en diferentes fuentes. En este laboratorio, el éxito del tráfico se debe al concepto de <b>Redes Directamente Conectadas (Directly Connected Networks)</b>.</p>
+        
+        <ul>
+            <li><b>Inyección Automática:</b> Al asignar una dirección IP válida a una interfaz física (`ip address ...`) y levantarla eléctricamente (`no shutdown`), el sistema operativo Cisco IOS calcula automáticamente la red a la que pertenece y la inserta de forma inmediata en su tabla de enrutamiento global.</li>
+            <li><b>Rol de Nodo Central:</b> Debido a que el Router R1 tiene un puerto físico (o "pie") conectado directamente en cada una de las cuatro subredes del mapa, él conoce de manera nativa los cuatro caminos. No requiere que un administrador le indique estáticamente cómo llegar a redes que ya están unidas a sus propios chasis.</li>
+        </ul>
+
+        <h3>Auditoría de la Tabla de Enrutamiento</h3>
+        <p>Para comprobar esto empíricamente desde el plano de control, ejecutá el siguiente comando de diagnóstico en el modo privilegiado del Router (<code>R1#</code>):</p>
+        <pre>R1# show ip route</pre>
+        
+        <p>Verás una salida similar a la siguiente en la sección inferior de la CLI. Prestá atención a las letras iniciales (códigos de origen):</p>
+        <pre>Codes: C - connected, L - local, S - static, R - RIP, M - mobile ...
+
+      8.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C        8.0.0.0/8 is directly connected, GigabitEthernet0/0/3
+L        8.0.0.1/32 is directly connected, GigabitEthernet0/0/3
+      192.168.10.0/24 is variably subnetted, 2 subnets, 2 masks
+C        192.168.10.0/24 is directly connected, GigabitEthernet0/0/0
+L        192.168.10.1/32 is directly connected, GigabitEthernet0/0/0
+      192.168.20.0/24 is variably subnetted, 2 subnets, 2 masks
+C        192.168.20.0/24 is directly connected, GigabitEthernet0/0/1
+L        192.168.20.1/32 is directly connected, GigabitEthernet0/0/1
+      192.168.30.0/24 is variably subnetted, 2 subnets, 2 masks
+C        192.168.30.0/24 is directly connected, GigabitEthernet0/0/2
+L        192.168.30.1/32 is directly connected, GigabitEthernet0/0/2</pre>
+
+        <div class="ccna-box theory">
+            <strong>📋 Interpretación de Códigos de Examen:</strong><br>
+            • El prefijo <b>C (Connected)</b> identifica el rango de red general que el router puede enrutar de forma directa e inalámbrica hacia esa interfaz.<br>
+            • El prefijo <b>L (Local)</b> (introducido a partir de la versión 15 de Cisco IOS) representa la IP específica de /32 asignada a la propia interfaz del hardware del router, optimizando el procesamiento de paquetes destinados al propio equipo.
+        </div>
+    </div>
+
+    <h2>Fase 4: Pruebas de Verificación y Control de Navegación Global</h2>
+    <p>Con el Router operando en la Capa 3, realizaremos las pruebas lógicas de resolución de nombres y conectividad extremo a extremo.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge test">Troubleshooting</span> Validación Completa del Sistema</div>
+        
+        <h3>Prueba 1: Comprobación de la Renovación DHCP con Parámetro DNS</h3>
+        <p>Andá a la <b>PC-V30</b>, abrí el <i>Command Prompt</i> (CMD) y forzá la actualización de la concesión IP:</p>
+        <pre>C:\> ipconfig /release
+C:\> ipconfig /renew
+C:\> ipconfig</pre>
+        <p><i>Verificá que ahora figure de forma correcta: Gateway 192.168.30.1 y DNS Server 8.8.8.8.</i></p>
+
+        <h3>Prueba 2: Comprobar el Enrutamiento Inter-VLAN (Pings Exitosos)</h3>
+        <p>A diferencia del Laboratorio 2, ahora el Router unifica las redes. Desde la <b>PC-V10</b> (VLAN 10), tirale un ping a la PC de la otra punta del edificio y al servidor DNS externo:</p>
+        <pre>C:\> ping 192.168.20.10   # Ping hacia PC-V20 (Exitoso)
+C:\> ping 8.8.8.8         # Ping hacia el Servidor DNS en la WAN (Exitoso)</pre>
+
+        <h3>Prueba 3: Prueba de Fuego - Navegación por Nombre de Dominio (DNS)</h3>
+        <ol>
+            <li>Hacé clic en cualquier PC (por ejemplo, <b>PC-V30</b>).</li>
+            <li>Ingresá a la pestaña <b>Desktop</b> y seleccioná la aplicación <b>Web Browser</b> (Navegador Web).</li>
+            <li>En la barra de direcciones URL, escribí de forma exacta: <code>http://www.telecom.lab</code> y presioná <code>Go</code> o <code>Enter</code>.</li>
+            <li>Si todo está bien configurado, la PC le preguntará al servidor <code>8.8.8.8</code> qué IP tiene ese nombre, este le responderá que es la <code>192.168.30.5</code>, y el navegador abrirá con éxito la página web por defecto de Cisco Packet Tracer alojada en el Servidor DHCP de la VLAN 30.</li>
+        </ol>
+    </div>
+</div>
+
+</body>
+</html>
