@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guía de Iniciación: Cisco Packet Tracer desde Cero</title>
+    <title>Guía de Iniciación: Cisco Packet Tracer Telecomunicaciones B</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #2d3748; background-color: #f7fafc; margin: 0; padding: 30px; }
         .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
@@ -30,7 +30,7 @@
 <body>
 
 <div class="container">
-    <h1>Guía de Iniciación: Cisco Packet Tracer y Comandos Base</h1>
+    <h1>Guía de Iniciación: Cisco Packet Tracer y Comandos Base Telecomunicaciones B</h1>
     <p>Este módulo interactivo cubre los pasos iniciales obligatorios para adentrarse en el ecosistema de redes Cisco. Aprenderás a gestionar tu entorno de simulación, construir topologías físicas básicas de Capa 2 y Capa 3, e interactuar con la consola de comandos de Cisco IOS.</p>
 
     <div class="ccna-box">
@@ -70,4 +70,57 @@ Server 1 (FastEthernet 0)    ───────────────>  Swi
 Router R1 (GigabitEthernet 0/0/0) ──────────>  Switch S1 (GigabitEthernet 0/1)</pre>
 
         <h3>Configuración IP Estática en Servidor 1</h3>
-        <p>Hacé clic sobre <b>Server 1</b>, ingresá a la solapa <i>Desktop > IP Configuration</i>, tildá <b>Static</b> y completá los parámetros
+        <p>Hacé clic sobre <b>Server 1</b>, ingresá a la solapa <i>Desktop > IP Configuration</i>, tildá <b>Static</b> y completá los parámetros de red:</p>
+        <ul>
+            <li><b>IP Address:</b> <code>192.168.30.10</code></li>
+            <li><b>Subnet Mask:</b> <code>255.255.255.0</code></li>
+            <li><b>Default Gateway:</b> <code>192.168.30.1</code></li>
+        </ul>
+        <p><i>Nota: Las interfaces de PC 1 y PC 2 deben quedar configuradas en modo <b>DHCP</b> de manera predeterminada.</i></p>
+    </div>
+
+    <h2>Paso 3: Modos de Ejecución y Comandos de Usuario en Cisco IOS</h2>
+    <p>Hacé clic sobre el <b>Router R1</b> e ingresá a la solapa <b>CLI</b>. Si se despliega el asistente inicial de configuración, escribí <code>no</code> y presioná <code>Enter</code> para acceder a la terminal limpia.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge cli">Cisco IOS</span> Flujo Secuencial de Consola</div>
+        
+        <h3>1. Modo Usuario (User EXEC Mode)</h3>
+        <p>Modo de lectura restringido. Representado por el prompt con el signo mayor que (<code>&gt;</code>).</p>
+        <pre>Router>
+Router> ?   # Despliega la lista reducida de comandos permitidos en este nivel</pre>
+
+        <h3>2. Modo Privilegiado (Privileged EXEC Mode)</h3>
+        <p>Permite ver estadísticas de rendimiento, configuraciones guardadas y realizar diagnósticos detallados. Representado por el signo numeral (<code>#</code>).</p>
+        <pre>Router> enable
+Router#
+Router# show ip interface brief   # Verifica el estado lógico y físico de las placas de red</pre>
+
+        <h3>3. Modo de Configuración Global</h3>
+        <p>Requerido para modificar parámetros operativos que impacten en el comportamiento general del chasis. Entorno delimitado por <code>(config)#</code>.</p>
+        <pre>Router# configure terminal
+Router(config)# 
+Router(config)# hostname R1       # Cambia el nombre identificatorio del dispositivo</pre>
+
+        <h3>4. Modo de Configuración de Interfaz</h3>
+        <p>Submodo destinado a aplicar directivas específicas sobre un puerto físico o lógico seleccionado.</p>
+        <pre>R1(config)# interface gigabitEthernet 0/0/0
+R1(config-if)# no shutdown       # Enciende eléctricamente la interfaz física seleccionada
+R1(config-if)# exit
+R1(config)# exit
+R1#</pre>
+
+        <details>
+            <summary>🔍 Comandos de Verificación Inmediata</summary>
+            <p>Ejecutá estas rutinas desde el modo privilegiado (<code>R1#</code>) para auditar los cambios aplicados en la interfaz:</p>
+            <pre># Comprobar que la interfaz Gi0/0/0 cambió al estado "up / up"
+R1# show ip interface brief
+
+# Guardar el Hostname y la inicialización de interfaces en la memoria persistente
+R1# write memory</pre>
+        </details>
+    </div>
+</div>
+
+</body>
+</html>
