@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual de Laboratorio: Segmentación con 3 VLANs y DHCP</title>
+    <title>Manual de Laboratorio: Segmentación L2 con Switches y Servidor DHCP</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #2d3748; background-color: #f7fafc; margin: 0; padding: 30px; }
         .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
@@ -34,207 +34,159 @@
 <body>
 
 <div class="container">
-    <h1>Laboratorio 2: Enrutamiento Inter-VLAN y Direccionamiento Híbrido</h1>
-    <p>Este laboratorio práctico profundiza en la segmentación de redes corporativas. Se implementarán tres dominios de difusión independientes utilizando un switch de acceso para cada VLAN, concentrando el enrutamiento en un Router central (Router-on-a-Stick). El esquema de direccionamiento combina hosts estáticos con asignación dinámica por DHCP gestionada por el propio router.</p>
+    <h1>Laboratorio 2: Aislamiento de Capa 2 y DHCP Centralizado por Servidor Telecomunicaciones B</h1>
+    <p>Este laboratorio práctico tiene como objetivo comprender el comportamiento de la segmentación de tráfico en la Capa 2 del modelo OSI sin la intervención de un router. Se desplegarán tres switches independientes para aislar los dominios de colisión y difusión. Dos redes utilizarán direccionamiento estático manual, mientras que la tercera contará con un Servidor genérico dedicado a la entrega dinámica de parámetros IP.</p>
 
     <div class="ccna-box">
-        <strong>📌 Concepto de Diseño:</strong> Aunque se utilicen switches físicos separados para cada departamento, la configuración de troncales (Trunks) y el etiquetado de tramas bajo el estándar <b>IEEE 802.1Q</b> siguen siendo obligatorios para que el Router pueda identificar y enrutar el tráfico de cada subred de forma aislada.
+        <strong>📌 Concepto Clave de Capa 2:</strong> Al no haber un router o switch de Capa 3 conectando las redes, las VLANs se encuentran completamente aisladas entre sí. Un equipo de la VLAN 10 no podrá comunicarse bajo ninguna circunstancia con uno de la VLAN 20 o 30, sirviendo este escenario como demostración pura de seguridad perimetral local.
     </div>
 
-    <h2>Fase 1: Diseño de la Topología y Plan de Direccionamiento IP</h2>
-    <p>Antes de interactuar con la CLI, es fundamental estructurar las conexiones físicas y el mapa de direccionamiento del escenario.</p>
+    <h2>Fase 1: Diseño de la Topología y Planificación IP</h2>
+    <p>Estructuraremos el escenario usando exclusivamente hardware de conmutación de accesos y hosts finales.</p>
 
     <div class="exercise">
-        <div class="exercise-title"><span class="badge topo">Topología</span> Componentes y Matriz de Red</div>
+        <div class="exercise-title"><span class="badge topo">Topología</span> Componentes e Interconexiones</div>
         
         <h3>Componentes requeridos en el lienzo:</h3>
         <ul>
-            <li><b>1 Router (R1):</b> Modelo ISR 4331.</li>
             <li><b>3 Switches (S1, S2, S3):</b> Modelo clásico 2960 de 24 puertos.</li>
-            <li><b>3 PCs Finales (PC-V10, PC-V20, PC-V30):</b> Una conectada a cada switch.</li>
+            <li><b>3 PCs Finales (PC-V10, PC-V20, PC-V30):</b> Distribuidas una en cada switch.</li>
+            <li><b>1 Servidor Genérico (Server-DHCP):</b> Acoplado al Switch 3.</li>
         </ul>
 
-        <h3>Tabla de Direccionamiento Lógico</h3>
+        <h3>Tabla de Direccionamiento del Escenario</h3>
         <table>
             <thead>
                 <tr>
-                    <th>VLAN</th>
-                    <th>Nombre</th>
+                    <th>VLAN de Acceso</th>
+                    <th>Switch Asociado</th>
                     <th>Red / Máscara</th>
-                    <th>Gateway (Router)</th>
                     <th>Dispositivo (Puerto)</th>
-                    <th>Tipo de IP</th>
+                    <th>Método de Asignación IP</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><b>VLAN 10</b></td>
-                    <td>Ingenieria</td>
+                    <td><b>VLAN 10</b> (Ingeniería)</td>
+                    <td>S1</td>
                     <td>192.168.10.0 /24</td>
-                    <td>192.168.10.1</td>
-                    <td>PC-V10 (En S1 Fa0/1)</td>
-                    <td><code>Estática (192.168.10.10)</code></td>
+                    <td>PC-V10 (En S1 Fa0/2)</td>
+                    <td><code>Estática: 192.168.10.10</code></td>
                 </tr>
                 <tr>
-                    <td><b>VLAN 20</b></td>
-                    <td>Administracion</td>
+                    <td><b>VLAN 20</b> (Administración)</td>
+                    <td>S2</td>
                     <td>192.168.20.0 /24</td>
-                    <td>192.168.20.1</td>
-                    <td>PC-V20 (En S2 Fa0/1)</td>
-                    <td><code>Estática (192.168.20.10)</code></td>
+                    <td>PC-V20 (En S2 Fa0/2)</td>
+                    <td><code>Estática: 192.168.20.10</code></td>
                 </tr>
                 <tr>
-                    <td><b>VLAN 30</b></td>
-                    <td>Invitados</td>
+                    <td><b>VLAN 30</b> (Invitados)</td>
+                    <td>S3</td>
                     <td>192.168.30.0 /24</td>
-                    <td>192.168.30.1</td>
-                    <td>PC-V30 (En S3 Fa0/1)</td>
-                    <td><code>Dinámica (DHCP Pool)</code></td>
+                    <td>Server-DHCP (En S3 Fa0/1)<br>PC-V30 (En S3 Fa0/2)</td>
+                    <td><code>Estática: 192.168.30.5 (Servidor)</code><br><code>Dinámica por DHCP (PC-V30)</code></td>
                 </tr>
             </tbody>
         </table>
 
-        <h3>Esquema de Interconexión de Cables (Cables Directos)</h3>
+        <h3>Esquema de Cables (Cables Directos de Cobre)</h3>
         <pre>
-Router R1 (Gi0/0/0) ──────> Puerto Gi0/1 en Switch S1 (Troncal)
-Router R1 (Gi0/0/1) ──────> Puerto Gi0/1 en Switch S2 (Troncal)
-Router R1 (Gi0/0/2) ──────> Puerto Gi0/1 en Switch S3 (Troncal)
+[Switch S1] <─── (Fa0/2) ─── [PC-V10]
+[Switch S2] <─── (Fa0/2) ─── [PC-V20]
+[Switch S3] <─── (Fa0/1) ─── [Server-DHCP]
+[Switch S3] <─── (Fa0/2) ─── [PC-V30]
         </pre>
     </div>
 
-    <h2>Fase 2: Scripts de Configuración de Dispositivos</h2>
-    <p>Accedé a la CLI de cada equipo y aplicá las siguientes plantillas de comandos para establecer el plano de datos.</p>
+    <h2>Fase 2: Configuración de los Dispositivos</h2>
+    <p>A continuación, se detallan los comandos de aprovisionamiento de las VLANs de acceso en los switches y los pasos lógicos para activar el servidor en Packet Tracer.</p>
 
     <div class="exercise">
-        <div class="exercise-title"><span class="badge conf">CLI</span> Configuración en los Switches de Acceso</div>
+        <div class="exercise-title"><span class="badge conf">CLI</span> Aislamiento de Puertos en Switches 2960</div>
         
-        <h3>Switch 1 (S1 - Red de Ingeniería)</h3>
+        <h3>Switch S1 (Dominio Ingeniería)</h3>
         <pre>Switch> enable
 Switch# configure terminal
 Switch(config)# hostname S1
 S1(config)# vlan 10
 S1(config-vlan)# name Ingenieria
 S1(config-vlan)# exit
-
-# Puerto de acceso para la PC
-S1(config)# interface fastEthernet 0/1
+S1(config)# interface fastEthernet 0/2
 S1(config-if)# switchport mode access
 S1(config-if)# switchport access vlan 10
+S1(config-if)# do write memory</pre>
 
-# Enlace Troncal hacia el Router
-S1(config)# interface gigabitEthernet 0/1
-S1(config-if)# switchport mode trunk
-S1(config-if)# switchport trunk allowed vlan 10
-S1(config-if)# exit</pre>
-
-        <h3>Switch 2 (S2 - Red de Administración)</h3>
+        <h3>Switch S2 (Dominio Administración)</h3>
         <pre>Switch> enable
 Switch# configure terminal
 Switch(config)# hostname S2
 S2(config)# vlan 20
 S2(config-vlan)# name Administracion
 S2(config-vlan)# exit
-
-S2(config)# interface fastEthernet 0/1
+S2(config)# interface fastEthernet 0/2
 S2(config-if)# switchport mode access
 S2(config-if)# switchport access vlan 20
+S2(config-if)# do write memory</pre>
 
-S2(config)# interface gigabitEthernet 0/1
-S2(config-if)# switchport mode trunk
-S2(config-if)# switchport trunk allowed vlan 20
-S2(config-if)# exit</pre>
-
-        <h3>Switch 3 (S3 - Red de Invitados)</h3>
+        <h3>Switch S3 (Dominio Invitados con Servidor)</h3>
         <pre>Switch> enable
 Switch# configure terminal
 Switch(config)# hostname S3
 S3(config)# vlan 30
 S3(config-vlan)# name Invitados
 S3(config-vlan)# exit
-
-S3(config)# interface fastEthernet 0/1
-S3(config-if)# switchport mode access
-S3(config-if)# switchport access vlan 30
-
-S3(config)# interface gigabitEthernet 0/1
-S3(config-if)# switchport mode trunk
-S3(config-if)# switchport trunk allowed vlan 30
-S3(config-if)# exit</pre>
+S3(config)# interface range fastEthernet 0/1 - 2
+S3(config-if-range)# switchport mode access
+S3(config-if-range)# switchport access vlan 30
+S3(config-if-range)# do write memory</pre>
     </div>
 
     <div class="exercise">
-        <div class="exercise-title"><span class="badge conf">CLI</span> Configuración de Router (Gateway & DHCP Server)</div>
-        <p>En R1 se habilitan las interfaces físicas y se levanta el servicio de asignación automática de parámetros IP exclusivamente para la VLAN 30.</p>
-        <pre>Router> enable
-Router# configure terminal
-Router(config)# hostname R1
+        <div class="exercise-title"><span class="badge conf">Servicios</span> Configuración Visual del Server-DHCP</div>
+        <p>Para levantar el servidor sin usar comandos IOS, interactuaremos con la interfaz gráfica (GUI) del objeto Server en Packet Tracer:</p>
+        
+        <h3>Paso A: Direccionamiento Fijo de la Tarjeta del Servidor</h3>
+        <p>Hacé clic en <b>Server-DHCP</b>, andá a <i>Desktop > IP Configuration</i>, seleccioná <b>Static</b> y cargá:</p>
+        <ul>
+            <li><b>IP Address:</b> <code>192.168.30.5</code></li>
+            <li><b>Subnet Mask:</b> <code>255.255.255.0</code></li>
+            <li><b>Default Gateway / DNS:</b> Dejar vacíos (0.0.0.0), ya que no contamos con salida de red local.</li>
+        </ul>
 
-# --- CONFIGURACIÓN DE SERVIDOR DHCP PARA VLAN 30 ---
-# Excluir las primeras direcciones para uso de administración/infraestructura
-R1(config)# ip dhcp excluded-address 192.168.30.1 192.168.30.10
-
-# Crear el pool de asignación
-R1(config)# ip dhcp pool POOL_INVITADOS
-R1(dhcp-config)# network 192.168.30.0 255.255.255.0
-R1(dhcp-config)# default-router 192.168.30.1
-R1(dhcp-config)# dns-server 8.8.8.8
-R1(dhcp-config)# exit
-
-# --- CONFIGURACIÓN DE INTERFACES EN R1 ---
-# Interfaz hacia S1 (VLAN 10)
-R1(config)# interface gigabitEthernet 0/0/0
-R1(config-if)# no shutdown
-R1(config-if)# interface gigabitEthernet 0/0/0.10
-R1(config-subif)# encapsulation dot1Q 10
-R1(config-subif)# ip address 192.168.10.1 255.255.255.0
-R1(config-subif)# exit
-
-# Interfaz hacia S2 (VLAN 20)
-R1(config)# interface gigabitEthernet 0/0/1
-R1(config-if)# no shutdown
-R1(config-if)# interface gigabitEthernet 0/0/1.20
-R1(config-subif)# encapsulation dot1Q 20
-R1(config-subif)# ip address 192.168.20.1 255.255.255.0
-R1(config-subif)# exit
-
-# Interfaz hacia S3 (VLAN 30)
-R1(config)# interface gigabitEthernet 0/0/2
-R1(config-if)# no shutdown
-R1(config-if)# interface gigabitEthernet 0/0/2.30
-R1(config-subif)# encapsulation dot1Q 30
-R1(config-subif)# ip address 192.168.30.1 255.255.255.0
-R1(config-subif)# exit</pre>
+        <h3>Paso B: Activación del Rol DHCP</h3>
+        <ol>
+            <li>Dentro de las solapas del servidor, ingresá a <b>Services</b> (Servicios) y hacé clic en <b>DHCP</b>.</li>
+            <li>Cambió el botón de Service a la posición de <b>ON</b>.</li>
+            <li>Modificá los siguientes campos en el pool por defecto (<i>serverPool</i>):
+                <ul>
+                    <li><b>Start IP Address:</b> <code>192.168.30.10</code></li>
+                    <li><b>Subnet Mask:</b> <code>255.255.255.0</code></li>
+                    <li><b>Maximum number of Users:</b> <code>50</code></li>
+                </ul>
+            </li>
+            <li>Hacé clic de manera obligatoria en el botón <b>Save</b> (Guardar).</li>
+        </ol>
     </div>
 
-    <h2>Fase 3: Pruebas de Diagnóstico y Verificación Obligatorias</h2>
-    <p>Para garantizar el éxito del despliegue en un entorno real o de examen, se deben ejecutar de manera rigurosa las siguientes pruebas en los dispositivos finales y de red.</p>
+    <h2>Fase 3: Pruebas de Comprobación y Comportamiento Esperado</h2>
+    <p>Al ser un escenario puramente de Capa 2 segmentado, las pruebas deben validar que el DHCP responde de manera confinada y que no existe fuga de tráfico entre entornos.</p>
 
     <div class="exercise">
-        <div class="exercise-title"><span class="badge test">Troubleshooting</span> Control de Calidad del Laboratorio</div>
+        <div class="exercise-title"><span class="badge test">Verificación</span> Pruebas de Fuego en Computadoras Finales</div>
         
-        <h3>Prueba 1: Verificación del Arrendamiento DHCP (PC-V30)</h3>
-        <p>Ingresá al Escritorio de la <b>PC-V30</b> > <i>IP Configuration</i> y conmutá el botón a <b>DHCP</b>. Debería obtener de inmediato la IP <code>192.168.30.11</code>, la máscara 255.255.255.0 y el Gateway 192.168.30.1.</p>
-        <details>
-            <summary>💬 Comando de Consola en Windows/PC CLI</summary>
-            <p>Abrí el <i>Command Prompt</i> de la PC-V30 y ejecutá:</p>
-            <pre>C:\> ipconfig
-# Si no toma IP correctamente, forzá la renovación con:
-C:\> ipconfig /renew</pre>
-        </details>
-
-        <h3>Prueba 2: Diagnóstico de la Tabla de Concesiones en el Router</h3>
-        <p>Para comprobar desde la perspectiva del plano de control que el router entregó los datos correctamente:</p>
-        <pre>R1# show ip dhcp binding
-# Debe listar la dirección MAC de la PC-V30 asociada a la IP 192.168.30.11</pre>
-
-        <h3>Prueba 3: Trazabilidad y Conectividad Extremo a Extremo (Ping & Traceroute)</h3>
-        <p>Abrí la terminal de comandos de la <b>PC-V10</b> (IP Estática 192.168.10.10) e intentá alcanzar a la PC de la otra VLAN para verificar que R1 está conmutando los paquetes:</p>
-        <pre>C:\> ping 192.168.20.10   # Ping hacia PC-V20
-C:\> ping 192.168.30.11   # Ping hacia PC-V30 (DHCP)</pre>
+        <h3>Prueba 1: Verificación de Concesión en PC-V30</h3>
+        <p>Hacé clic en <b>PC-V30</b>, andá a <i>Desktop > IP Configuration</i> y conmutá de Static a <b>DHCP</b>. Al cabo de unos segundos, la PC debe recibir exitosamente la dirección IP <code>192.168.30.10</code> proveniente de nuestro servidor.</p>
         
-        <p>Para visualizar de forma exacta el salto que da el paquete a través de la subinterfaz del Router:</p>
-        <pre>C:\> tracert 192.168.30.11</pre>
-        <p><i>El primer salto de la lista debe ser de manera mandatoria la IP del Gateway local (<code>192.168.10.1</code>).</i></p>
+        <h3>Prueba 2: Comprobación de Aislamiento Total (Pings Fallidos Esperados)</h3>
+        <p>Abrí la consola de comandos (<i>Command Prompt</i>) en la <b>PC-V10</b> (IP 192.168.10.10) e intentá conectarte con los hosts de los otros switches:</p>
+        <pre>C:\> ping 192.168.20.10    # Destinado a PC-V20. Resultado: Request Timed Out (Fallido)
+C:\> ping 192.168.30.10    # Destinado a PC-V30. Resultado: Request Timed Out (Fallido)</pre>
+        <p><i>Nota de examen: Este comportamiento de falla es **correcto y esperado**. Demuestra que las VLANs cumplen su función nativa de contener y bloquear las transmisiones por fuera de su ID de red.</i></p>
+
+        <h3>Prueba 3: Comprobación Interna de Capa 2 (Ping Exitoso)</h3>
+        <p>Desde la terminal de la <b>PC-V30</b> (IP 192.168.30.10), tirá un ping hacia el servidor que le otorgó la dirección para confirmar la conectividad intracomunitaria:</p>
+        <pre>C:\> ping 192.168.30.5     # Destinado al Server-DHCP. Resultado: Reply from 192.168.30.5 (Exitoso)</pre>
     </div>
 </div>
 
