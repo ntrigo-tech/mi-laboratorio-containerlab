@@ -1,6 +1,0 @@
-{
-  "name": "Containerlab",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-
-  "postCreateCommand": "curl -sL https://containerlab.dev/setup | sudo -E bash -s all"
-}
