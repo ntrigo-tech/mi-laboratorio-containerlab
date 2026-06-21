@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guía de Iniciación: Cisco Packet Tracer Telecomunicaciones B</title>
+    <title>Guía de Iniciación: Cisco Packet Tracer</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #2d3748; background-color: #f7fafc; margin: 0; padding: 30px; }
         .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
@@ -14,12 +14,14 @@
         ul, ol { margin-bottom: 20px; padding-left: 25px; }
         li { margin-bottom: 8px; }
         .ccna-box { background-color: #fffaf0; border-left: 4px solid #dd6b20; padding: 20px; border-radius: 4px; margin: 20px 0; font-size: 0.95rem; }
+        .ccna-box.tip { background-color: #ebf8ff; border-left: 4px solid #3182ce; }
         .exercise { background-color: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .exercise-title { font-weight: bold; color: #2c5282; font-size: 1.15rem; margin-bottom: 15px; display: flex; align-items: center; }
         .badge { display: inline-block; padding: 4px 8px; background-color: #4a5568; color: white; border-radius: 4px; font-size: 0.75rem; margin-right: 10px; font-weight: bold; text-transform: uppercase; }
         .badge.setup { background-color: #2b6cb0; }
         .badge.topo { background-color: #319795; }
         .badge.cli { background-color: #805ad5; }
+        .badge.save { background-color: #38a169; }
         code { font-family: 'Courier New', Courier, monospace; background-color: #edf2f7; padding: 2px 6px; border-radius: 4px; font-size: 0.95rem; color: #b83280; font-weight: bold; }
         pre { background-color: #1a202c; color: #edf2f7; padding: 15px; border-radius: 6px; font-family: 'Courier New', Courier, monospace; overflow-x: auto; font-size: 0.9rem; line-height: 1.4; }
         details { background-color: #f7fafc; border: 1px solid #edf2f7; border-radius: 4px; padding: 12px 18px; margin-top: 15px; }
@@ -93,8 +95,7 @@ Router> ?   # Despliega la lista reducida de comandos permitidos en este nivel</
         <h3>2. Modo Privilegiado (Privileged EXEC Mode)</h3>
         <p>Permite ver estadísticas de rendimiento, configuraciones guardadas y realizar diagnósticos detallados. Representado por el signo numeral (<code>#</code>).</p>
         <pre>Router> enable
-Router#
-Router# show ip interface brief   # Verifica el estado lógico y físico de las placas de red</pre>
+Router#</pre>
 
         <h3>3. Modo de Configuración Global</h3>
         <p>Requerido para modificar parámetros operativos que impacten en el comportamiento general del chasis. Entorno delimitado por <code>(config)#</code>.</p>
@@ -109,16 +110,43 @@ R1(config-if)# no shutdown       # Enciende eléctricamente la interfaz física 
 R1(config-if)# exit
 R1(config)# exit
 R1#</pre>
+    </div>
 
-        <details>
-            <summary>🔍 Comandos de Verificación Inmediata</summary>
-            <p>Ejecutá estas rutinas desde el modo privilegiado (<code>R1#</code>) para auditar los cambios aplicados en la interfaz:</p>
-            <pre># Comprobar que la interfaz Gi0/0/0 cambió al estado "up / up"
+    <h2>Paso 4: Verificación y Persistencia de la Configuración</h2>
+    <p>Todo cambio realizado en la CLI impacta de manera inmediata en la memoria volátil del equipo, pero se perderá ante un corte de energía si no se consolida en el almacenamiento persistente.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge save">Almacenamiento</span> RAM vs. NVRAM y Auditoría</div>
+        
+        <h3>Comandos Esenciales de Verificación (Modo Privilegiado <code>#</code>)</h3>
+        <p>Antes de guardar, es mandatorio auditar que los cambios aplicados en caliente sean los correctos:</p>
+        <pre># 1. Ver la configuración activa operando en la memoria RAM
+R1# show running-config
+
+# 2. Ver el estado simplificado y direccionamiento de todas las interfaces
 R1# show ip interface brief
 
-# Guardar el Hostname y la inicialización de interfaces en la memoria persistente
-R1# write memory</pre>
-        </details>
+# 3. Ver la configuración de respaldo almacenada en la memoria NVRAM (No volátil)
+R1# show startup-config</pre>
+
+        <h3>Cómo Guardar la Configuración de Forma Permanente</h3>
+        <p>Para transferir el contenido de la memoria volátil activa (RAM) hacia la persistente de arranque (NVRAM), disponés de dos comandos alternativos:</p>
+        
+        <pre># Método Estándar y Oficial (Recomendado para exámenes de certificación)
+R1# copy running-config startup-config
+Destination filename [startup-config]?   # Presioná ENTER para confirmar
+
+# Método Corto Tradicional (Ampliamente usado en la industria)
+R1# write memory   # (o simplemente: wr)</pre>
+    </div>
+
+    <div class="ccna-box tip">
+        <strong>💡 Tips Críticos de Operación sobre Guardado y Verificación:</strong>
+        <ul>
+            <li><b>El peligro de un reinicio accidental:</b> Si modificás configuraciones críticas (como cambiar contraseñas o apagar un puerto) y el equipo se apaga o se ejecuta el comando <code>reload</code> antes de guardar, el dispositivo arrancará con el estado anterior guardado en la NVRAM.</li>
+            <li><b>El atajo de ejecución (Do):</b> Si estás metido muy adentro en los modos de configuración (ej: <code>R1(config-if)#</code>) y querés tirar un comando de verificación o guardar sin salir a la raíz, anteponé la palabra clave <code>do</code> (ej: <code>do show ip interface brief</code> o <code>do wr</code>).</li>
+            <li><b>Validar la NVRAM vacía:</b> Si un equipo es nuevo o se le borró la configuración con el comando <code>erase startup-config</code>, al ejecutar <code>show startup-config</code> la consola devolverá el mensaje: <i>"startup-config is not present"</i>. Es completamente normal hasta que guardes por primera vez.</li>
+        </ul>
     </div>
 </div>
 
