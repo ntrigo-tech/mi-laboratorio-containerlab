@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Laboratorio 3: Enrutamiento Inter-VLAN, DNS y Salida a Internet</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #2d3748; background-color: #f7fafc; margin: 0; padding: 30px; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1 { color: #1a365d; border-bottom: 3px solid #2b6cb0; padding-bottom: 12px; margin-top: 0; font-size: 2.2rem; }
+        h2 { color: #2b6cb0; margin-top: 35px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; font-size: 1.6rem; }
+        h3 { color: #2d3748; margin-top: 25px; font-size: 1.25rem; border-left: 4px solid #4299e1; padding-left: 10px; }
+        p { margin-bottom: 15px; text-align: justify; }
+        ul, ol { margin-bottom: 20px; padding-left: 25px; }
+        li { margin-bottom: 8px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; background-color: #fff; }
+        th { background-color: #2b6cb0; color: white; font-weight: bold; padding: 12px; text-align: left; border: 1px solid #cbd5e0; font-size: 0.95rem; }
+        td { padding: 10px; border: 1px solid #cbd5e0; text-align: left; font-size: 0.9rem; }
+        tr:nth-child(even) { background-color: #f7fafc; }
+        .ccna-box { background-color: #fffaf0; border-left: 4px solid #dd6b20; padding: 20px; border-radius: 4px; margin: 20px 0; font-size: 0.95rem; }
+        .ccna-box.dns-tip { background-color: #ebf8ff; border-left: 4px solid #3182ce; }
+        .ccna-box.theory { background-color: #f7fafc; border-left: 4px solid #4a5568; color: #4a5568; }
+        .exercise { background-color: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .exercise-title { font-weight: bold; color: #2c5282; font-size: 1.15rem; margin-bottom: 15px; display: flex; align-items: center; }
+        .badge { display: inline-block; padding: 4px 8px; background-color: #4a5568; color: white; border-radius: 4px; font-size: 0.75rem; margin-right: 10px; font-weight: bold; text-transform: uppercase; }
+        .badge.topo { background-color: #319795; }
+        .badge.conf { background-color: #2b6cb0; }
+        .badge.test { background-color: #e53e3e; }
+        .badge.theory-badge { background-color: #4a5568; }
+        code { font-family: 'Courier New', Courier, monospace; background-color: #edf2f7; padding: 2px 6px; border-radius: 4px; font-size: 0.95rem; color: #b83280; font-weight: bold; }
+        pre { background-color: #1a202c; color: #edf2f7; padding: 15px; border-radius: 6px; font-family: 'Courier New', Courier, monospace; overflow-x: auto; font-size: 0.9rem; line-height: 1.4; }
+        details { background-color: #f7fafc; border: 1px solid #edf2f7; border-radius: 4px; padding: 12px 18px; margin-top: 15px; }
+        details summary { font-weight: bold; color: #4a5568; cursor: pointer; user-select: none; }
+        details summary:hover { color: #2b6cb0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Laboratorio 3: Infraestructura Corporativa con DNS y Simulación de Internet</h1>
+    <p>Este laboratorio representa la consolidación de las arquitecturas previas. Romperemos el aislamiento de Capa 2 integrando un Router central que actuará como Gateway de las VLANs. Además, estructuraremos un segmento de DMZ/Internet pública para alojar un Servidor DNS e introduciremos enrutamiento estático hacia la WAN para que las PCs internas resuelvan dominios web reales simulados.</p>
+
+    <div class="ccna-box dns-tip">
+        <strong>🌐 La Importancia del DNS en el DHCP:</strong> Al tener salida a redes externas, ahora es mandatorio que el Servidor DHCP (Server-DHCP) no solo entregue IP y Máscara a la VLAN 30, sino que también propague de forma automática la IP del Servidor DNS para que los hosts puedan navegar usando nombres de dominio (ej: <code>www.cisco.com</code>) en lugar de recordar IPs complejas.
+    </div>
+
+    <h2>Fase 1: Diseño de la Topología y Mapa de Direccionamiento</h2>
+    <p>Evolucionaremos el escenario previo interconectando los switches de acceso a las interfaces del Router y creando un nuevo dominio para representar la nube/Internet.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge topo">Lienzo</span> Nuevos Componentes y Cableado</div>
+        
+        <h3>Modificaciones físicas sobre el Laboratorio 2:</h3>
+        <ul>
+            <li><b>Agregar 1 Router (R1):</b> Modelo ISR 4331. Sus interfaces físicas se conectarán a cada Switch.</li>
+            <li><b>Agregar 1 Servidor Adicional (Server-DNS):</b> Representará un servidor público en la WAN.</li>
+        </ul>
+
+        <h3>Tabla Completa de Direccionamiento e Interfaces</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Segmento / Red</th>
+                    <th>Interfaz R1</th>
+                    <th>IP Gateway</th>
+                    <th>Dispositivos Finales</th>
+                    <th>Método IP</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>VLAN 10</b> (192.168.10.0/24)</td>
+                    <td>GigabitEthernet 0/0/0</td>
+                    <td>192.168.10.1</td>
+                    <td>PC-V10</td>
+                    <td>Estática: <code>192.168.10.10</code> / DNS: <code>8.8.8.8</code></td>
+                </tr>
+                <tr>
+                    <td><b>VLAN 20</b> (192.168.20.0/24)</td>
+                    <td>GigabitEthernet 0/
