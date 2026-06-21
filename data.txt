@@ -1,5 +1,12 @@
 https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/main/Lab-switching.clab.yml
 https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/main/Lab-routing.clab.yml
-https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/Practica_packet_tracer.html
-https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/lab-doc-2-inter-vlan.html
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/PacketTracer/Mi_primer_Laboratorio.html
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/PacketTracer/Laboratorio_1_PKT.html
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/PacketTracer/Laboratorio_2_VLANs_DHCP.html
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/PacketTracer/Laboratorio_3_Enrutamiento_Internet_DNS.html
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/PacketTracer/Laboratorio_4_Ruteo_Estatico_ISP.html
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/PacketTracer/Laboratorio_5_Trunk_OSPF.html
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/PacketTracer/Laboratorio_6_Integrador_BGP.html
+
+#### Practicas ###
 https://thelineman.ca/lab-docs/
