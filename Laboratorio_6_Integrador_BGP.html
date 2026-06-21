@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Laboratorio 6: Proyecto Integrador Final - Sistemas Autónomos con BGP</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #2d3748; background-color: #f7fafc; margin: 0; padding: 30px; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1 { color: #1a365d; border-bottom: 3px solid #2b6cb0; padding-bottom: 12px; margin-top: 0; font-size: 2.2rem; }
+        h2 { color: #2b6cb0; margin-top: 35px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; font-size: 1.6rem; }
+        h3 { color: #2d3748; margin-top: 25px; font-size: 1.25rem; border-left: 4px solid #4299e1; padding-left: 10px; }
+        p { margin-bottom: 15px; text-align: justify; }
+        ul, ol { margin-bottom: 20px; padding-left: 25px; }
+        li { margin-bottom: 8px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; background-color: #fff; }
+        th { background-color: #2b6cb0; color: white; font-weight: bold; padding: 12px; text-align: left; border: 1px solid #cbd5e0; font-size: 0.95rem; }
+        td { padding: 10px; border: 1px solid #cbd5e0; text-align: left; font-size: 0.9rem; }
+        tr:nth-child(even) { background-color: #f7fafc; }
+        .ccna-box { background-color: #fffaf0; border-left: 4px solid #dd6b20; padding: 20px; border-radius: 4px; margin: 20px 0; font-size: 0.95rem; }
+        .ccna-box.bgp-tip { background-color: #f7fafc; border-left: 4px solid #b7791f; color: #744210; }
+        .ccna-box.final-challenge { background-color: #fff5f5; border-left: 4px solid #e53e3e; color: #9b2c2c; }
+        .exercise { background-color: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .exercise-title { font-weight: bold; color: #2c5282; font-size: 1.15rem; margin-bottom: 15px; display: flex; align-items: center; }
+        .badge { display: inline-block; padding: 4px 8px; background-color: #4a5568; color: white; border-radius: 4px; font-size: 0.75rem; margin-right: 10px; font-weight: bold; text-transform: uppercase; }
+        .badge.topo { background-color: #319795; }
+        .badge.conf { background-color: #2b6cb0; }
+        .badge.test { background-color: #e53e3e; }
+        .badge.bgp-badge { background-color: #b7791f; }
+        code { font-family: 'Courier New', Courier, monospace; background-color: #edf2f7; padding: 2px 6px; border-radius: 4px; font-size: 0.95rem; color: #b83280; font-weight: bold; }
+        pre { background-color: #1a202c; color: #edf2f7; padding: 15px; border-radius: 6px; font-family: 'Courier New', Courier, monospace; overflow-x: auto; font-size: 0.9rem; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Laboratorio 6 (Proyecto Integrador): Interconexión de Sistemas Autónomos con eBGP</h1>
+    <p>Este laboratorio final consolida la totalidad de los conceptos vistos en la cursada: Conmutación de Capa 2 (VLANs, Trunks), Servicios Core (DHCP, DNS), Enrutamiento Interior (OSPFv2 para Router-on-a-Stick) y Enrutamiento de Borde Exterior (eBGP). Simularemos dos organizaciones independientes en Internet que deciden intercambiar sus prefijos privados de forma dinámica.</p>
+
+    <div class="ccna-box bgp-tip">
+        <strong>🌐 Arquitectura BGP (Border Gateway Protocol):</strong> A diferencia de OSPF que busca la ruta más rápida basándose en el costo del enlace (métrica de estado de enlace), BGP es un protocolo de vector de ruta (Path Vector) que toma decisiones basándose en políticas, atributos y saltos de Sistemas Autónomos (AS). Es el protocolo utilizado para interconectar ISPs y grandes redes corporativas en el mundo real.
+    </div>
+
+    <h2>Fase 1: Mapa General de la Topología y Direccionamiento</h2>
+    <p>A continuación se detalla la distribución de los bloques de red. El escenario se divide en dos Sistemas Autónomos (AS) unidos por un enlace troncal punto a punto.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge topo">Topología</span> Distribución de Hardware en Packet Tracer</div>
+        
+        <h3>Bloque A: Sistema Autónomo 100 (Sede Central Corp)</h3>
+        <ul>
+            <li><b>Router R1 (AS 100):</b> Concentra las VLANs corporativas locales mediante Router-on-a-Stick en su puerto <code>Gi0/0/0</code> e interconecta la WAN en la <code>Gi0/0/3</code>. El enrutamiento interno de sus segmentos se resuelve vía OSPF.</li>
+            <li><b>Switch S1 (Central):</b> Configurado con Trunk hacia R1 y puertos de acceso para VLAN 10 (Ingeniería), VLAN 20 (Administración) y VLAN 30 (Servidor DHCP corporativo).</li>
+        </ul>
+
+        <h3>Bloque B: Sistema Autónomo 200 (Nueva Red Sucursal / Socio)</h3>
+        <ul>
+            <li><b>Router R2 (AS 200):</b> Actúa como el Gateway perimetral de la nueva sucursal. Configura Router-on-a-Stick en su interfaz <code>Gi0/0/0</code> para sus propios segmentos y conecta la WAN en la <code>Gi0/0/3</code>.</li>
+            <li><b>Switch S2 (Sucursal):</b> Maneja dos nuevas VLANs de acceso independiente:
+                <ul>
+                    <li><b>VLAN 40 (Cómputo):</b> Red <code>192.168.40.0/24</code> (PC-V40 conectada a puerto de acceso).</li>
+                    <li><b>VLAN 50 (Servidores Locales):</b> Red <code>192.168.50.0/24</code> (PC-V50 / Servidor local conectado a puerto de acceso).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Tabla Completa de Direccionamiento de Interfaces Perimetrales</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sistema Autónomo (AS)</th>
+                    <th>Dispositivo</th>
+                    <th>Interfaz Física / Lógica</th>
+                    <th>Dirección IP</th>
+                    <th>Máscara de Red</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="4"><b>AS 100</b> (Corp)</td>
+                    <td rowspan="4">Router R1</td>
+                    <td>Gi0/0/0.10 (VLAN 10)</td>
+                    <td>192.168.10.1</td>
+                    <td>255.255.255.0 (/24)</td>
+                </tr>
+                <tr>
+                    <td>Gi0/0/0.20 (VLAN 20)</td>
+                    <td>192.168.20.1</td>
+                    <td>255.255.255.0 (/24)</td>
+                </tr>
+                <tr>
+                    <td>Gi0/0/0.30 (VLAN 30)</td>
+                    <td>192.168.30.1</td>
+                    <td>255.255.255.0 (/24)</td>
+                </tr>
+                <tr>
+                    <td>Gi0/0/3 (Enlace WAN)</td>
+                    <td>10.0.0.1</td>
+                    <td>255.255.255.252 (/30)</td>
+                </tr>
+                <tr>
+                    <td rowspan="3"><b>AS 200</b> (Sucursal)</td>
+                    <td rowspan="3">Router R2</td>
+                    <td>Gi0/0/0.40 (VLAN 40)</td>
+                    <td>192.168.40.1</td>
+                    <td>255.255.255.0 (/24)</td>
+                </tr>
+                <tr>
+                    <td>Gi0/0/0.50 (VLAN 50)</td>
+                    <td>192.168.50.1</td>
+                    <td>255.255.255.0 (/24)</td>
+                </tr>
+                <tr>
+                    <td>Gi0/0/3 (Enlace WAN)</td>
+                    <td>10.0.0.2</td>
+                    <td>255.255.255.252 (/30)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Fase 2: Configuración del Nuevo Sistema Autónomo (AS 200)</h2>
+    <p>Para garantizar que la sucursal funcione internamente de forma óptima, aplicaremos la técnica de Router-on-a-Stick en el Switch S2 y el Router R2.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge conf">CLI</span> Paso A: Base de datos de VLANs y Trunk en Switch S2</div>
+        <pre>Switch> enable
+Switch# configure terminal
+Switch(config)# hostname S2
+
+# Crear VLANs de la sucursal
+S2(config)# vlan 40
+S2(config-vlan)# name Computo_Sucursal
+S2(config-vlan)# vlan 50
+S2(config-vlan)# name Servidores_Sucursal
+S2(config-vlan)# exit
+
+# Asignar accesos de hosts
+S2(config)# interface fastEthernet 0/10
+S2(config-if)# switchport mode access
+S2(config-if)# switchport access vlan 40
+
+S2(config)# interface fastEthernet 0/20
+S2(config-if)# switchport mode access
+S2(config-if)# switchport access vlan 50
+S2(config-if)# exit
+
+# Configurar Troncal hacia el nuevo Router R2
+S2(config)# interface gigabitEthernet 0/1
+S2(config-if)# switchport mode trunk
+S2(config-if)# do write memory</pre>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge conf">CLI</span> Paso B: Configuración de Subinterfaces en Router R2</div>
+        <pre>Router> enable
+Router# configure terminal
+Router(config)# hostname R2
+
+# Levantar interfaz física base
+R2(config)# interface gigabitEthernet 0/0/0
+R2(config-if)# no shutdown
+R2(config-if)# exit
+
+# Subinterfaz VLAN 40
+R2(config)# interface gigabitEthernet 0/0/0.40
+R2(config-subif)# encapsulation dot1Q 40
+R2(config-subif)# ip address 192.168.40.1 255.255.255.0
+R2(config-subif)# exit
+
+# Subinterfaz VLAN 50
+R2(config)# interface gigabitEthernet 0/0/0.50
+R2(config-subif)# encapsulation dot1Q 50
+R2(config-subif)# ip address 192.168.50.1 255.255.255.0
+R2(config-subif)# exit
+
+# Configurar interfaz WAN física hacia AS 100
+R2(config)# interface gigabitEthernet 0/0/3
+R2(config-if)# ip address 10.0.0.2 255.255.255.252
+R2(config-if)# no shutdown
+R2(config-if)# exit
+R2(config)# do write memory</pre>
+    </div>
+
+    <h2>Fase 3: Configuración del Enrutamiento eBGP Core</h2>
+    <p>Con las interfaces operativas y comunicación en el enlace WAN (comprobable mediante un ping directo entre R1 y R2), procederemos a configurar la sesión eBGP para el intercambio dinámico de prefijos IP.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge bgp-badge">CLI</span> Configuración de BGP en el Router Corporativo R1 (AS 100)</div>
+        <p>Declararemos el número de sistema autónomo local, estableceremos la vecindad apuntando a la IP WAN de R2 (indicando su AS remoto) y anunciaremos los bloques de red internos corporativos.</p>
+        <pre>R1> enable
+R1# configure terminal
+
+# Levantar el proceso BGP para el Sistema Autónomo 100
+R1(config)# router bgp 100
+R1(config-router)# bgp log-neighbor-changes
+
+# Declarar al vecino (IP de la interfaz de R2 y su AS correspondiente)
+R1(config-router)# neighbor 10.0.0.2 remote-as 200
+
+# Anunciar las redes internas a Internet de forma exacta
+R1(config-router)# network 192.168.10.0 mask 255.255.255.0
+R1(config-router)# network 192.168.20.0 mask 255.255.255.0
+R1(config-router)# network 192.168.30.0 mask 255.255.255.0
+R1(config-router)# exit
+R1(config)# do write memory</pre>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge bgp-badge">CLI</span> Configuración de BGP en el Router Sucursal R2 (AS 200)</div>
+        <p>Realizaremos el proceso espejo en la sucursal. Al confirmar el comando del vecino, el protocolo negociará la adyacencia de forma inmediata.</p>
+        <pre>R2> enable
+R2# configure terminal
+
+# Levantar el proceso BGP para el Sistema Autónomo 200
+R2(config)# router bgp 200
+R2(config-router)# bgp log-neighbor-changes
+
+# Declarar al vecino (IP de la interfaz de R1 y su AS correspondiente)
+R2(config-router)# neighbor 10.0.0.1 remote-as 100
+
+# Anunciar las redes internas de la sucursal
+R2(config-router)# network 192.168.40.0 mask 255.255.255.0
+R2(config-router)# network 192.168.50.0 mask 255.255.255.0
+R2(config-router)# exit
+R2(config)# do write memory</pre>
+        <p><i>Al finalizar la configuración, las consolas CLI de ambos routers dispararán un mensaje informativo del sistema (Syslog) indicando que la adyacencia pasó a estado operativo: <code>%BGP-5-ADJCHANGE: neighbor 10.0.0.x Up</code>.</i></p>
+    </div>
+
+    <h2>Fase 4: Diagnóstico, Verificación y Convergencia Global</h2>
+    <p>BGP tiene comandos de diagnóstico específicos. Validaremos el plano de control antes de realizar las pruebas lógicas de extremo a extremo.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge test">Troubleshooting</span> Comandos de Auditoría Perimetral</div>
+        
+        <h3>1. Verificar el Resumen de Vecinos BGP</h3>
+        <p>Para comprobar el estado de la sesión, la cantidad de prefijos recibidos y el tiempo de adyacencia activa, ejecutá en cualquier router:</p>
+        <pre>R1# show ip bgp summary</pre>
+        <p><i>Asegurate de que la columna de la derecha (State/PfxRcd) muestre un número entero (la cantidad de redes aprendidas) y **no** palabras como <code>Active</code> o <code>Idle</code>, lo cual indicaría una falla de negociación.</i></p>
+
+        <h3>2. Inspeccionar la Tabla de Enrutamiento (Prefijo "B")</h3>
+        <p>Ejecutemos el comando global en R1 para validar que los caminos dinámicos inter-AS ya se inyectaron en el plano de reenvío:</p>
+        <pre>R1# show ip route</pre>
+        <p>Verás las redes de la sucursal precedidas de forma explícita por la letra **B**:</p>
+        <pre>B    192.168.40.0/24 [20/0] via 10.0.0.2, 00:05:14
+B    192.168.50.0/24 [20/0] via 10.0.0.2, 00:05:14</pre>
+        <p><i>Nota de examen CCNA: La Distancia Administrativa (DA) para las rutas aprendidas por conexiones **eBGP es de 20**, lo que las hace altamente prioritarias frente a protocolos internos como OSPF (110).</i></p>
+
+        <h3>3. Prueba del Plano de Datos Extremo a Extremo</h3>
+        <p>Abrí la consola de comandos de la <b>PC-V10 (VLAN 10 en AS 100)</b> y tirale un ping a la <b>PC-V40 (VLAN 40 en AS 200)</b>:</p>
+        <pre>C:\> ping 192.168.40.10</pre>
+        <p>La traza de paquetes responderá con total éxito, demostrando que dos redes gobernadas de forma independiente y aisladas físicamente por diferentes Sistemas Autónomos pueden comunicarse transparentemente gracias a la inyección dinámica de BGP.</p>
+    </div>
+
+    <div class="ccna-box final-challenge">
+        <strong>🏆 ¡Felicitaciones por Completar la Saga de Laboratorios!</strong><br>
+        Has diseñado, cableado y configurado una infraestructura corporativa completa que abarca desde la asignación dinámica de IPs en el borde local mediante DHCP, la resolución de nombres por DNS, la optimización de hardware usando Enlaces Troncales (Trunk), el enrutamiento interior (OSPFv2) y la federación perimetral de Internet a gran escala utilizando BGP. ¡Estás listo para afrontar cualquier escenario real de arquitectura de redes!
+    </div>
+</div>
+
+</body>
+</html>
