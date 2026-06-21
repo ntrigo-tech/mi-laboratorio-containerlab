@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Laboratorio 4: Enrutamiento Estático y Router de Borde (ISP)</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #2d3748; background-color: #f7fafc; margin: 0; padding: 30px; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1 { color: #1a365d; border-bottom: 3px solid #2b6cb0; padding-bottom: 12px; margin-top: 0; font-size: 2.2rem; }
+        h2 { color: #2b6cb0; margin-top: 35px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; font-size: 1.6rem; }
+        h3 { color: #2d3748; margin-top: 25px; font-size: 1.25rem; border-left: 4px solid #4299e1; padding-left: 10px; }
+        p { margin-bottom: 15px; text-align: justify; }
+        ul, ol { margin-bottom: 20px; padding-left: 25px; }
+        li { margin-bottom: 8px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; background-color: #fff; }
+        th { background-color: #2b6cb0; color: white; font-weight: bold; padding: 12px; text-align: left; border: 1px solid #cbd5e0; font-size: 0.95rem; }
+        td { padding: 10px; border: 1px solid #cbd5e0; text-align: left; font-size: 0.9rem; }
+        tr:nth-child(even) { background-color: #f7fafc; }
+        .ccna-box { background-color: #fffaf0; border-left: 4px solid #dd6b20; padding: 20px; border-radius: 4px; margin: 20px 0; font-size: 0.95rem; }
+        .ccna-box.static-tip { background-color: #e6fffa; border-left: 4px solid #319795; }
+        .ccna-box.next-step { background-color: #f0fff4; border-left: 4px solid #38a169; color: #276749; }
+        .exercise { background-color: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .exercise-title { font-weight: bold; color: #2c5282; font-size: 1.15rem; margin-bottom: 15px; display: flex; align-items: center; }
+        .badge { display: inline-block; padding: 4px 8px; background-color: #4a5568; color: white; border-radius: 4px; font-size: 0.75rem; margin-right: 10px; font-weight: bold; text-transform: uppercase; }
+        .badge.topo { background-color: #319795; }
+        .badge.conf { background-color: #2b6cb0; }
+        .badge.test { background-color: #e53e3e; }
+        .badge.bridge { background-color: #dd6b20; }
+        code { font-family: 'Courier New', Courier, monospace; background-color: #edf2f7; padding: 2px 6px; border-radius: 4px; font-size: 0.95rem; color: #b83280; font-weight: bold; }
+        pre { background-color: #1a202c; color: #edf2f7; padding: 15px; border-radius: 6px; font-family: 'Courier New', Courier, monospace; overflow-x: auto; font-size: 0.9rem; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Laboratorio 4: Enrutamiento Estático y Gateway de Última Esperanza (ISP)</h1>
+    <p>Este escenario introduce el concept de demarcación perimetral y transporte WAN. Modificaremos la arquitectura anterior desconectando el Servidor DNS del router local y colocándolo detrás de un nuevo Router de Borde que simulará al Proveedor de Servicios de Internet (ISP). Aplicaremos rutas estáticas específicas y de última esperanza para forzar la convergencia global de la red.</p>
+
+    <div class="ccna-box static-tip">
+        <strong>📌 El Secreto del Enrutamiento Bidireccional:</strong> En redes, el enrutamiento siempre es de ida y vuelta. Que el Router de tu empresa (`R1`) sepa cómo mandar un paquete a Internet no sirve de nada si el Router del ISP no tiene una ruta de regreso para saber en qué interfaz interna de la WAN se aloja tu rango de IPs corporativas.
+    </div>
+
+    <h2>Fase 1: Reestructuración de la Topología Física y Enlaces</h2>
+    <p>Desconectaremos el Servidor DNS del puerto de R1 para ubicarlo en su verdadero destino jerárquico: la red del ISP.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge topo">Topología</span> Nueva Red de Transporte WAN</div>
+        
+        <h3>Modificaciones en el Lienzo de Packet Tracer:</h3>
+        <ul>
+            <li><b>Router Corporativo (R1):</b> Mantiene sus tres conexiones locales hacia los switches (VLAN 10, 20 y 30).</li>
+            <li><b>Nuevo Router Borde (ISP):</b> Modelo ISR 4331. Hará de pasarela hacia la nube.</li>
+            <li><b>Server-DNS:</b> Se desconecta de R1 y se conecta **directamente al puerto Gi0/0/1 del Router ISP**.</li>
+        </ul>
+
+        <h3>Esquema de Cableado e Interconexiones</h3>
+        <pre>
+[Switches S1, S2, S3] ─────> Conectados a R1 (Mismo esquema Lab 3)
+
+[Router R1] (Gi0/0/3) ─── Link WAN Punto a Punto ─── (Gi0/0/0) [Router ISP]
+                          Red: 10.0.0.0 /30
+
+[Router ISP] (Gi0/0/1) ──────────────────────────────> [Server-DNS] (Fa0)
+                          Red LAN Pública: 8.0.0.0 /8
+        </pre>
+    </div>
+
+    <h2>Fase 2: Plan de Direccionamiento IP (Actualizado)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Dispositivo / Interfaz</th>
+                <th>Dirección IP</th>
+                <th>Máscara de Red</th>
+                <th>Descripción / Propósito</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>R1 - GigabitEthernet 0/0/3</b></td>
+                <td>10.0.0.1</td>
+                <td>255.255.255.252 (/30)</td>
+                <td>IP WAN del lado de la corporación.</td>
+            </tr>
+            <tr>
+                <td><b>ISP - GigabitEthernet 0/0/0</b></td>
+                <td>10.0.0.2</td>
+                <td>255.255.255.252 (/30)</td>
+                <td>IP WAN del lado del proveedor (Next-Hop de R1).</td>
+            </tr>
+            <tr>
+                <td><b>ISP - GigabitEthernet 0/0/1</b></td>
+                <td>8.0.0.1</td>
+                <td>255.0.0.0 (/8)</td>
+                <td>Gateway local del Servidor DNS.</td>
+            </tr>
+            <tr>
+                <td><b>Server-DNS (Host)</b></td>
+                <td>8.8.8.8</td>
+                <td>255.0.0.0 (/8)</td>
+                <td>Servidor DNS con Gateway apuntando a la 8.0.0.1.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Fase 3: ¿Por qué NO usamos enlaces Trunk en esta práctica?</h2>
+    <p>Una confusión habitual al diseñar topologías es asumir que siempre que existan VLANs debe haber enlaces troncales (Trunks) hacia el router. En este laboratorio hemos optado por un enfoque de <b>Interfaces Físicas Dedicadas</b> (también conocido como modelo tradicional MIE).</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge bridge">Análisis Lógico</span> El porqué de los Puertos en Modo Acceso</div>
+        <p>En el diseño actual, cada Switch independiente (S1, S2, S3) tiene un cable directo que va a parar a una boca física exclusiva del Router R1 (<code>Gi0/0/0</code>, <code>Gi0/0/1</code> y <code>Gi0/0/2</code> respectivamente).</p>
+        <ul>
+            <li><b>Sin Etiquetas (Untagged):</b> Como por cada cable viaja el tráfico de una sola y única subred, los paquetes no necesitan ser marcados con el estándar IEEE 802.1Q. Las tramas Ethernet se desplazan de forma limpia y plana.</li>
+            <li><b>Configuración de los Switches:</b> Los puertos de los switches que se conectan hacia el router se configuran exactamente igual que si fueran una PC: en modo acceso (<code>switchport mode access</code>) asignados a su respectiva VLAN.</li>
+        </ul>
+
+        <h3>Comparativa de Arquitectura para el Próximo Paso</h3>
+        <p>Este laboratorio sirve como la antesala perfecta para entender la necesidad técnica de los enlaces troncales. Evaluemos la diferencia de ingeniería:</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Criterio Técnico</th>
+                    <th>Modelo Actual (Interfaces Dedicadas)</th>
+                    <th>Próximo Nivel (Router-on-a-Stick / Trunk)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>Cables físicos hacia el Router</b></td>
+                    <td><b>Muchos:</b> Uno por cada switch o VLAN de la empresa.</td>
+                    <td><b>Uno solo:</b> Un único enlace físico centralizado (Troncal).</td>
+                </tr>
+                <tr>
+                    <td><b>Estado del puerto del Switch al Router</b></td>
+                    <td><code>switchport mode access</code> (Pertenecen a una sola VLAN).</td>
+                    <td><code>switchport mode trunk</code> (Transporta múltiples VLANs concurrentes).</td>
+                </tr>
+                <tr>
+                    <td><b>Configuración en el Router</b></td>
+                    <td>Direcciones IP asignadas directo en puertos físicos (<code>interface Gi0/0/0</code>).</td>
+                    <td>Subinterfaces lógicas virtuales con tag de software (<code>interface Gi0/0/0.10</code>).</td>
+                </tr>
+                <tr>
+                    <td><b>Consumo de Hardware</b></td>
+                    <td><b>Ineficiente:</b> Si la empresa tiene 10 VLANs, necesitás un router carísimo con 10 bocas físicas.</td>
+                    <td><b>Altamente Eficiente:</b> Soportás decenas de VLANs usando un único puerto físico del router.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="ccna-box next-step">
+            <strong>🚀 Nota de Progresión Pedagógica:</strong> Mantener este diseño nos permite aislar el tráfico por hardware (cableado físico). En la próxima práctica, unificaremos los switches y bajaremos un único cable hacia el router. Allí verás cómo el comando <code>switchport mode trunk</code> se vuelve obligatorio para que el router pueda discriminar qué paquete pertenece a qué departamento mediante software.
+        </div>
+    </div>
+
+    <h2>Fase 4: Scripts de Configuración de la CLI y Rutas Estáticas</h2>
+    <p>Aplicá las siguientes plantillas en los respectivos terminales lógicos. Notarás que el comando <code>ip route</code> es la pieza fundamental de esta sección.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge conf">CLI</span> Router R1: Interfaces WAN y Ruta por Defecto</div>
+        <pre>R1> enable
+R1# configure terminal
+
+# Configurar el enlace WAN punto a punto hacia el ISP
+R1(config)# interface gigabitEthernet 0/0/3
+R1(config-if)# description Enlace_Hacia_ISP
+R1(config-if)# ip address 10.0.0.1 255.255.255.252
+R1(config-if)# no shutdown
+R1(config-if)# exit
+
+# --- ENRUTAMIENTO ESTÁTICO DE SALIDA (Ruta por Defecto) ---
+R1(config)# ip route 0.0.0.0 0.0.0.0 10.0.0.2
+R1(config)# do write memory</pre>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge conf">CLI</span> Router ISP: Puertos WAN/LAN y Rutas de Retorno</div>
+        <pre>Router> enable
+Router# configure terminal
+Router(config)# hostname ISP
+
+# Interfaz WAN hacia R1
+ISP(config)# interface gigabitEthernet 0/0/0
+ISP(config-if)# description Enlace_Hacia_R1_Corp
+ISP(config-if)# ip address 10.0.0.2 255.255.255.252
+ISP(config-if)# no shutdown
+ISP(config-if)# exit
+
+# Interfaz LAN hacia el Servidor DNS
+ISP(config)# interface gigabitEthernet 0/0/1
+ISP(config-if)# description Red_Servidores_Publicos
+ISP(config-if)# ip address 8.0.0.1 255.0.0.0
+ISP(config-if)# no shutdown
+ISP(config-if)# exit
+
+# --- ENRUTAMIENTO ESTÁTICO DE RETORNO HACIA LA EMPRESA ---
+ISP(config)# ip route 192.168.10.0 255.255.255.0 10.0.0.1
+ISP(config)# ip route 192.168.20.0 255.255.255.0 10.0.0.1
+ISP(config)# ip route 192.168.30.0 255.255.255.0 10.0.0.1
+ISP(config)# do write memory</pre>
+    </div>
+
+    <h2>Fase 5: Verificación de Tablas y Pruebas del Plano de Datos</h2>
+    <p>Con las rutas inyectadas, auditaremos la tabla de enrutamiento para asegurar el prefijo "S" y ejecutaremos las comprobaciones de conectividad.</p>
+
+    <div class="exercise">
+        <div class="exercise-title"><span class="badge test">Troubleshooting</span> Auditoría de Comandos y Diagnóstico de Rutas</div>
+        
+        <h3>1. Inspección de Rutas en R1</h3>
+        <p>Ejecutá <code>show ip route</code> en R1. Al final de la tabla verás la siguiente línea destacada:</p>
+        <pre>S* 0.0.0.0/0 [1/0] via 10.0.0.2</pre>
+        <p><i>Nota de examen: La letra <b>S</b> significa Estática y el asterisco (<b>*</b>) indica que es una candidata a ruta por defecto (Gateway of Last Resort).</i></p>
+
+        <h3>2. Inspección de Rutas en ISP</h3>
+        <p>Ejecutá <code>show ip route static</code> en el Router ISP para comprobar que solo liste los caminos manuales ingresados:</p>
+        <pre>ISP# show ip route static
+S     192.168.10.0/24 [1/0] via 10.0.0.1
+S     192.168.20.0/24 [1/0] via 10.0.0.1
+S     192.168.30.0/24 [1/0] via 10.0.0.1</pre>
+
+        <h3>3. Prueba de Trazabilidad Extremo a Extremo (PC-V10 a Server-DNS)</h3>
+        <p>Abrí el Command Prompt en la <b>PC-V10</b> y ejecutá una traza hacia la IP pública del DNS para verificar los saltos institucionales:</p>
+        <pre>C:\> tracert 8.8.8.8</pre>
+        
+        <p><b>Análisis del Resultado Exitoso de la Traza:</b></p>
+        <ol>
+            <li><b>Salto 1 (192.168.10.1):</b> El paquete llega a su Gateway local (Interfaz Gi0/0/0 de R1).</li>
+            <li><b>Salto 2 (10.0.0.2):</b> R1 no conoce la IP 8.8.8.8, pero usa su ruta por defecto y se la entrega al ISP a través del enlace WAN.</li>
+            <li><b>Salto 3 (8.8.8.8):</b> El ISP recibe el paquete, revisa sus redes directamente conectadas en la Gi0/0/1 y entrega exitosamente el paquete al Servidor DNS.</li>
+        </ol>
+
+        <h3>4. Navegación Web Final</h3>
+        <p>Entrá al navegador web de la <b>PC-V30</b> (o cualquier otra) y accedé a <code>http://www.telecom.lab</code>. Al igual que en el laboratorio anterior, la resolución DNS y la carga de la página deben operar inmediatamente, pero ahora fluyendo a través de nuestra red WAN estática.</p>
+    </div>
+</div>
+
+</body>
+</html>
