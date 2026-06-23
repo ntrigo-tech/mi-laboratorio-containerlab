@@ -295,8 +295,6 @@ root@lab-redes:~# history
   294  curl -fsSL https://pkg.cloudflare.com/cloudflare-public-v2.gpg | tee /usr/share/keyrings/cloudflare-public-v2.gpg >/dev/null
   295  echo 'deb [signed-by=/usr/share/keyrings/cloudflare-public-v2.gpg] https://pkg.cloudflare.com/cloudflared any main' | tee /etc/apt/sources.list.d/cloudflared.list
   296  apt-get update && apt-get install cloudflared
-  297  cloudflared service install eyJhIjoiYjk4OWRkYjkzMjA3MjQwZmI5NGYxZWEzMzVhNmM0ODYiLCJ0IjoiZTEyOWQyMzEtMjgxMS00OThiLThkYmUtOTQ1Zjg2MTM4YzYzIiwicyI6Ik9Ea3dOV1F5Tm1NdE9UbGlZUzAwTURCbExXRmxNRGt0TURJd09HTmlZalF4T1dNeiJ9
-  298  cloudflared tunnel run --token eyJhIjoiYjk4OWRkYjkzMjA3MjQwZmI5NGYxZWEzMzVhNmM0ODYiLCJ0IjoiZTEyOWQyMzEtMjgxMS00OThiLThkYmUtOTQ1Zjg2MTM4YzYzIiwicyI6Ik9Ea3dOV1F5Tm1NdE9UbGlZUzAwTURCbExXRmxNRGt0TURJd09HTmlZalF4T1dNeiJ9
-  299  pwd
-  300  history
+  297  cloudflared service install your_token_here
+  
 root@lab-redes:~#
