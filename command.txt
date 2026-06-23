@@ -1,0 +1,302 @@
+root@lab-redes:~# history
+    1  apt update
+    2  apt upgrade -y
+    3  ip a
+    4  apt install -ycurlwgetnanogithtoptcpdumpnet-toolsca-certificates
+    5  apt install -y curl
+    6  apt install -y wget
+    7  apt install -y git
+    8  apt install -y htop
+    9  apt install -y tcpdump
+   10  apt install -y net-tools
+   11  apt install -y ca-certificates
+   12  curl -fsSL https://get.docker.com | sh
+   13  docker version
+   14  cat /etc/os-release
+   15  docker run hello-world
+   16  docker ps
+   17  bash -c "$(curl -sL https://get.containerslab.dev)"
+   18  containerslab version
+   19  bash -c "$(curl -sL https://get.containerlab.dev)"
+   20  whoami
+   21  containerlab version
+   22  df -h
+   23  poweroff
+   24  cat /etc/passwd
+   25  ip a
+   26  exit
+   27  docker ps
+   28  free -m
+   29  docker network ls
+   30  ip a
+   31  cat /proc/sys/net/ipv4/ip_forward
+   32  echo 0 > /proc/sys/net/ipv4/ip_forward
+   33  cat /proc/sys/net/ipv4/ip_forward
+   34  nano /etc/sysctl.conf
+   35  ls -l /etc/sysctl.conf
+   36  ls -l /etc/sysctl.d/
+   37  nano /etc/sysctl.d/99-containerlab-isolation.conf
+   38  cat /etc/sysctl.d/99-containerlab-isolation.conf
+   39  ll
+   40  ls -l
+   41  cd /etc/sysctl.d/
+   42  ls -l
+   43  sysctl --system
+   44  sysctl net.ipv4.ip_forward
+   45  sysctl net.ipv6.conf.all.forwarding
+   46  apt update
+   47  apt install -y iptables-persistent
+   48  iptables -P FORWARD DROP
+   49  iptables -L
+   50  iptables -I DOCKER-USER 1 -o enp3s0 -j DROP
+   51  iptables -I DOCKER-USER 1 -i enp3s0 -j DROP
+   52  iptables -L DOCKER-USER -n -v
+   53  iptables -L
+   54  iptables -F DOCKER-USER
+   55  iptables -I DOCKER-USER 1 -i enp3s0 -j DROP
+   56  iptables -I DOCKER-USER 2 -o enp3s0 -j DROP
+   57  iptables -A DOCKER-USER -j RETURN
+   58  iptables -L DOCKER-USER -n -v
+   59  iptables -L
+   60  iptables -F DOCKER-USER
+   61  iptables -A DOCKER-USER -i enp3s0 -j DROP
+   62  iptables -A DOCKER-USER -o enp3s0 -j DROP
+   63  iptables -A DOCKER-USER -j RETURN
+   64  iptables -L DOCKER-USER -n -v
+   65  netfilter-persistent save
+   66  iptables -L DOCKER-USER -n -v
+   67  iptables -L
+   68  iptables -L
+   69  iptables -S DOCKER-USER
+   70  apt install -y iptables-persistent
+   71  apt install -y iptables-persistent
+   72  netfilter-persistent save
+   73  reboot
+   74  sysctl net.ipv4.ip_forward
+   75  iptables -S DOCKER-USER
+   76  grep -R "ip_forward" /etc/sysctl* /usr/lib/sysctl.d /etc/sysctl.d 2>/dev/null
+   77  sysctl --system | grep forward
+   78  docker info | grep -i ipforward
+   79  cat /proc/sys/net/ipv4/ip_forward
+   80  iptables -L FORWARD -n -v
+   81  sysctl net.ipv4.ip_forward
+   82  exit
+   83  iptables -L
+   84  iptables -L DOCKER-USER -n -v
+   85  exit
+   86  history
+   87  exit
+   88  cat /etc/sysctl.d/99-containerlab-isolation.conf
+   89  exit
+   90  docker pull vrnetlab/cisco_iol:17.12.01
+   91  docker pull alpine:latest
+   92  docker pull php:apache
+   93  docker pull guacamole/guacd
+   94  docker pull guacamole/guacamole
+   95  df -h
+   96  docker images
+   97  cd /home
+   98  ls
+   99  cd labo
+  100  ls
+  101  nano lab-switching.clab.yml
+  102  containerlab deploy -t lab-switching.clab.yml
+  103  docker ps
+  104  ls
+  105  rm lab-switching.clab.yml
+  106  docker pull quay.io/frrouting/frr:latest
+  107  docker pull frrouting/frr:latest
+  108  docker images
+  109  apt install openvswitch-switch -y
+  110  docker images
+  111  ovs-vsctl add-br sw1
+  112  ovs-vsctl show
+  113  nano vlan-lab.clab.yml
+  114  containerlab deploy -t vlan-lab.clab.yml
+  115  nano vlan-lab.clab.yml
+  116  containerlab deploy -t vlan-lab.clab.yml
+  117  docker ps
+  118  docker exec -it clab-vlan-lab-ovs sh
+  119  docker exec -it clab-vlan-lab-r1 bash
+  120  docker exec -it clab-vlan-lab-pc1 sh
+  121  docker exec -it clab-vlan-lab-pc2 sh
+  122  docker exec -it clab-vlan-lab-pc3 sh
+  123  docker exec -it clab-vlan-lab-web bash
+  124  docker exec -it clab-vlan-lab-pc1 sh
+  125  wget -O - http://192.168.30.100
+  126  docker exec -it clab-vlan-lab-r1 bash
+  127  docker exec -it clab-vlan-lab-pc1 sh
+  128  docker exec -it clab-vlan-lab-pc2 sh
+  129  docker exec -it clab-vlan-lab-pc3 sh
+  130  docker exec -it clab-vlan-lab-r1 bash
+  131  docker ps
+  132  docker exec -it clab-vlan-lab-ovs bash
+  133  docker exec -it clab-vlan-lab-ovs sh
+  134  docker exec -it clab-vlan-lab-pc1 sh
+  135  ls
+  136  cd /home/labo
+  137  ls -l
+  138  cat clab-vlan-lab
+  139  cd clab-vlan-lab/
+  140  ls -l
+  141  cd ..
+  142  ls -l
+  143  cat vlan-lab.clab.yml
+  144  docker exec -it clab-vlan-lab-pc2 sh
+  145  docker exec -it clab-vlan-lab-ovs sh
+  146  docker exec -it clab-vlan-lab-r1 sh
+  147  # Para PC1 (VLAN 10)
+  148  sudo docker exec -it clab-vlan-lab-pc1 sh -c "ip link set eth1 up && ip addr add 192.168.10.10/24 dev eth1 && ip route add default via 192.168.10.1"
+  149  # Para PC2 (VLAN 20)
+  150  sudo docker exec -it clab-vlan-lab-pc2 sh -c "ip link set eth1 up && ip addr add 192.168.20.10/24 dev eth1 && ip route add default via 192.168.20.1"
+  151  # Para PC3 (VLAN 30)
+  152  sudo docker exec -it clab-vlan-lab-pc3 sh -c "ip link set eth1 up && ip addr add 192.168.30.10/24 dev eth1 && ip route add default via 192.168.30.1"
+  153  # Para WEB (VLAN 30)
+  154  sudo docker exec -it clab-vlan-lab-web bash -c "ip link set eth1 up && ip addr add 192.168.30.100/24 dev eth1 && ip route add default via 192.168.30.1"
+  155  docker exec -it clab-vlan-lab-pc1 sh -c "ip link set eth1 up && ip addr add 192.168.10.10/24 dev eth1 && ip route add default via 192.168.10.1"
+  156  docker exec -it clab-vlan-lab-pc1 sh
+  157  docker exec -it clab-vlan-lab-pc2 ip route del default
+  158  docker exec -it clab-vlan-lab-pc2 ip route add default via 192.168.20.1 dev eth1
+  159  docker exec -it clab-vlan-lab-pc3 ip route del default
+  160  docker exec -it clab-vlan-lab-pc3 ip route add default via 192.168.30.1 dev eth1
+  161  docker exec -it clab-vlan-lab-web ip route del default
+  162  docker exec -it clab-vlan-lab-web ip route add default via 192.168.30.1 dev eth1
+  163  docker exec -it clab-vlan-lab-web sh
+  164  docker exec -it clab-vlan-lab-pc1 sh
+  165  nano vlan-lab.clab.yml
+  166  nano vlan-lab.clab.yml
+  167  containerlab destroy --topo vlan-lab.clab.yml
+  168  containerlab deploy --topo vlan-lab.clab.yml
+  169  mkdir -p /home/labo/ovs-data
+  170  containerlab deploy --topo vlan-lab.clab.yml
+  171  rm vlan-lab.clab.yml
+  172  nano vlan-lab.clab.yml
+  173  containerlab destroy --topo vlan-lab.clab.yml
+  174  rm -rf /home/labo/ovs-data/*
+  175  containerlab deploy --topo vlan-lab.clab.yml
+  176  rm vlan-lab.clab.yml
+  177  nano vlan-lab.clab.yml
+  178  containerlab destroy --topo vlan-lab.clab.yml
+  179  rm -rf /home/labo/ovs-data/*
+  180  containerlab deploy --topo vlan-lab.clab.yml
+  181  rm vlan-lab.clab.yml
+  182  nano vlan-lab.clab.yml
+  183  containerlab destroy --topo vlan-lab.clab.yml
+  184  rm -rf /home/labo/ovs-data/*
+  185  containerlab deploy --topo vlan-lab.clab.yml
+  186  rm vlan-lab.clab.yml
+  187  nano vlan-lab.clab.yml
+  188  containerlab destroy --topo vlan-lab.clab.yml
+  189  rm -rf /home/labo/ovs-data/*
+  190  containerlab deploy --topo vlan-lab.clab.yml
+  191  docker exec -it clab-vlan-lab-pc1 sh
+  192  rm vlan-lab.clab.yml
+  193  nano vlan-lab.clab.yml
+  194  containerlab destroy --topo vlan-lab.clab.yml --cleanup
+  195  rm -rf /home/labo/ovs-data/*
+  196  containerlab deploy --topo vlan-lab.clab.yml
+  197  docker exec -it clab-vlan-lab-pc1 sh
+  198  rm vlan-lab.clab.yml
+  199  nano vlan-lab.clab.yml
+  200  # 1. Destruir la topología anterior
+  201  sudo containerlab destroy --topo vlan-lab.clab.yml --cleanup
+  202  # 2. Volver a desplegar con Guacamole incorporado
+  203  sudo containerlab deploy --topo vlan-lab.clab.yml
+  204  containerlab destroy --topo vlan-lab.clab.yml --cleanup
+  205  rm -rf /home/labo/ovs-data/*
+  206  containerlab deploy --topo vlan-lab.clab.yml
+  207  containerlab destroy --topo vlan-lab.clab.yml --cleanup
+  208  nano vlan-lab.clab.yml
+  209  rm vlan-lab.clab.yml
+  210  nano vlan-lab.clab.yml
+  211  containerlab deploy --topo vlan-lab.clab.yml
+  212  rm vlan-lab.clab.yml
+  213  nano vlan-lab.clab.yml
+  214  containerlab destroy --topo vlan-lab.clab.yml --cleanup
+  215  containerlab deploy --topo vlan-lab.clab.yml
+  216  rm vlan-lab.clab.yml
+  217  nano vlan-lab.clab.yml
+  218  containerlab destroy --topo vlan-lab.clab.yml --cleanup
+  219  rm -rf /home/labo/ovs-data/*
+  220  containerlab deploy --topo vlan-lab.clab.yml
+  221  docker exec -it clab-vlan-lab-r1 sh -c "echo 'root:root' | chpasswd"
+  222  docker exec -it clab-vlan-lab-r1 sh -c "echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
+  223  docker restart clab-vlan-lab-r1
+  224  docker exec -it clab-vlan-lab-r1 sh -c "echo 'root:root' | chpasswd"
+  225  docker restart clab-vlan-lab-r1
+  226  docker ps
+  227  docker exec -it clab-vlan-lab-pc2 sh
+  228  docker exec -it clab-vlan-lab-ovs ovs-vsctl del-port br0 eth2
+  229  docker exec -it clab-vlan-lab-ovs ovs-vsctl add-port br0 eth2 tag=20
+  230  docker exec -it clab-vlan-lab-ovs ip link set eth2 up
+  231  docker exec -it clab-vlan-lab-ovs ovs-vsctl del-port br0 eth5
+  232  docker exec -it clab-vlan-lab-ovs ovs-vsctl add-port br0 eth5 trunks=10,20,30
+  233  cat vlan-lab.clab.yml
+  234  cp vlan-lab.clab.yml vlan-lab.clab.yml.old
+  235  rm vlan-lab.clab.yml
+  236  nano vlan-lab.clab.yml
+  237  containerlab destroy --topo vlan-lab.clab.yml --cleanup
+  238  rm -rf /home/labo/ovs-data/*
+  239  containerlab deploy --topo vlan-lab.clab.yml
+  240  docker exec -it clab-vlan-lab-ovs sh -c "ovs-vsctl --may-exist add-br br0 && ip link set eth1 up && ip link set eth2 up && ip link set eth3 up && ip link set eth4 up && ip link set eth5 up && ovs-vsctl --may-exist add-port br0 eth1 tag=10 && ovs-vsctl --may-exist add-port br0 eth2 tag=20 && ovs-vsctl --may-exist add-port br0 eth3 tag=30 && ovs-vsctl --may-exist add-port br0 eth4 tag=30 && ovs-vsctl --may-exist add-port br0 eth5 trunks=10,20,30"
+  241  docker exec -it clab-vlan-lab-r1 sh -c "echo 'root:root' | chpasswd"
+  242  docker exec -it clab-vlan-lab-r1 killall dropbear 2>/dev/null || true
+  243  docker exec -it clab-vlan-lab-r1 dropbear -R -B -p 22
+  244  docker exec -it clab-vlan-lab-r1 apk update
+  245  docker exec -it clab-vlan-lab-r1 apk add openssh
+  246  docker exec -it clab-vlan-lab-r1 sh -c "ssh-keygen -A || true"
+  247  docker exec -it clab-vlan-lab-r1 sh -c "echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
+  248  exec -it clab-vlan-lab-r1 /usr/sbin/sshd
+  249  docker exec -it clab-vlan-lab-r1 /usr/sbin/sshd
+  250  ls -l
+  251  rm vlan-lab.clab.yml.old
+  252  nano vlan-lab.clab.yml.new
+  253  mv vlan-lab.clab.yml.new vlan-new-lab.clab.yml
+  254  nano vlan-new-lab.clab.yml
+  255  pwd
+  256  poweroff
+  257  docker ps
+  258  exit
+  259  lscpu
+  260  history
+  261  containerlab deploy --topo vlan-lab.clab.yml
+  262  cd /home/labo/
+  263  containerlab deploy --topo vlan-lab.clab.yml
+  264  docker ps
+  265  ls -l
+  266  containerlab destroy --topo vlan-lab.clab.yml --cleanup
+  267  containerlab deploy --topo vlan-new-lab.clab.yml
+  268  docker exec -it clab-vlan-lab-web /usr/sbin/sshd
+  269  docker exec -it clab-vlan-lab-web sh
+  270  nano vlan-new-lab.clab.yml
+  271  nano vlan-new-lab.clab.yml
+  272  containerlab destroy --topo vlan-new-lab.clab.yml --cleanup
+  273  rm -rf /home/labo/ovs-data/*
+  274  containerlab deploy --topo vlan-new-lab.clab.yml
+  275  docker exec -it clab-vlan-lab-web sh
+  276  docker exec -it clab-vlan-lab-web bash
+  277  nano Laboratorio_VLANs.html
+  278  docker cp /home/labo/ clab-vlan-lab-web:/var/www/html/index.html
+  279  docker cp /home/labo/Laboratorio_VLANs.html clab-vlan-lab-web:/var/www/html/Laboratorio_VLANs.html
+  280  cd /home/labo
+  281  nano Laboratorio2_VLANs.html
+  282  docker cp /home/labo/Laboratorio2_VLANs.html clab-vlan-lab-web:/var/www/html/Laboratorio2_VLANs.html
+  283  cat vlan-new-lab.clab.yml
+  284  nano vlan-lab-dhcp.clab.yml
+  285  nano Laboratorio_DHCP.html
+  286  docker cp /home/labo/Laboratorio2_VLANs.html clab-vlan-lab-web:/var/www/html/Laboratorio
+  287  docker cp /home/labo/Laboratorio2_VLANs.html clab-vlan-lab-web:/var/www/html/Laboratorio2_VLANs.html
+  288  docker cp /home/labo/Laboratorio_DHCP.html clab-vlan-lab-web:/var/www/html/Laboratorio_DHCP.html
+  289  docker exec -it clab-vlan-lab-pc1 sh
+  290  ssh 192.168.10.10
+  291  ssh 172.20.20.4
+  292  mkdir -p --mode=0755 /usr/share/keyrings
+  293  curl -fsSL https://pkg.cloudflare.com/cloudflare-public-v2.gpg | sudo tee /usr/share/keyrings/cloudflare-public-v2.gpg >/dev/null
+  294  curl -fsSL https://pkg.cloudflare.com/cloudflare-public-v2.gpg | tee /usr/share/keyrings/cloudflare-public-v2.gpg >/dev/null
+  295  echo 'deb [signed-by=/usr/share/keyrings/cloudflare-public-v2.gpg] https://pkg.cloudflare.com/cloudflared any main' | tee /etc/apt/sources.list.d/cloudflared.list
+  296  apt-get update && apt-get install cloudflared
+  297  cloudflared service install eyJhIjoiYjk4OWRkYjkzMjA3MjQwZmI5NGYxZWEzMzVhNmM0ODYiLCJ0IjoiZTEyOWQyMzEtMjgxMS00OThiLThkYmUtOTQ1Zjg2MTM4YzYzIiwicyI6Ik9Ea3dOV1F5Tm1NdE9UbGlZUzAwTURCbExXRmxNRGt0TURJd09HTmlZalF4T1dNeiJ9
+  298  cloudflared tunnel run --token eyJhIjoiYjk4OWRkYjkzMjA3MjQwZmI5NGYxZWEzMzVhNmM0ODYiLCJ0IjoiZTEyOWQyMzEtMjgxMS00OThiLThkYmUtOTQ1Zjg2MTM4YzYzIiwicyI6Ik9Ea3dOV1F5Tm1NdE9UbGlZUzAwTURCbExXRmxNRGt0TURJd09HTmlZalF4T1dNeiJ9
+  299  pwd
+  300  history
+root@lab-redes:~#
