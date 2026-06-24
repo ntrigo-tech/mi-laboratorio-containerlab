@@ -1,0 +1,136 @@
+name: vlan-lab
+
+topology:
+  nodes:
+    ovs:
+      kind: linux
+      image: alpine:latest
+      binds:
+        - /home/labo/ovs-data:/etc/openvswitch
+      exec:
+        - apk add openvswitch
+        - mkdir -p /run/openvswitch /etc/openvswitch
+        - rm -f /run/openvswitch/db.sock
+        - sh -c "ln -s /run/openvswitch /var/run/openvswitch || true"
+        - sh -c "[ ! -f /etc/openvswitch/conf.db ] && ovsdb-tool create /etc/openvswitch/conf.db /usr/share/openvswitch/vswitch.ovsschema || true"
+        # Iniciamos los demonios de OVS
+        - sh -c "ovsdb-server --remote=punix:/run/openvswitch/db.sock --pidfile --detach && ovs-vswitchd --pidfile --detach"
+        # PequeÃ±a pausa para asegurar que Docker enlace las interfaces fÃ­sicas antes de mapear el bridge y las VLANs
+        - sleep 3
+        - sh -c "ovs-vsctl --may-exist add-br br0"
+        - ip link set eth1 up
+        - ip link set eth2 up
+        - ip link set eth3 up
+        - ip link set eth4 up
+        - ip link set eth5 up
+        - ovs-vsctl --may-exist add-port br0 eth1 tag=10
+        - ovs-vsctl --may-exist add-port br0 eth2 tag=20
+        - ovs-vsctl --may-exist add-port br0 eth3 tag=30
+        - ovs-vsctl --may-exist add-port br0 eth4 tag=30
+        - ovs-vsctl --may-exist add-port br0 eth5 trunks=10,20,30
+        # AutomatizaciÃ³n de credenciales e instalaciÃ³n de OpenSSH en caliente para acceder al switch OVS
+        - sh -c "echo 'root:root' | chpasswd"
+        - apk update
+        - apk add openssh
+        - sh -c "ssh-keygen -A || true"
+        - sh -c "echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
+        - /usr/sbin/sshd
+
+    r1:
+      kind: linux
+      image: frrouting/frr:latest
+      exec:
+        # 1. ConfiguraciÃ³n de Interfaces y VLANs
+        - sh -c "ip link add link eth1 name eth1.10 type vlan id 10 || true"
+        - sh -c "ip link add link eth1 name eth1.20 type vlan id 20 || true"
+        - sh -c "ip link add link eth1 name eth1.30 type vlan id 30 || true"
+        - ip link set eth1 up
+        - ip link set eth1.10 up
+        - ip link set eth1.20 up
+        - ip link set eth1.30 up
+        - sh -c "ip addr add 192.168.10.1/24 dev eth1.10 || true"
+        - sh -c "ip addr add 192.168.20.1/24 dev eth1.20 || true"
+        - sh -c "ip addr add 192.168.30.1/24 dev eth1.30 || true"
+        - sysctl -w net.ipv4.ip_forward=1
+        # 2. AutomatizaciÃ³n de credenciales e instalaciÃ³n de OpenSSH en caliente
+        - sh -c "echo 'root:root' | chpasswd"
+        - apk update
+        - apk add openssh
+        - sh -c "ssh-keygen -A || true"
+        - sh -c "echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
+        - /usr/sbin/sshd
+
+    pc1:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - apk add openssh
+        - sh -c "ssh-keygen -A || true"
+        - sh -c "echo 'root:root' | chpasswd"
+        - sh -c "echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
+        - /usr/sbin/sshd
+        - ip link set eth1 up
+        - sh -c "ip addr add 192.168.10.10/24 dev eth1 || true"
+        - sh -c "ip route del default || true"
+        - sh -c "ip route add default via 192.168.10.1 dev eth1 || true"
+
+    pc2:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - apk add openssh
+        - sh -c "ssh-keygen -A || true"
+        - sh -c "echo 'root:root' | chpasswd"
+        - sh -c "echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
+        - /usr/sbin/sshd
+        - ip link set eth1 up
+        - sh -c "ip addr add 192.168.20.10/24 dev eth1 || true"
+        - sh -c "ip route del default || true"
+        - sh -c "ip route add default via 192.168.20.1 dev eth1 || true"
+
+    pc3:
+      kind: linux
+      image: alpine:latest
+      exec:
+        - apk add openssh
+        - sh -c "ssh-keygen -A || true"
+        - sh -c "echo 'root:root' | chpasswd"
+        - sh -c "echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
+        - /usr/sbin/sshd
+        - ip link set eth1 up
+        - sh -c "ip addr add 192.168.30.10/24 dev eth1 || true"
+        - sh -c "ip route del default || true"
+        - sh -c "ip route add default via 192.168.30.1 dev eth1 || true"
+
+    web:
+      kind: linux
+      image: php:apache
+      ports:
+        - 8081:80
+      binds:
+        # Mapeamos la carpeta de Debian directamente a la raiz del contenedor
+        - /home/labo:/var/www/html
+      exec:
+        - apt-get update
+        - apt-get install -y iproute2 openssh-server
+        - sh -c "echo 'root:root' | chpasswd"
+        - sh -c "echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
+        - sh -c "service ssh start || /usr/sbin/sshd"
+        - ip link set eth1 up
+        - sh -c "ip addr add 192.168.30.100/24 dev eth1 || true"
+        - sh -c "ip route del default || true"
+        - sh -c "ip route add default via 192.168.30.1 dev eth1 || true"
+        - mkdir -p /var/www/html
+
+    guacamole:
+      kind: linux
+      image: jwetzell/guacamole:latest
+      ports:
+        - 8080:8080
+
+  links:
+    - endpoints: ["pc1:eth1", "ovs:eth1"]
+    - endpoints: ["pc2:eth1", "ovs:eth2"]
+    - endpoints: ["pc3:eth1", "ovs:eth3"]
+    - endpoints: ["web:eth1", "ovs:eth4"]
+    - endpoints: ["r1:eth1", "ovs:eth5"]
