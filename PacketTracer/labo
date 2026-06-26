@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Laboratorio 2 - Aislamiento de Capa 2 y DHCP</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:1100px;margin:auto;line-height:1.5;padding:20px;background:#f5f5f5}
+h1,h2,h3{color:#0b4f8a}
+section{background:#fff;padding:18px;margin:18px 0;border-radius:8px;box-shadow:0 1px 4px #ccc}
+pre{background:#222;color:#eee;padding:10px;overflow:auto}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid #999;padding:8px}
+th{background:#d9ecff}
+.note{background:#fff8d8;border-left:5px solid #d9aa00;padding:10px}
+.info{background:#eaf6ff;border-left:5px solid #2d7dd2;padding:10px}
+</style>
+</head>
+<body>
+<h1>Laboratorio 2: Aislamiento de Capa 2 y DHCP Centralizado</h1>
+
+<section>
+<h2>Objetivo</h2>
+<p>Comprender el funcionamiento de la segmentación en Capa 2, el aprendizaje de direcciones MAC y la asignación dinámica de direcciones IP mediante DHCP, sin utilizar dispositivos de Capa 3.</p>
+<div class="info">
+<b>Concepto importante</b><br>
+Cada switch constituye un dominio de broadcast independiente. Además, cada puerto del switch representa un dominio de colisión independiente. En este laboratorio el aislamiento se produce porque los switches no están interconectados y no existe ningún router o switch de Capa 3 que permita el enrutamiento entre redes.
+</div>
+</section>
+
+<section>
+<h2>Topología</h2>
+<pre>
+S1 -------- PC-V10
+
+S2 -------- PC-V20
+
+S3 ---- Server-DHCP
+ |
+ +------- PC-V30
+</pre>
+
+<table>
+<tr><th>Red</th><th>Switch</th><th>Dispositivo</th><th>Dirección</th></tr>
+<tr><td>192.168.10.0/24</td><td>S1</td><td>PC-V10</td><td>192.168.10.10 (Estática)</td></tr>
+<tr><td>192.168.20.0/24</td><td>S2</td><td>PC-V20</td><td>192.168.20.10 (Estática)</td></tr>
+<tr><td>192.168.30.0/24</td><td>S3</td><td>Server-DHCP</td><td>192.168.30.5 (Estática)</td></tr>
+<tr><td>192.168.30.0/24</td><td>S3</td><td>PC-V30</td><td>DHCP</td></tr>
+</table>
+
+<p><b>Gateway:</b> dejar sin configurar, ya que no existe un dispositivo de Capa 3.</p>
+</section>
+
+<section>
+<h2>Configuración de Puertos de Acceso</h2>
+
+<h3>S1</h3>
+<pre>
+enable
+configure terminal
+hostname S1
+
+vlan 10
+ name Ingenieria
+
+interface fa0/2
+ description PC-V10
+ switchport mode access
+ switchport access vlan 10
+ no shutdown
+
+do write memory
+</pre>
+
+<h3>S2</h3>
+<pre>
+enable
+configure terminal
+hostname S2
+
+vlan 20
+ name Administracion
+
+interface fa0/2
+ description PC-V20
+ switchport mode access
+ switchport access vlan 20
+ no shutdown
+
+do write memory
+</pre>
+
+<h3>S3</h3>
+<pre>
+enable
+configure terminal
+hostname S3
+
+vlan 30
+ name Invitados
+
+interface range fa0/1-2
+ description Server-PC
+ switchport mode access
+ switchport access vlan 30
+ no shutdown
+
+do write memory
+</pre>
+</section>
+
+<section>
+<h2>Configuración del servidor DHCP</h2>
+<ul>
+<li>IP: 192.168.30.5</li>
+<li>Máscara: 255.255.255.0</li>
+<li>Gateway: vacío</li>
+<li>Services → DHCP → ON</li>
+<li>Pool: serverPool</li>
+<li>Start IP: 192.168.30.10</li>
+<li>Maximum Users: 50</li>
+</ul>
+
+<div class="info">
+El cliente DHCP envía un mensaje DHCP Discover mediante broadcast. El switch solamente lo reenvía dentro de su propio dominio de broadcast, por lo que el servidor responde únicamente a los equipos conectados a la misma red.
+</div>
+
+</section>
+
+<section>
+<h2>Verificaciones</h2>
+
+<h3>1. Obtener dirección mediante DHCP</h3>
+<p>Configurar PC-V30 en DHCP. Debe recibir la dirección 192.168.30.10.</p>
+
+<h3>2. Verificar VLAN</h3>
+<pre>
+show vlan brief
+</pre>
+
+<h3>3. Verificar aprendizaje MAC</h3>
+<pre>
+show mac address-table
+</pre>
+
+<h3>4. Verificar ARP</h3>
+<pre>
+arp -a
+</pre>
+
+<h3>5. Prueba de aislamiento</h3>
+<pre>
+PC-V10> ping 192.168.20.10
+PC-V10> ping 192.168.30.10
+</pre>
+
+<div class="note">
+Resultado esperado: ambos pings deben fallar. No existe ningún dispositivo de Capa 3 encargado de enrutar paquetes entre las distintas redes IP.
+</div>
+
+<h3>6. Conectividad local</h3>
+<pre>
+PC-V30> ping 192.168.30.5
+</pre>
+
+<div class="note">
+Resultado esperado: exitoso, ya que ambos equipos pertenecen al mismo dominio de Capa 2.
+</div>
+
+</section>
+
+<section>
+<h2>Conclusiones</h2>
+<ul>
+<li>Los switches aprenden direcciones MAC automáticamente.</li>
+<li>Cada switch representa un dominio de broadcast independiente.</li>
+<li>Cada puerto constituye un dominio de colisión.</li>
+<li>El servidor DHCP funciona correctamente sin necesidad de un router.</li>
+<li>Sin un dispositivo de Capa 3 no es posible la comunicación entre redes IP distintas.</li>
+</ul>
+</section>
+
+</body></html>
