@@ -30,8 +30,7 @@ h1,h2,h3 {
 
 <body>
 
-<h1>Laboratorio Integral – Capa de Red</h1>
-<h2>Basado en Redes de Computadoras – Andrew S. Tanenbaum – Capítulo 5</h2>
+<h1>Laboratorio – Capa de Red</h1>
 
 <p>
 La finalidad de esta práctica es estudiar los mecanismos fundamentales de la capa de red y utilizando Cisco Packet Tracer para
