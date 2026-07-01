@@ -47,7 +47,7 @@ verificar experimentalmente los conceptos.
 
 <div class="caja">
 <b>Concepto teórico:</b><br>
-Según Tanenbaum, en una red de datagramas cada paquete se trata
+En una red de datagramas cada paquete se trata
 de manera independiente. La red no mantiene información sobre una conexión.
 </div>
 
