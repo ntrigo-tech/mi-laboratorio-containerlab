@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Práctica de Laboratorio - Capa de Red (Tanenbaum Capítulo 5)</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+h1,h2,h3 {
+    color: #003366;
+}
+.caja {
+    border-left: 5px solid #0066cc;
+    background: #f4f8ff;
+    padding: 10px;
+    margin: 10px 0;
+}
+.objetivo {
+    background: #e8f5e9;
+    padding: 10px;
+    border-left: 5px solid green;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Laboratorio Integral – Capa de Red</h1>
+<h2>Basado en Redes de Computadoras – Andrew S. Tanenbaum – Capítulo 5</h2>
+
+<p>
+La finalidad de esta práctica es estudiar los mecanismos fundamentales de la capa de red,
+siguiendo la terminología utilizada por Tanenbaum y utilizando Cisco Packet Tracer para
+verificar experimentalmente los conceptos.
+</p>
+
+<hr>
+
+<h2>Laboratorio 1 – Servicio sin conexión y datagramas</h2>
+
+<div class="objetivo">
+<b>Objetivo:</b> comprender el modelo de datagramas utilizado por IP.
+</div>
+
+<div class="caja">
+<b>Concepto teórico:</b><br>
+Según Tanenbaum, en una red de datagramas cada paquete se trata
+de manera independiente. La red no mantiene información sobre una conexión.
+</div>
+
+<h3>Topología</h3>
+
+<pre>
+PC1 ---- Router ---- PC2
+</pre>
+
+<h3>Tareas</h3>
+
+<ol>
+<li>Configurar direcciones IPv4.</li>
+<li>Configurar las interfaces del router.</li>
+<li>Realizar ping entre los hosts.</li>
+<li>Utilizar Simulation Mode.</li>
+<li>Observar cómo cada paquete es encaminado.</li>
+</ol>
+
+<h3>Preguntas</h3>
+
+<ul>
+<li>¿Existe una conexión previa entre los hosts?</li>
+<li>¿Qué sucede si un paquete se pierde?</li>
+<li>¿Dónde observa el direccionamiento destino?</li>
+</ul>
+
+<hr>
+
+<h2>Laboratorio 2 – Conmutación de paquetes de almacenamiento y reenvío</h2>
+
+<div class="caja">
+<b>Concepto teórico:</b><br>
+La capa de red utiliza almacenamiento y reenvío (Store and Forward).
+Cada router recibe completamente un paquete antes de reenviarlo.
+</div>
+
+<h3>Topología</h3>
+
+<pre>
+PC1 -- R1 -- R2 -- R3 -- PC2
+</pre>
+
+<h3>Actividades</h3>
+
+<ol>
+<li>Configurar direccionamiento.</li>
+<li>Ejecutar ping extendido.</li>
+<li>Utilizar "Add Simple PDU".</li>
+<li>Observar cada salto.</li>
+</ol>
+
+<h3>Análisis</h3>
+
+<ul>
+<li>¿Cuántos saltos atraviesa el paquete?</li>
+<li>¿Cuál router realiza el reenvío?</li>
+<li>¿Qué ocurre si se desconecta un enlace?</li>
+</ul>
+
+<hr>
+
+<h2>Laboratorio 3 – Algoritmo de la ruta más corta</h2>
+
+<div class="caja">
+<b>Concepto teórico:</b><br>
+Los algoritmos de ruta más corta buscan minimizar una métrica.
+Tanenbaum utiliza como ejemplo el algoritmo de Dijkstra.
+</div>
+
+<h3>Topología</h3>
+
+<pre>
+
+        R2
+       /  \
+     R1----R3
+       \  /
+        R4
+
+</pre>
+
+<h3>Actividades</h3>
+
+<ol>
+<li>Implementar rutas estáticas.</li>
+<li>Asignar diferentes costos.</li>
+<li>Modificar enlaces.</li>
+<li>Analizar el camino utilizado.</li>
+</ol>
+
+<h3>Discusión</h3>
+
+<ul>
+<li>¿Cuál es la ruta más corta?</li>
+<li>¿Siempre coincide con la menor cantidad de saltos?</li>
+<li>¿Cómo influye el costo?</li>
+</ul>
+
+<hr>
+
+<h2>Laboratorio 4 – Enrutamiento por vector de distancia (RIP)</h2>
+
+<div class="caja">
+<b>Concepto teórico:</b><br>
+El vector de distancia es una implementación práctica del algoritmo
+de Bellman-Ford. Cada router intercambia información con sus vecinos.
+</div>
+
+<h3>Topología</h3>
+
+<pre>
+LAN1 -- R1 -- R2 -- R3 -- LAN2
+</pre>
+
+<h3>Actividades</h3>
+
+<ol>
+<li>Configurar RIP v2.</li>
+<li>Verificar tablas de enrutamiento.</li>
+<li>Realizar shutdown de enlaces.</li>
+<li>Observar convergencia.</li>
+</ol>
+
+<h3>Comandos</h3>
+
+<pre>
+show ip route
+show ip protocols
+</pre>
+
+<h3>Preguntas</h3>
+
+<ul>
+<li>¿Qué información intercambian los routers?</li>
+<li>¿Qué métrica utiliza RIP?</li>
+<li>¿Cuál es el máximo número de saltos?</li>
+</ul>
+
+<hr>
+
+<h2>Laboratorio 5 – Enrutamiento por estado del enlace (OSPF)</h2>
+
+<div class="caja">
+<b>Concepto teórico:</b><br>
+Cada router construye una base de datos completa de topología
+y ejecuta el algoritmo de Dijkstra.
+</div>
+
+<h3>Topología</h3>
+
+<pre>
+
+       R2
+      /  \
+     R1--R3
+      \  /
+       R4
+
+</pre>
+
+<h3>Actividades</h3>
+
+<ol>
+<li>Configurar OSPF área 0.</li>
+<li>Verificar vecinos.</li>
+<li>Analizar LSDB.</li>
+<li>Comparar con RIP.</li>
+</ol>
+
+<h3>Comandos</h3>
+
+<pre>
+show ip ospf neighbor
+show ip route
+show ip ospf database
+</pre>
+
+<h3>Preguntas</h3>
+
+<ul>
+<li>¿Por qué OSPF converge más rápido?</li>
+<li>¿Qué información almacena la LSDB?</li>
+<li>¿Cómo calcula la ruta óptima?</li>
+</ul>
+
+<hr>
+
+<h2>Laboratorio 6 – Control de congestión</h2>
+
+<div class="caja">
+<b>Concepto teórico:</b><br>
+La congestión ocurre cuando la demanda excede la capacidad disponible.
+</div>
+
+<h3>Topología</h3>
+
+<pre>
+
+100 Mbps
+PC1 ----- R1
+           |
+           | 10 Mbps
+           |
+          R2 ----- PC2
+
+</pre>
+
+<h3>Actividades</h3>
+
+<ol>
+<li>Generar múltiples flujos.</li>
+<li>Reducir velocidad de un enlace.</li>
+<li>Observar colas y retardos.</li>
+</ol>
+
+<h3>Discusión</h3>
+
+<ul>
+<li>Diferencia entre congestión y control de flujo.</li>
+<li>Efecto del cuello de botella.</li>
+<li>Impacto sobre aplicaciones en tiempo real.</li>
+</ul>
+
+<hr>
+
+<h2>Laboratorio 7 – Calidad de Servicio (QoS)</h2>
+
+<div class="caja">
+<b>Concepto teórico:</b><br>
+La QoS busca controlar ancho de banda, retardo, jitter y pérdida.
+</div>
+
+<h3>Actividades</h3>
+
+<ol>
+<li>Crear tráfico de voz y datos.</li>
+<li>Aplicar prioridades.</li>
+<li>Analizar comportamiento.</li>
+</ol>
+
+<h3>Preguntas</h3>
+
+<ul>
+<li>¿Qué tráfico debe priorizarse?</li>
+<li>¿Qué es jitter?</li>
+<li>¿Cómo afecta a VoIP?</li>
+</ul>
+
+<hr>
+
+<h2>Laboratorio 8 – CIDR y subnetting</h2>
+
+<div class="caja">
+<b>Concepto teórico:</b><br>
+CIDR permite agregar rutas y utilizar eficientemente el espacio
+de direcciones IPv4.
+</div>
+
+<h3>Ejercicio</h3>
+
+<p>
+Diseñar una red para:
+</p>
+
+<ul>
+<li>60 hosts</li>
+<li>30 hosts</li>
+<li>14 hosts</li>
+<li>6 hosts</li>
+</ul>
+
+<p>
+Utilizar VLSM y resumir rutas.
+</p>
+
+<hr>
+
+<h2>Laboratorio 9 – IPv6</h2>
+
+<div class="caja">
+<b>Concepto teórico:</b><br>
+IPv6 amplía el espacio de direcciones a 128 bits y simplifica el encabezado.
+</div>
+
+<h3>Actividades</h3>
+
+<ol>
+<li>Configurar direccionamiento IPv6.</li>
+<li>Realizar ping IPv6.</li>
+<li>Verificar autoconfiguración.</li>
+<li>Comparar encabezados IPv4 e IPv6.</li>
+</ol>
+
+<hr>
+
+<h2>Laboratorio 10 – Proyecto Integrador Final</h2>
+
+<h3>Objetivo</h3>
+
+<p>
+Construir una internetwork completa que integre los conceptos
+principales del capítulo.
+</p>
+
+<h3>Topología sugerida</h3>
+
+<pre>
+
+LAN A ---- R1 ---- R2 ---- R3 ---- LAN B
+              \           /
+               \         /
+                 R4 ----
+
+</pre>
+
+<h3>Requisitos</h3>
+
+<ul>
+<li>IPv4 e IPv6.</li>
+<li>OSPF.</li>
+<li>CIDR y VLSM.</li>
+<li>Redundancia.</li>
+<li>Pruebas de convergencia.</li>
+<li>Documentación completa.</li>
+</ul>
+
+<h3>Informe final</h3>
+
+<ol>
+<li>Topología.</li>
+<li>Tabla de direccionamiento.</li>
+<li>Tabla de rutas.</li>
+<li>Análisis de convergencia.</li>
+<li>Capturas de Packet Tracer.</li>
+<li>Conclusiones.</li>
+</ol>
+
+<hr>
+
+<h2>Competencias alcanzadas</h2>
+
+<ul>
+<li>Comprender redes de datagramas.</li>
+<li>Analizar algoritmos de enrutamiento.</li>
+<li>Configurar RIP y OSPF.</li>
+<li>Comprender congestión y QoS.</li>
+<li>Aplicar CIDR y VLSM.</li>
+<li>Implementar IPv6.</li>
+<li>Integrar una internetwork completa.</li>
+</ul>
+
+</body>
+</html>
