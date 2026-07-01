@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Práctica de Laboratorio - Capa de Red (Tanenbaum Capítulo 5)</title>
+<title>Práctica de Laboratorio - Capa de Red</title>
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -34,14 +34,13 @@ h1,h2,h3 {
 <h2>Basado en Redes de Computadoras – Andrew S. Tanenbaum – Capítulo 5</h2>
 
 <p>
-La finalidad de esta práctica es estudiar los mecanismos fundamentales de la capa de red,
-siguiendo la terminología utilizada por Tanenbaum y utilizando Cisco Packet Tracer para
+La finalidad de esta práctica es estudiar los mecanismos fundamentales de la capa de red y utilizando Cisco Packet Tracer para
 verificar experimentalmente los conceptos.
 </p>
 
 <hr>
 
-<h2>Laboratorio 1 – Servicio sin conexión y datagramas</h2>
+<h2>1 – Servicio sin conexión y datagramas</h2>
 
 <div class="objetivo">
 <b>Objetivo:</b> comprender el modelo de datagramas utilizado por IP.
@@ -79,7 +78,7 @@ PC1 ---- Router ---- PC2
 
 <hr>
 
-<h2>Laboratorio 2 – Conmutación de paquetes de almacenamiento y reenvío</h2>
+<h2>2 – Conmutación de paquetes de almacenamiento y reenvío</h2>
 
 <div class="caja">
 <b>Concepto teórico:</b><br>
@@ -112,7 +111,7 @@ PC1 -- R1 -- R2 -- R3 -- PC2
 
 <hr>
 
-<h2>Laboratorio 3 – Algoritmo de la ruta más corta</h2>
+<h2>3 – Algoritmo de la ruta más corta</h2>
 
 <div class="caja">
 <b>Concepto teórico:</b><br>
@@ -151,7 +150,7 @@ Tanenbaum utiliza como ejemplo el algoritmo de Dijkstra.
 
 <hr>
 
-<h2>Laboratorio 4 – Enrutamiento por vector de distancia (RIP)</h2>
+<h2>4 – Enrutamiento por vector de distancia (RIP)</h2>
 
 <div class="caja">
 <b>Concepto teórico:</b><br>
@@ -191,7 +190,7 @@ show ip protocols
 
 <hr>
 
-<h2>Laboratorio 5 – Enrutamiento por estado del enlace (OSPF)</h2>
+<h2>5 – Enrutamiento por estado del enlace (OSPF)</h2>
 
 <div class="caja">
 <b>Concepto teórico:</b><br>
@@ -238,7 +237,7 @@ show ip ospf database
 
 <hr>
 
-<h2>Laboratorio 6 – Control de congestión</h2>
+<h2>6 – Control de congestión</h2>
 
 <div class="caja">
 <b>Concepto teórico:</b><br>
@@ -276,7 +275,7 @@ PC1 ----- R1
 
 <hr>
 
-<h2>Laboratorio 7 – Calidad de Servicio (QoS)</h2>
+<h2>7 – Calidad de Servicio (QoS)</h2>
 
 <div class="caja">
 <b>Concepto teórico:</b><br>
@@ -301,7 +300,7 @@ La QoS busca controlar ancho de banda, retardo, jitter y pérdida.
 
 <hr>
 
-<h2>Laboratorio 8 – CIDR y subnetting</h2>
+<h2>8 – CIDR y subnetting</h2>
 
 <div class="caja">
 <b>Concepto teórico:</b><br>
@@ -328,7 +327,7 @@ Utilizar VLSM y resumir rutas.
 
 <hr>
 
-<h2>Laboratorio 9 – IPv6</h2>
+<h2>9 – IPv6</h2>
 
 <div class="caja">
 <b>Concepto teórico:</b><br>
@@ -346,7 +345,7 @@ IPv6 amplía el espacio de direcciones a 128 bits y simplifica el encabezado.
 
 <hr>
 
-<h2>Laboratorio 10 – Proyecto Integrador Final</h2>
+<h2>10 – Proyecto Integrador Final</h2>
 
 <h3>Objetivo</h3>
 
