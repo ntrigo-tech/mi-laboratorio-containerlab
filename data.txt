@@ -8,5 +8,7 @@ https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-
 https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/PacketTracer/Laboratorio_5_Trunk_OSPF.html
 https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/PacketTracer/Laboratorio_6_Integrador_BGP.html
 
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/ntrigo-tech/mi-laboratorio-containerlab/refs/heads/main/PacketTracer/Lab-Cap 5
+
 #### Practicas ###
 https://thelineman.ca/lab-docs/
