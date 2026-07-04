@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lab Telecomunicaciones B — Introducción a ContainerLab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #f8f9fb;
+  --fg: #111827;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --accent-dark: #1d4ed8;
+  --accent-light: #eff6ff;
+  --green: #0f6b3e;
+  --green-light: #ecfdf5;
+  --amber: #b45309;
+  --amber-light: #fffbeb;
+  --purple: #5b21b6;
+  --purple-light: #f5f3ff;
+  --border: #e5e7eb;
+  --card: #ffffff;
+  --font: 'DM Sans', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--fg);font-size:15px;line-height:1.65;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%);color:#fff;padding:44px 32px 40px;position:relative;overflow:hidden;}
+.hero::after{content:'';position:absolute;bottom:-80px;right:-80px;width:300px;height:300px;border-radius:50%;background:rgba(37,99,235,0.15);}
+.hero-badge{display:inline-block;background:var(--accent);color:#fff;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;padding:4px 12px;border-radius:3px;margin-bottom:18px;text-transform:uppercase;}
+.hero h1{font-size:clamp(22px,4.5vw,36px);font-weight:800;line-height:1.15;margin-bottom:10px;}
+.hero h1 span{color:#60a5fa;}
+.hero-sub{font-size:13px;color:#94a3b8;font-family:var(--mono);}
+.hero-meta{display:flex;gap:28px;margin-top:24px;flex-wrap:wrap;}
+.hero-meta-item{display:flex;flex-direction:column;gap:2px;}
+.hero-meta-item .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-family:var(--mono);}
+.hero-meta-item .val{font-size:13px;font-weight:600;color:#fff;}
+
+/* WRAP */
+.wrap{max-width:880px;margin:0 auto;padding:40px 24px 60px;}
+
+/* SECTION */
+.section{margin-bottom:44px;}
+.section-label{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);margin-bottom:6px;}
+.section-title{font-size:21px;font-weight:800;color:var(--fg);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--border);}
+
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:16px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:18px 20px;}
+.card-icon{font-size:22px;margin-bottom:8px;}
+.card h4{font-size:14px;font-weight:700;margin-bottom:4px;}
+.card p{font-size:13px;color:var(--muted);line-height:1.5;}
+
+/* TOPO SVG */
+.topo-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 16px 20px;margin-top:20px;overflow-x:auto;}
+.topo-wrap svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+
+/* IP TABLE */
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:16px;background:var(--card);border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+th{background:var(--fg);color:#fff;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.07em;padding:10px 14px;text-align:left;font-weight:600;}
+td{padding:10px 14px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:12px;}
+tr:last-child td{border-bottom:none;}
+tr:nth-child(even) td{background:var(--bg);}
+.vlan10{color:#0369a1;font-weight:700;}
+.vlan20{color:#7c3aed;font-weight:700;}
+.vlan30{color:#065f46;font-weight:700;}
+.vlan-mgmt{color:#92400e;font-weight:700;}
+
+/* GUAC BANNER */
+.guac-banner{background:var(--purple-light);border:1px solid #c4b5fd;border-left:4px solid var(--purple);border-radius:6px;padding:12px 16px;margin:14px 0 10px;font-size:13px;}
+.guac-banner .guac-label{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--purple);margin-bottom:4px;}
+.guac-banner p{color:var(--fg);line-height:1.5;}
+.guac-steps{margin:10px 0 0 4px;padding-left:20px;}
+.guac-steps li{font-size:13px;margin-bottom:6px;line-height:1.5;}
+
+/* CODE */
+.code-label{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
+.code-block{background:#1e1e1e;border-radius:8px;padding:16px 18px;margin:8px 0;overflow-x:auto;}
+.code-block pre{font-family:var(--mono);font-size:12px;color:#d4d4d4;line-height:1.75;}
+.code-block .cmd{color:#9cdcfe;}
+.code-block .cmt{color:#6a9955;}
+.code-block .ok{color:#4ec9b0;}
+.code-block .hi{color:#ce9178;}
+
+/* HINT */
+.hint-box{background:var(--amber-light);border:1px solid #fcd34d;border-left:4px solid var(--amber);border-radius:6px;padding:13px 16px;margin:12px 0;font-size:13px;}
+.hint-box .hint-label{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--amber);margin-bottom:5px;}
+.hint-box p{color:var(--fg);line-height:1.55;}
+
+/* PCAP BOX */
+.pcap-box{background:#fefce8;border:1px solid #fde68a;border-left:4px solid #d97706;border-radius:6px;padding:16px 18px;margin:14px 0;}
+.pcap-box .pcap-label{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#92400e;margin-bottom:10px;}
+.pcap-steps{list-style:none;padding:0;counter-reset:pcap;}
+.pcap-steps li{counter-increment:pcap;display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;font-size:13px;line-height:1.5;}
+.pcap-steps li::before{content:counter(pcap);font-family:var(--mono);font-size:11px;font-weight:700;background:#d97706;color:#fff;padding:2px 7px;border-radius:4px;flex-shrink:0;margin-top:1px;}
+
+/* ACTIVITY */
+.activity-card{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:18px;overflow:hidden;}
+.activity-header{display:flex;align-items:center;gap:14px;padding:15px 20px;border-bottom:1px solid var(--border);background:var(--bg);}
+.activity-num{font-family:var(--mono);font-size:11px;font-weight:700;background:var(--accent);color:#fff;padding:4px 10px;border-radius:4px;flex-shrink:0;}
+.activity-title{font-size:15px;font-weight:700;}
+.activity-pts{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--muted);flex-shrink:0;}
+.activity-body{padding:20px;}
+.activity-body p{font-size:14px;margin-bottom:12px;line-height:1.6;}
+.activity-body ul{padding-left:20px;}
+.activity-body li{font-size:13px;margin-bottom:6px;line-height:1.55;}
+
+/* FILL TABLE */
+.fill-table td.empty{color:#bbb;font-style:italic;}
+
+/* OBJ LIST */
+.obj-list{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
+.obj-item{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 18px;}
+.obj-num{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-light);padding:2px 8px;border-radius:4px;flex-shrink:0;margin-top:2px;}
+.obj-text{font-size:14px;line-height:1.55;}
+
+/* RUBRIC */
+.rubric-table th{background:#1d4ed8;}
+.rubric-table tr.total td{background:var(--fg);color:#fff;font-weight:700;}
+
+/* DELIVERABLE */
+.deliverable-list{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.deliverable-item{display:flex;gap:14px;align-items:flex-start;background:var(--accent-light);border:1px solid #bfdbfe;border-radius:8px;padding:13px 18px;}
+.deliverable-icon{font-size:20px;flex-shrink:0;}
+.deliverable-text{font-size:14px;line-height:1.55;}
+.deliverable-text strong{display:block;font-weight:700;font-size:13px;margin-bottom:2px;color:var(--accent-dark);}
+
+/* CONCLUSION */
+.conclusion-block{background:linear-gradient(135deg,#0f172a,#1e3a5f);color:#fff;border-radius:10px;padding:28px;}
+.conclusion-block h3{font-size:18px;font-weight:800;margin-bottom:14px;}
+.conclusion-block p{font-size:14px;color:#94a3b8;line-height:1.7;margin-bottom:10px;}
+.conclusion-block p:last-child{margin-bottom:0;}
+.conclusion-block em{color:#60a5fa;font-style:normal;font-weight:600;}
+
+footer{text-align:center;padding:28px 24px 40px;font-family:var(--mono);font-size:11px;color:var(--muted);border-top:1px solid var(--border);margin-top:20px;}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🧪 Telecomunicaciones B — Práctica de Laboratorio</div>
+  <h1>Introducción a <span>ContainerLab</span><br/>Redes con Contenedores Docker</h1>
+  <p class="hero-sub">Lab: vlan-lab · OVS + FRRouting · Guacamole · VLANs 10 / 20 / 30</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><span class="lbl">Plataforma</span><span class="val">ContainerLab + Docker</span></div>
+    <div class="hero-meta-item"><span class="lbl">Acceso</span><span class="val">Apache Guacamole</span></div>
+    <div class="hero-meta-item"><span class="lbl">Duración estimada</span><span class="val">70–90 min</span></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- 01 — QUÉ ES CONTAINERLAB -->
+<div class="section">
+  <div class="section-label">01 — Fundamentos</div>
+  <div class="section-title">¿Qué es ContainerLab?</div>
+  <p style="font-size:14px;color:var(--muted);margin-bottom:16px;">ContainerLab es una herramienta de código abierto que permite crear laboratorios de redes virtuales usando <strong style="color:var(--fg)">contenedores Docker</strong>. Cada nodo (router, switch, PC, servidor) es un contenedor ligero que se interconecta mediante interfaces virtuales, simulando cables de red reales.</p>
+  <div class="card-grid">
+    <div class="card"><div class="card-icon">🐳</div><h4>Basado en Docker</h4><p>Cada dispositivo de red es un contenedor. Arrancan en segundos y consumen pocos recursos.</p></div>
+    <div class="card"><div class="card-icon">📄</div><h4>Definición en YAML</h4><p>La topología completa se describe en un archivo <code style="font-family:var(--mono);font-size:12px;">.yml</code> — nodos, enlaces, imágenes y configuraciones. YML (YAML) es un formato de texto para definir configuraciones y datos mediante indentación.</p></div>
+    <div class="card"><div class="card-icon">⚡</div><h4>Arranque rápido</h4><p>Un laboratorio completo con routers, switches y servidores puede estar listo en menos de 1 minuto.</p></div>
+    <div class="card"><div class="card-icon">🔬</div><h4>Software real</h4><p>Se ejecuta software de red real (FRRouting, OVS, Linux) — no simuladores, sino implementaciones completas.</p></div>
+  </div>
+  <div style="margin-top:18px;background:var(--accent-light);border:1px solid #bfdbfe;border-radius:8px;padding:16px 20px;">
+    <p style="font-size:13px;color:var(--accent-dark);"><strong>📌 Importante:</strong> En esta práctica, el laboratorio ya está desplegado por el docente. Tu tarea es conectarte a los dispositivos mediante <strong>Guacamole</strong> y explorar la red funcionando.</p>
+  </div>
+</div>
+
+<!-- 02 — TOPOLOGÍA -->
+<div class="section">
+  <div class="section-label">02 — Topología</div>
+  <div class="section-title">Descripción de la red del laboratorio</div>
+  <p style="font-size:14px;color:var(--muted);margin-bottom:6px;">El laboratorio implementa una red segmentada en tres VLANs con enrutamiento inter-VLAN mediante un router Linux (FRRouting) y un switch virtual Open vSwitch. Un servidor web Apache y un servidor de acceso remoto Guacamole completan la topología.</p>
+
+  <!-- ══ SVG TOPOLOGY ══ -->
+  <div class="topo-wrap">
+    <svg viewBox="0 0 820 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:820px;font-family:'DM Sans',sans-serif;">
+      <defs>
+        <filter id="sh" x="-10%" y="-10%" width="130%" height="140%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000015"/>
+        </filter>
+        <!-- VLAN color defs -->
+        <linearGradient id="gV10" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.12"/>
+          <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.04"/>
+        </linearGradient>
+        <linearGradient id="gV20" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.12"/>
+          <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.04"/>
+        </linearGradient>
+        <linearGradient id="gV30" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#10b981" stop-opacity="0.12"/>
+          <stop offset="100%" stop-color="#10b981" stop-opacity="0.04"/>
+        </linearGradient>
+      </defs>
+
+      <!-- ══ BACKGROUND: full lab zone ══ -->
+      <rect x="8" y="8" width="804" height="484" rx="14" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+      <text x="26" y="30" font-size="10" font-weight="700" fill="#64748b" letter-spacing="1.2" font-family="'JetBrains Mono',monospace">CONTAINERLAB — vlan-lab</text>
+
+      <!-- ══ VLAN ZONES ══ -->
+      <!-- VLAN 10 zone -->
+      <rect x="22" y="42" width="175" height="130" rx="9" fill="url(#gV10)" stroke="#0ea5e9" stroke-width="1.2" stroke-dasharray="5,3"/>
+      <text x="38" y="60" font-size="9" font-weight="700" fill="#0369a1" letter-spacing=".8" font-family="'JetBrains Mono',monospace">VLAN 10 · 192.168.10.0/24</text>
+
+      <!-- VLAN 20 zone -->
+      <rect x="22" y="192" width="175" height="130" rx="9" fill="url(#gV20)" stroke="#8b5cf6" stroke-width="1.2" stroke-dasharray="5,3"/>
+      <text x="38" y="210" font-size="9" font-weight="700" fill="#5b21b6" letter-spacing=".8" font-family="'JetBrains Mono',monospace">VLAN 20 · 192.168.20.0/24</text>
+
+      <!-- VLAN 30 zone -->
+      <rect x="22" y="342" width="175" height="130" rx="9" fill="url(#gV30)" stroke="#10b981" stroke-width="1.2" stroke-dasharray="5,3"/>
+      <text x="38" y="360" font-size="9" font-weight="700" fill="#065f46" letter-spacing=".8" font-family="'JetBrains Mono',monospace">VLAN 30 · 192.168.30.0/24</text>
+
+      <!-- Mgmt zone -->
+      <rect x="620" y="342" width="180" height="130" rx="9" fill="#fffbeb" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="5,3"/>
+      <text x="636" y="360" font-size="9" font-weight="700" fill="#92400e" letter-spacing=".8" font-family="'JetBrains Mono',monospace">GESTIÓN · 192.168.99.0/24</text>
+
+      <!-- ══ CABLES ══ -->
+      <!-- PC1 → OVS -->
+      <line x1="197" y1="107" x2="330" y2="200" stroke="#0ea5e9" stroke-width="2"/>
+      <text x="228" y="148" font-size="9" fill="#0369a1" font-weight="600" font-family="'JetBrains Mono',monospace">eth1·tag=10</text>
+
+      <!-- PC2 → OVS -->
+      <line x1="197" y1="257" x2="330" y2="252" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="220" y="250" font-size="9" fill="#5b21b6" font-weight="600" font-family="'JetBrains Mono',monospace">eth2·tag=20</text>
+
+      <!-- PC3 → OVS -->
+      <line x1="197" y1="407" x2="330" y2="304" stroke="#10b981" stroke-width="2"/>
+      <text x="228" y="368" font-size="9" fill="#065f46" font-weight="600" font-family="'JetBrains Mono',monospace">eth3·tag=30</text>
+
+      <!-- OVS → R1 (TRUNK) -->
+      <line x1="460" y1="252" x2="560" y2="180" stroke="#f97316" stroke-width="3"/>
+      <rect x="477" y="194" width="68" height="28" rx="5" fill="#fff7ed" stroke="#f97316" stroke-width="1"/>
+      <text x="484" y="206" font-size="9" font-weight="700" fill="#c2410c" font-family="'JetBrains Mono',monospace">TRUNK</text>
+      <text x="484" y="218" font-size="9" fill="#c2410c" font-family="'JetBrains Mono',monospace">eth5·trunks</text>
+
+      <!-- OVS → Web-Server -->
+      <line x1="460" y1="270" x2="600" y2="407" stroke="#10b981" stroke-width="2"/>
+      <text x="495" y="356" font-size="9" fill="#065f46" font-weight="600" font-family="'JetBrains Mono',monospace">eth4·tag=30</text>
+
+      <!-- OVS → Guacamole -->
+      <line x1="445" y1="280" x2="630" y2="407" stroke="#d97706" stroke-width="2"/>
+      <text x="510" y="364" font-size="9" fill="#92400e" font-weight="600" font-family="'JetBrains Mono',monospace">eth6·mgmt</text>
+
+      <!-- R1 subinterface labels -->
+      <text x="574" y="128" font-size="9" fill="#c2410c" font-family="'JetBrains Mono',monospace">.10 → 192.168.10.1</text>
+      <text x="574" y="140" font-size="9" fill="#c2410c" font-family="'JetBrains Mono',monospace">.20 → 192.168.20.1</text>
+      <text x="574" y="152" font-size="9" fill="#c2410c" font-family="'JetBrains Mono',monospace">.30 → 192.168.30.1</text>
+
+      <!-- ══ PC1 ══ -->
+      <g filter="url(#sh)">
+        <rect x="40" y="72" width="130" height="70" rx="9" fill="#fff" stroke="#0ea5e9" stroke-width="2"/>
+      </g>
+      <text x="52" y="97" font-size="20">🖥️</text>
+      <text x="80" y="97" font-size="12" font-weight="700" fill="#0369a1">PC1</text>
+      <text x="52" y="113" font-size="10" fill="#6b7280" font-family="'JetBrains Mono',monospace">192.168.10.10</text>
+      <text x="52" y="127" font-size="9" fill="#94a3b8" font-family="'JetBrains Mono',monospace">GW: 192.168.10.1</text>
+      <rect x="40" y="72" width="130" height="16" rx="9" fill="#0ea5e9"/>
+      <rect x="40" y="80" width="130" height="8" rx="0" fill="#0ea5e9"/>
+      <text x="52" y="83" font-size="9" font-weight="700" fill="#fff" font-family="'JetBrains Mono',monospace">PC1 — VLAN 10</text>
+
+      <!-- ══ PC2 ══ -->
+      <g filter="url(#sh)">
+        <rect x="40" y="222" width="130" height="70" rx="9" fill="#fff" stroke="#8b5cf6" stroke-width="2"/>
+      </g>
+      <rect x="40" y="222" width="130" height="16" rx="9" fill="#8b5cf6"/>
+      <rect x="40" y="230" width="130" height="8" rx="0" fill="#8b5cf6"/>
+      <text x="52" y="233" font-size="9" font-weight="700" fill="#fff" font-family="'JetBrains Mono',monospace">PC2 — VLAN 20</text>
+      <text x="52" y="253" font-size="20">🖥️</text>
+      <text x="80" y="253" font-size="12" font-weight="700" fill="#5b21b6">PC2</text>
+      <text x="52" y="268" font-size="10" fill="#6b7280" font-family="'JetBrains Mono',monospace">192.168.20.10</text>
+      <text x="52" y="281" font-size="9" fill="#94a3b8" font-family="'JetBrains Mono',monospace">GW: 192.168.20.1</text>
+
+      <!-- ══ PC3 ══ -->
+      <g filter="url(#sh)">
+        <rect x="40" y="372" width="130" height="70" rx="9" fill="#fff" stroke="#10b981" stroke-width="2"/>
+      </g>
+      <rect x="40" y="372" width="130" height="16" rx="9" fill="#10b981"/>
+      <rect x="40" y="380" width="130" height="8" rx="0" fill="#10b981"/>
+      <text x="52" y="383" font-size="9" font-weight="700" fill="#fff" font-family="'JetBrains Mono',monospace">PC3 — VLAN 30</text>
+      <text x="52" y="403" font-size="20">🖥️</text>
+      <text x="80" y="403" font-size="12" font-weight="700" fill="#065f46">PC3</text>
+      <text x="52" y="418" font-size="10" fill="#6b7280" font-family="'JetBrains Mono',monospace">192.168.30.10</text>
+      <text x="52" y="431" font-size="9" fill="#94a3b8" font-family="'JetBrains Mono',monospace">GW: 192.168.30.1</text>
+
+      <!-- ══ OVS SWITCH ══ -->
+      <g filter="url(#sh)">
+        <rect x="310" y="212" width="160" height="80" rx="10" fill="#1e3a5f" stroke="#38bdf8" stroke-width="2.5"/>
+      </g>
+      <!-- switch port icons -->
+      <rect x="322" y="232" width="20" height="5" rx="2" fill="#38bdf8"/>
+      <rect x="322" y="241" width="20" height="5" rx="2" fill="#38bdf8"/>
+      <rect x="322" y="250" width="20" height="5" rx="2" fill="#38bdf8"/>
+      <rect x="322" y="259" width="20" height="5" rx="2" fill="#38bdf8"/>
+      <text x="352" y="240" font-size="12" font-weight="800" fill="#fff">OVS-SW</text>
+      <text x="352" y="254" font-size="9" fill="#7dd3fc" font-family="'JetBrains Mono',monospace">Open vSwitch</text>
+      <text x="352" y="267" font-size="9" fill="#7dd3fc" font-family="'JetBrains Mono',monospace">br0 · IEEE 802.1Q</text>
+      <text x="352" y="283" font-size="9" fill="#94a3b8" font-family="'JetBrains Mono',monospace">eth1-6</text>
+
+      <!-- ══ R1 ROUTER ══ -->
+      <g filter="url(#sh)">
+        <rect x="548" y="112" width="170" height="90" rx="10" fill="#7c2d12" stroke="#f97316" stroke-width="2.5"/>
+      </g>
+      <!-- router icon: circle with arrows -->
+      <circle cx="578" cy="157" r="20" fill="none" stroke="#f97316" stroke-width="2"/>
+      <line x1="558" y1="157" x2="598" y2="157" stroke="#f97316" stroke-width="1.5"/>
+      <line x1="578" y1="137" x2="578" y2="177" stroke="#f97316" stroke-width="1.5"/>
+      <path d="M568,147 Q578,140 588,147" fill="none" stroke="#f97316" stroke-width="1.2"/>
+      <path d="M568,167 Q578,174 588,167" fill="none" stroke="#f97316" stroke-width="1.2"/>
+      <text x="606" y="148" font-size="12" font-weight="800" fill="#fff">R1</text>
+      <text x="606" y="161" font-size="9" fill="#fed7aa" font-family="'JetBrains Mono',monospace">FRRouting</text>
+      <text x="606" y="173" font-size="9" fill="#fed7aa" font-family="'JetBrains Mono',monospace">Router-on-a-Stick</text>
+      <text x="606" y="185" font-size="9" fill="#fb923c" font-family="'JetBrains Mono',monospace">eth5.10/.20/.30</text>
+
+      <!-- ══ WEB SERVER ══ -->
+      <g filter="url(#sh)">
+        <rect x="588" y="372" width="140" height="70" rx="9" fill="#fff" stroke="#10b981" stroke-width="2"/>
+      </g>
+      <rect x="588" y="372" width="140" height="16" rx="9" fill="#10b981"/>
+      <rect x="588" y="380" width="140" height="8" rx="0" fill="#10b981"/>
+      <text x="600" y="383" font-size="9" font-weight="700" fill="#fff" font-family="'JetBrains Mono',monospace">Web-Server — VLAN 30</text>
+      <text x="600" y="403" font-size="18">🌐</text>
+      <text x="626" y="403" font-size="12" font-weight="700" fill="#065f46">Web-Server</text>
+      <text x="600" y="418" font-size="10" fill="#6b7280" font-family="'JetBrains Mono',monospace">192.168.30.100</text>
+      <text x="600" y="431" font-size="9" fill="#94a3b8" font-family="'JetBrains Mono',monospace">Apache · www.lab.local</text>
+
+      <!-- ══ GUACAMOLE ══ -->
+      <g filter="url(#sh)">
+        <rect x="632" y="428" width="155" height="70" rx="9" fill="#fff" stroke="#d97706" stroke-width="2"/>
+      </g>
+      <rect x="632" y="428" width="155" height="16" rx="9" fill="#d97706"/>
+      <rect x="632" y="436" width="155" height="8" rx="0" fill="#d97706"/>
+      <text x="644" y="439" font-size="9" font-weight="700" fill="#fff" font-family="'JetBrains Mono',monospace">Guacamole — GESTIÓN</text>
+      <text x="644" y="458" font-size="18">🖥</text>
+      <text x="670" y="458" font-size="12" font-weight="700" fill="#92400e">Guacamole</text>
+      <text x="644" y="473" font-size="10" fill="#6b7280" font-family="'JetBrains Mono',monospace">192.168.99.10</text>
+      <text x="644" y="487" font-size="9" fill="#94a3b8" font-family="'JetBrains Mono',monospace">Acceso SSH remoto</text>
+
+      <!-- ══ LEGEND ══ -->
+      <rect x="22" y="458" width="270" height="26" rx="6" fill="#fff" stroke="#e2e8f0" stroke-width="1"/>
+      <line x1="32" y1="471" x2="58" y2="471" stroke="#0ea5e9" stroke-width="2"/>
+      <text x="62" y="475" font-size="9" fill="#444" font-family="'JetBrains Mono',monospace">VLAN 10</text>
+      <line x1="108" y1="471" x2="134" y2="471" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="138" y="475" font-size="9" fill="#444" font-family="'JetBrains Mono',monospace">VLAN 20</text>
+      <line x1="184" y1="471" x2="210" y2="471" stroke="#10b981" stroke-width="2"/>
+      <text x="214" y="475" font-size="9" fill="#444" font-family="'JetBrains Mono',monospace">VLAN 30</text>
+    </svg>
+  </div>
+
+  <!-- IP TABLE -->
+  <table style="margin-top:20px;">
+    <thead>
+      <tr><th>Nodo (contenedor)</th><th>Rol</th><th>IP</th><th>Gateway</th><th>VLAN</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>R1</strong></td><td>Router inter-VLAN (FRRouting)</td><td>eth5.10: 192.168.10.1<br/>eth5.20: 192.168.20.1<br/>eth5.30: 192.168.30.1</td><td>—</td><td><span class="vlan10">10</span> / <span class="vlan20">20</span> / <span class="vlan30">30</span></td></tr>
+      <tr><td><strong>OVS-SW</strong></td><td>Switch L2 (Open vSwitch)</td><td>br0 (L2 only)</td><td>—</td><td>Trunk</td></tr>
+      <tr><td><strong>PC1</strong></td><td>Estación de trabajo</td><td>192.168.10.10</td><td>192.168.10.1</td><td><span class="vlan10">10</span></td></tr>
+      <tr><td><strong>PC2</strong></td><td>Estación de trabajo</td><td>192.168.20.10</td><td>192.168.20.1</td><td><span class="vlan20">20</span></td></tr>
+      <tr><td><strong>PC3</strong></td><td>Estación de trabajo</td><td>192.168.30.10</td><td>192.168.30.1</td><td><span class="vlan30">30</span></td></tr>
+      <tr><td><strong>Web-Server</strong></td><td>Servidor HTTP (Apache)</td><td>192.168.30.100</td><td>192.168.30.1</td><td><span class="vlan30">30</span></td></tr>
+      <tr><td><strong>Guacamole</strong></td><td>Acceso remoto HTML5</td><td>192.168.99.10</td><td>192.168.99.1</td><td><span class="vlan-mgmt">Gestión</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 03 — OVS -->
+<div class="section">
+  <div class="section-label">03 — Componentes</div>
+  <div class="section-title">Open vSwitch (OVS) — El switch virtual</div>
+  <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">Open vSwitch es un switch de red implementado por software, compatible con el estándar IEEE 802.1Q. En este laboratorio actúa como switch de distribución: separa el tráfico en VLANs usando etiquetas en los frames Ethernet.</p>
+  <div class="card-grid">
+    <div class="card"><div class="card-icon">🏷️</div><h4>Puertos de acceso</h4><p>Los puertos conectados a las PCs tienen un <code style="font-family:var(--mono);font-size:12px;">tag=N</code> — todo el tráfico que entra se etiqueta con el número de VLAN correspondiente.</p></div>
+    <div class="card"><div class="card-icon">🔀</div><h4>Puerto trunk</h4><p>El enlace hacia el router R1 lleva tráfico de múltiples VLANs simultáneamente, identificadas por sus etiquetas 802.1Q.</p></div>
+    <div class="card"><div class="card-icon">🔒</div><h4>Aislamiento</h4><p>PCs en distintas VLANs no pueden comunicarse directamente — el tráfico debe pasar por el router R1 para cruzar entre segmentos.</p></div>
+    <div class="card"><div class="card-icon">🐧</div><h4>Software libre</h4><p>OVS es open source y se usa en producción en plataformas cloud como OpenStack y VMware NSX.</p></div>
+  </div>
+</div>
+
+<!-- 04 — GUACAMOLE -->
+<div class="section">
+  <div class="section-label">04 — Acceso remoto</div>
+  <div class="section-title">Apache Guacamole — Tu terminal en el navegador</div>
+  <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">Guacamole es un gateway de escritorio remoto sin cliente — todo funciona desde el navegador web, sin instalar software adicional. En este laboratorio proporciona acceso SSH a cada contenedor.</p>
+  <div class="card-grid" style="margin-bottom:18px;">
+    <div class="card"><div class="card-icon">🌐</div><h4>Sin cliente</h4><p>Solo necesitás un navegador. No se instala nada en tu computadora.</p></div>
+    <div class="card"><div class="card-icon">🔐</div><h4>Acceso SSH</h4><p>Cada nodo del lab tiene una conexión SSH pre-configurada en Guacamole.</p></div>
+    <div class="card"><div class="card-icon">📋</div><h4>Portapapeles</h4><p>Para pegar comandos usá el panel lateral: <strong>Ctrl+Alt+Shift</strong> para abrirlo.</p></div>
+  </div>
+  <div class="hint-box">
+    <div class="hint-label">🔑 Cómo conectarse a Guacamole</div>
+    <ol class="guac-steps">
+      <li>Abrí tu navegador y accedé a la URL que indica el docente (ej: <code style="font-family:var(--mono)">https://lab.trigoproject404.website/#/</code>)</li>
+      <li>Ingresá con usuario <code style="font-family:var(--mono)">estudiante</code> y la contraseña indicada en clase</li>
+      <li>En el panel de conexiones verás los nodos disponibles: <strong>PC1, PC2, PC3, OVS-SW, R1, Web-Server</strong></li>
+      <li>Hacé clic en el nodo que quieras acceder — se abre una terminal SSH en el navegador</li>
+      <li>Para pegar comandos: <strong>Ctrl+Alt+Shift</strong> → pestaña Portapapeles → pegá el texto → cerrá el panel</li>
+      <li>Para abrir dos sesiones simultáneas, abrí una segunda pestaña del navegador y volvé a entrar a Guacamole</li>
+    </ol>
+  </div>
+</div>
+
+<!-- 05 — OBJETIVOS -->
+<div class="section">
+  <div class="section-label">05 — Objetivos</div>
+  <div class="section-title">¿Qué vas a aprender?</div>
+  <div class="obj-list">
+    <div class="obj-item"><span class="obj-num">O1</span><span class="obj-text">Entender qué es ContainerLab y cómo virtualiza infraestructura de red usando contenedores Docker.</span></div>
+    <div class="obj-item"><span class="obj-num">O2</span><span class="obj-text">Identificar los nodos de la topología (R1, OVS-SW, PCs, servidores) y sus roles en la red.</span></div>
+    <div class="obj-item"><span class="obj-num">O3</span><span class="obj-text">Verificar la conectividad de capa 3 entre dispositivos usando herramientas estándar (ping, ip addr).</span></div>
+    <div class="obj-item"><span class="obj-num">O4</span><span class="obj-text">Comprender el funcionamiento de VLANs y cómo el switch OVS segmenta el tráfico usando etiquetas 802.1Q.</span></div>
+    <div class="obj-item"><span class="obj-num">O5</span><span class="obj-text">Analizar las tablas de enrutamiento del router R1 y entender el concepto de Router-on-a-Stick.</span></div>
+    <div class="obj-item"><span class="obj-num">O6</span><span class="obj-text">Capturar tráfico de red real con tcpdump e identificar campos de la cabecera 802.1Q en Wireshark.</span></div>
+  </div>
+</div>
+
+<!-- 06 — ACTIVIDADES -->
+<div class="section">
+  <div class="section-label">06 — Actividades</div>
+  <div class="section-title">Trabajo práctico</div>
+
+  <!-- A1 -->
+  <div class="activity-card">
+    <div class="activity-header">
+      <span class="activity-num">A1</span>
+      <span class="activity-title">Verificar configuración IP de las PCs</span>
+      <span class="activity-pts">10 pts</span>
+    </div>
+    <div class="activity-body">
+      <div class="guac-banner">
+        <div class="guac-label">🖥 Guacamole — Sesión requerida</div>
+        <p>Conectate a <strong>PC1</strong>, luego a <strong>PC2</strong> y <strong>PC3</strong> desde el panel de conexiones de Guacamole.</p>
+      </div>
+      <p>En cada PC, ejecutá el siguiente comando para ver su configuración de red:</p>
+      <div class="code-label">En PC1, PC2 y PC3</div>
+      <div class="code-block"><pre>
+<span class="cmd">ip addr show</span>          <span class="cmt"># Ver IP y máscara</span>
+<span class="cmd">ip route show</span>         <span class="cmt"># Ver gateway (ruta por defecto)</span></pre></div>
+      <p>Completá la tabla con los datos relevados:</p>
+      <table class="fill-table">
+        <thead><tr><th>PC</th><th>Dirección IP</th><th>Gateway</th><th>Ping al gateway (✓/✗)</th></tr></thead>
+        <tbody>
+          <tr><td>PC1</td><td class="empty">_______________</td><td class="empty">_______________</td><td class="empty">_____</td></tr>
+          <tr><td>PC2</td><td class="empty">_______________</td><td class="empty">_______________</td><td class="empty">_____</td></tr>
+          <tr><td>PC3</td><td class="empty">_______________</td><td class="empty">_______________</td><td class="empty">_____</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- A2 -->
+  <div class="activity-card">
+    <div class="activity-header">
+      <span class="activity-num">A2</span>
+      <span class="activity-title">Prueba de conectividad entre VLANs</span>
+      <span class="activity-pts">10 pts</span>
+    </div>
+    <div class="activity-body">
+      <div class="guac-banner">
+        <div class="guac-label">🖥 Guacamole — Sesión requerida</div>
+        <p>Conectate a <strong>PC1</strong> desde Guacamole.</p>
+      </div>
+      <p>Probá la conectividad desde PC1 hacia los demás dispositivos:</p>
+      <div class="code-label">Desde PC1</div>
+      <div class="code-block"><pre>
+<span class="cmd">ping -c 3 192.168.10.1</span>    <span class="cmt"># Gateway VLAN 10 (R1)</span>
+<span class="cmd">ping -c 3 192.168.20.10</span>   <span class="cmt"># PC2 — distinta VLAN</span>
+<span class="cmd">ping -c 3 192.168.30.10</span>   <span class="cmt"># PC3 — distinta VLAN</span>
+<span class="cmd">ping -c 3 192.168.30.100</span>  <span class="cmt"># Web-Server</span></pre></div>
+      <div class="hint-box">
+        <div class="hint-label">💡 Para analizar</div>
+        <p>¿El tráfico entre PC1 y PC2 pasa por el router R1? ¿Por qué dos PCs en distintas VLANs no pueden comunicarse directamente aunque estén en el mismo switch físico?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- A3 -->
+  <div class="activity-card">
+    <div class="activity-header">
+      <span class="activity-num">A3</span>
+      <span class="activity-title">Inspección del router R1</span>
+      <span class="activity-pts">10 pts</span>
+    </div>
+    <div class="activity-body">
+      <div class="guac-banner">
+        <div class="guac-label">🖥 Guacamole — Sesión requerida</div>
+        <p>Conectate a <strong>R1</strong> desde Guacamole.</p>
+      </div>
+      <div class="code-label">Desde R1</div>
+      <div class="code-block"><pre>
+<span class="cmd">ip addr show</span>              <span class="cmt"># Ver subinterfaces eth5.10/.20/.30</span>
+<span class="cmd">ip route show</span>             <span class="cmt"># Ver tabla de enrutamiento</span>
+<span class="cmd">vtysh -c "show ip route"</span>  <span class="cmt"># Tabla de rutas FRR (formato Cisco)</span></pre></div>
+      <p>En tu informe: copiá la salida de <code style="font-family:var(--mono)">ip route show</code> y explicá para qué sirve cada ruta que ves.</p>
+    </div>
+  </div>
+
+  <!-- A4 -->
+  <div class="activity-card">
+    <div class="activity-header">
+      <span class="activity-num">A4</span>
+      <span class="activity-title">Inspección del switch OVS</span>
+      <span class="activity-pts">10 pts</span>
+    </div>
+    <div class="activity-body">
+      <div class="guac-banner">
+        <div class="guac-label">🖥 Guacamole — Sesión requerida</div>
+        <p>Conectate a <strong>OVS-SW</strong> desde Guacamole.</p>
+      </div>
+      <div class="code-label">Desde OVS-SW</div>
+      <div class="code-block"><pre>
+<span class="cmd">ovs-vsctl show</span>                    <span class="cmt"># Ver configuración del bridge br0</span>
+<span class="cmd">ovs-vsctl list-ports br0</span>          <span class="cmt"># Listar todos los puertos</span>
+<span class="cmd">ovs-vsctl get port eth1 tag</span>        <span class="cmt"># Ver VLAN tag del puerto de PC1</span>
+<span class="cmd">ovs-vsctl get port eth5 trunks</span>     <span class="cmt"># Ver VLANs del trunk hacia R1</span></pre></div>
+      <div class="hint-box">
+        <div class="hint-label">🔎 Para tu informe</div>
+        <p>¿Qué número de VLAN tiene asignado el puerto <code style="font-family:var(--mono)">eth1</code>? ¿Qué VLANs transporta el puerto trunk <code style="font-family:var(--mono)">eth5</code>?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- A5 -->
+  <div class="activity-card">
+    <div class="activity-header">
+      <span class="activity-num">A5</span>
+      <span class="activity-title">Acceso al servidor web</span>
+      <span class="activity-pts">15 pts</span>
+    </div>
+    <div class="activity-body">
+      <div class="guac-banner">
+        <div class="guac-label">🖥 Guacamole — Sesión requerida</div>
+        <p>Conectate a <strong>PC1</strong> o <strong>PC2</strong> desde Guacamole.</p>
+      </div>
+      <div class="code-label">Desde PC1 o PC2</div>
+      <div class="code-block"><pre>
+<span class="cmd">curl http://192.168.30.100</span>           <span class="cmt"># Acceso por IP</span>
+<span class="cmd">curl http://www.lab.local</span>            <span class="cmt"># Acceso por nombre (DNS)</span>
+<span class="cmd">ping -c 3 www.lab.local</span>              <span class="cmt"># Resolver nombre → IP</span></pre></div>
+      <p>En tu informe: ¿Cuántos saltos (hops) recorre un paquete de PC1 al Web-Server? Describí el camino completo mencionando cada dispositivo que atraviesa.</p>
+    </div>
+  </div>
+
+  <!-- A6 -->
+  <div class="activity-card">
+    <div class="activity-header">
+      <span class="activity-num">A6</span>
+      <span class="activity-title">Verificar aislamiento de VLANs</span>
+      <span class="activity-pts">10 pts</span>
+    </div>
+    <div class="activity-body">
+      <div class="guac-banner">
+        <div class="guac-label">🖥 Guacamole — Sesión requerida</div>
+        <p>Conectate a <strong>OVS-SW</strong> desde Guacamole.</p>
+      </div>
+      <p>Verificá que el switch filtra correctamente el tráfico entre VLANs a nivel de capa 2:</p>
+      <div class="code-label">Desde OVS-SW</div>
+      <div class="code-block"><pre>
+<span class="cmd">ovs-appctl fdb/show br0</span>    <span class="cmt"># Tabla MAC del switch</span></pre></div>
+      <div class="hint-box">
+        <div class="hint-label">💡 Para analizar</div>
+        <p>¿Aparecen las MACs de PC1 y PC2 en la tabla? ¿En qué puerto y VLAN están registradas? ¿Podría PC1 enviar una trama directamente a PC2 sin pasar por R1?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- A7 -->
+  <div class="activity-card">
+    <div class="activity-header">
+      <span class="activity-num">A7</span>
+      <span class="activity-title">Captura de tráfico con tcpdump → Wireshark</span>
+      <span class="activity-pts">20 pts</span>
+    </div>
+    <div class="activity-body">
+      <div class="guac-banner">
+        <div class="guac-label">🖥 Guacamole — Dos sesiones simultáneas</div>
+        <p>Abrí <strong>dos pestañas</strong> en tu navegador: una con sesión a <strong>OVS-SW</strong> y otra con sesión a <strong>PC1</strong>.</p>
+      </div>
+      <p><strong>Paso 1 — En la sesión de OVS-SW:</strong> iniciá la captura en el puerto trunk hacia R1 (solo 20 paquetes ICMP):</p>
+      <div class="code-label">En OVS-SW</div>
+      <div class="code-block"><pre>
+<span class="cmd">tcpdump -i eth5 -w /tmp/vlan-cap.pcap icmp -c 20</span></pre></div>
+      <p><strong>Paso 2 — En la sesión de PC1:</strong> generá tráfico ICMP mientras tcpdump captura:</p>
+      <div class="code-label">En PC1 (mientras tcpdump está corriendo en OVS)</div>
+      <div class="code-block"><pre>
+<span class="cmd">ping -c 20 192.168.20.10</span>   <span class="cmt"># Ping a PC2 (distinta VLAN — pasa por trunk)</span></pre></div>
+      <p><strong>Paso 3 — En OVS-SW:</strong> convertí el archivo pcap a base64 para poder copiarlo:</p>
+      <div class="code-label">En OVS-SW</div>
+      <div class="code-block"><pre>
+<span class="cmd">base64 /tmp/vlan-cap.pcap</span>   <span class="cmt"># Imprime el archivo como texto base64</span></pre></div>
+      <p>Seleccioná y copiá toda la salida base64 (usá <strong>Ctrl+Alt+Shift</strong> en Guacamole para acceder al portapapeles).</p>
+
+      <div class="pcap-box">
+        <div class="pcap-label">📦 Convertir base64 → pcap → abrir en Wireshark</div>
+        <ol class="pcap-steps">
+          <li>Pegá el texto base64 copiado en un archivo de texto en tu computadora y guardalo como <code style="font-family:var(--mono)">vlan-cap.b64</code></li>
+          <li><strong>Windows (PowerShell):</strong><br/>
+            <code style="font-family:var(--mono);font-size:11px;">[System.Convert]::FromBase64String([System.IO.File]::ReadAllText("vlan-cap.b64")) | Set-Content -Encoding Byte "vlan-cap.pcap"</code></li>
+          <li><strong>Linux / Mac (terminal):</strong><br/>
+            <code style="font-family:var(--mono);font-size:12px;">base64 -d vlan-cap.b64 &gt; vlan-cap.pcap</code></li>
+          <li>Abrí Wireshark → <strong>File → Open</strong> → seleccioná <code style="font-family:var(--mono)">vlan-cap.pcap</code></li>
+          <li>En Wireshark, filtrá con <code style="font-family:var(--mono)">icmp</code> y expandí un paquete → buscá el campo <strong>"802.1Q Virtual LAN"</strong> → anotá el <strong>VLAN ID</strong> que aparece</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 07 — PREGUNTAS -->
+<div class="section">
+  <div class="section-label">07 — Análisis</div>
+  <div class="section-title">Preguntas para el informe</div>
+  <div class="obj-list">
+    <div class="obj-item"><span class="obj-num">A</span><span class="obj-text">¿Qué diferencia hay entre un switch físico tradicional y Open vSwitch? ¿Qué ventajas ofrece implementar un switch por software en un entorno de laboratorio?</span></div>
+    <div class="obj-item"><span class="obj-num">B</span><span class="obj-text">Explicá con tus palabras qué es una VLAN y por qué se usan en redes empresariales. ¿Qué problema resuelven?</span></div>
+    <div class="obj-item"><span class="obj-num">C</span><span class="obj-text">¿Qué es el modelo Router-on-a-Stick? ¿Por qué R1 necesita subinterfaces (eth5.10, eth5.20, eth5.30) en lugar de una sola interfaz por VLAN?</span></div>
+    <div class="obj-item"><span class="obj-num">D</span><span class="obj-text">¿Qué diferencia hay entre ContainerLab y Cisco Packet Tracer como entornos de simulación/virtualización de redes? Mencioná al menos dos ventajas y dos limitaciones de cada uno.</span></div>
+    <div class="obj-item"><span class="obj-num">E</span><span class="obj-text">En la captura de Wireshark (A7): ¿pudiste ver el campo <strong>802.1Q Virtual LAN</strong>? ¿Qué número de VLAN aparece y por qué ese tráfico lleva etiqueta 802.1Q en ese punto de la red?</span></div>
+  </div>
+</div>
+
+<!-- 08 — RÚBRICA -->
+<div class="section">
+  <div class="section-label">08 — Rúbrica</div>
+  <div class="section-title">Criterios de evaluación</div>
+  <table class="rubric-table">
+    <thead><tr><th>Criterio</th><th>Descripción</th><th>Pts</th></tr></thead>
+    <tbody>
+      <tr><td><strong>A1 — IPs de las PCs</strong></td><td>Tabla completada correctamente con ip/gateway/ping de las 3 PCs.</td><td>10</td></tr>
+      <tr><td><strong>A2 — Conectividad VLANs</strong></td><td>Pings ejecutados y documentados. Explica por qué el tráfico inter-VLAN pasa por R1.</td><td>10</td></tr>
+      <tr><td><strong>A3 — Router R1</strong></td><td>Salida de ip route copiada y explicada. Identifica las rutas por subred.</td><td>10</td></tr>
+      <tr><td><strong>A4 + A5 — OVS y Web</strong></td><td>Identifica tag/trunks de OVS. Accede al web server por IP y nombre. Describe el camino del paquete.</td><td>25</td></tr>
+      <tr><td><strong>A6 — Aislamiento</strong></td><td>Muestra tabla MAC y explica el aislamiento de VLANs a nivel L2.</td><td>10</td></tr>
+      <tr><td><strong>A7 — tcpdump/Wireshark</strong></td><td>Captura realizada. Archivo pcap abierto en Wireshark. Campo 802.1Q identificado con VLAN ID correcto.</td><td>20</td></tr>
+      <tr><td><strong>Preguntas A–E</strong></td><td>Respuestas completas, con vocabulario técnico apropiado y análisis propio.</td><td>15</td></tr>
+      <tr class="total"><td colspan="2">TOTAL</td><td>100</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 09 — CONCLUSIONES -->
+<div class="section">
+  <div class="section-label">09 — Conclusiones</div>
+  <div class="section-title">¿Qué aprendiste hoy?</div>
+  <div class="conclusion-block">
+    <h3>🐳 De los simuladores a la red real</h3>
+    <p>Hoy trabajaste con software que se usa en producción real: Open vSwitch corre en los data centers de Amazon y Google; FRRouting es el motor de enrutamiento de muchos ISPs; tcpdump es la herramienta número uno de cualquier ingeniero de red cuando hay un incidente.</p>
+    <p>La diferencia entre un simulador como Packet Tracer y ContainerLab no es solo técnica — es conceptual. En PT modelás comportamientos. En ContainerLab ejecutás <em>software real</em> sobre una red virtual que se comporta exactamente como una red física.</p>
+    <p>Las VLANs que configuraste hoy, el trunk 802.1Q que capturaste con tcpdump, el router-on-a-stick que viste en FRRouting — todo eso existe, con los mismos comandos y los mismos protocolos, en la red que te conecta a Internet ahora mismo.</p>
+  </div>
+</div>
+
+<!-- 10 — ENTREGABLE -->
+<div class="section">
+  <div class="section-label">10 — Entregable</div>
+  <div class="section-title">¿Qué tenés que entregar?</div>
+  <div class="deliverable-list">
+    <div class="deliverable-item">
+      <span class="deliverable-icon">📄</span>
+      <div class="deliverable-text">
+        <strong>Informe técnico (PDF)</strong>
+        Con resultados de todas las actividades A1–A7: tablas completadas, capturas de pantalla de los comandos ejecutados en Guacamole, respuestas a las preguntas A–E. Nombre/Grupo: <code style="font-family:var(--mono)">ApellidoNombres[o grupo]_ContainerLab.pdf</code>
+      </div>
+    </div>
+    <div class="deliverable-item">
+      <span class="deliverable-icon">📸</span>
+      <div class="deliverable-text">
+        <strong>Capturas de pantalla de Guacamole</strong>
+        Al menos una por actividad mostrando: el nodo al que estás conectado y la salida del comando ejecutado.
+      </div>
+    </div>
+    <div class="deliverable-item">
+      <span class="deliverable-icon">🦈</span>
+      <div class="deliverable-text">
+        <strong>Archivo vlan-cap.pcap</strong>
+        El archivo de captura abierto en Wireshark. Incluí una captura de pantalla mostrando el campo <strong>802.1Q Virtual LAN</strong> expandido con el VLAN ID visible.
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+<footer>Telecomunicaciones B · Laboratorio ContainerLab · vlan-lab · OVS + FRRouting + Guacamole</footer>
+</body>
+</html>

@@ -1,0 +1,140 @@
+Capitulo 1
+Las redes de computadoras tienen muchos usos, tanto para empresas como para individuos, en el hogar y
+en movimiento. Las empresas usan redes de computadoras para compartir la información corporativa, por
+lo general mediante el modelo cliente-servidor en donde las computadoras de los empleados actúan como
+clientes que acceden a poderosos servidores en la sala de máquinas. Para los individuos, las redes ofrecen
+acceso a una variedad de recursos de información y entretenimiento, así como una manera de comprar
+y vender productos y servicios. Con frecuencia los individuos acceden a Internet por medio de sus 
+proveedores de teléfono o cable en el hogar, aunque cada vez se utiliza más el acceso inalámbrico para
+laptops y teléfonos. Los avances tecnológicos permiten nuevos tipos de aplicaciones móviles y redes con
+computadoras integradas a los electrodomésticos y demás dispositivos para el consumidor. Los mismos
+avances generan cuestiones sociales tales como las relacionadas con la privacidad.
+En términos generales, podemos dividir a las redes en LAN, MAN, WAN e interredes. Por lo general
+las redes LAN cubren todo un edificio y operan a velocidades altas. Las redes MAN comúnmente cubren
+toda una ciudad. El sistema de televisión por cable es un ejemplo, ya que ahora muchas personas lo utilizan
+para acceder a Internet. Las redes WAN pueden cubrir un país o continente. Algunas de las tecnologías
+utilizadas para construir estas redes son de punto a punto (como un cable), mientras que otras son
+de difusión (como las redes inalámbricas). Las redes se pueden interconectar con enrutadores para formar
+interredes, de las cuales Internet es el ejemplo más grande y popular. Las redes inalámbricas, como las
+redes LAN 802.11 y de telefonía móvil 3G, también se están volviendo muy populares.
+El software de red se basa en los protocolos, que son reglas mediante las cuales los procesos se comunican
+entre sí. La mayoría de las redes soportan jerarquías de protocolos, en donde cada capa proporciona
+servicios a la capa inmediata superior y los aísla de los detalles sobre los protocolos que se utilizan en las
+capas inferiores. Por lo general las pilas de protocolos se basan en el modelo OSI o en el modelo TCP/IP.
+Ambos modelos tienen capas de enlace, red, transporte y aplicación, pero difieren en las otras capas. Los
+aspectos de diseño incluyen: confiabilidad, asignación de recursos, crecimiento, seguridad, etcétera. Gran
+parte de este libro se enfoca en los protocolos y su diseño.
+Las redes proveen varios servicios a sus usuarios. Estos servicios pueden variar, desde la entrega de
+paquetes sin conexión de mejor esfuerzo hasta la entrega garantizada orientada a conexión. En algunas
+redes se proporciona servicio sin conexión en una capa y servicio orientado a conexión en la capa inmediata
+superior.
+Entre las redes más conocidas están: Internet, la red de telefonía móvil 3G y las redes LAN 802.11.
+Internet evolucionó de ARPANET, a la que se agregaron otras redes para formar una interred. En
+realidad la Internet de la actualidad es una colección de muchos miles de redes que utilizan la pila de
+protocolos TCP/IP. La red de telefonía móvil 3G proporciona acceso inalámbrico y móvil a Internet, con
+velocidades de varios Mbps; además transmite llamadas de voz. Las redes LAN inalámbricas basadas en
+el estándar IEEE 802.11 se implementan en muchos hogares y cafés; pueden proporcionar conectividad
+a velocidades en mayores 100 Mbps. También están surgiendo nuevos tipos de redes, como las redes de
+sensores integradas y las redes basadas en tecnología RFID.
+Para permitir que varias computadoras se comuniquen entre sí se requiere una gran cantidad de estandarización,
+tanto en hardware como en software. Las organizaciones tales como ITU-T, ISO, IEEE e IAB
+administran distintas partes del proceso de estandarización.
+
+Capitulo 2 LA CAPA FÍSICA
+
+En este capítulo analizaremos la capa más baja en nuestro modelo de protocolos: la capa física.
+Ésta define las interfaces eléctricas, de temporización y demás interfaces mediante las cuales
+se envían los bits como señales a través de los canales. La capa física es la base sobre la cual se
+construye la red. Las propiedades de distintos tipos de canales físicos determinan el desempeño
+(por ejemplo, rendimiento, latencia y tasa de error), por lo que es un buen lugar para empezar
+nuestro viaje hacia la tierra de las redes.
+Empezaremos con un análisis teórico de la transmisión de datos, sólo para descubrir que
+la Madre Naturaleza nos impuso ciertos límites en lo que se puede enviar a través de un canal.
+Después veremos tres tipos de medios de transmisión: guiados (cable de cobre y fibra óptica),
+inalámbricos (radio terrestre) y satélite. Cada una de estas tecnologías tiene distintas propiedades
+que afectan el diseño y el desempeño de las redes que las utilizan. Este material proveerá los
+antecedentes clave sobre las tecnologías de transmisión que se utilizan en las redes actuales.
+Después conoceremos la modulación digital, que explica todo sobre la forma en que las señales
+analógicas se convierten en bits digitales y viceversa. Más adelante analizaremos los esquemas
+de multiplexión y exploraremos cómo se pueden colocar varias conversaciones en el mismo medio de
+transmisión al mismo tiempo, sin que unas interfieran con otras.
+Por último, veremos tres ejemplos de sistemas de comunicación utilizados en la práctica
+para las redes de computadoras de área amplia: el sistema telefónico (fijo), el de telefonía móvil
+y el de televisión por cable. Todos estos sistemas son importantes en la práctica, por lo que
+dedicaremos tiempo a cada uno.
+
+La capa física es la base de todas las redes. La naturaleza impone en todos los canales dos límites fundamentales
+que determinan su ancho de banda. Estos límites son: el límite de Nyquist, que tiene que ver con
+los canales sin ruido; y el límite de Shannon, para canales con ruido.
+
+Los medios de transmisión pueden ser guiados y no guiados. Los principales medios guiados son el
+cable de par trenzado, el cable coaxial y la fibra óptica. Los medios no guiados incluyen la radio terrestre,
+las microondas, el infrarrojo, los láser a través del aire y los satélites.
+Los métodos de modulación digital envían bits a través de los medios guiados y no guiados en forma
+de señales analógicas. Los códigos de línea operan en banda base y las señales se pueden colocar en una
+banda de paso mediante la modulación de la amplitud, frecuencia y fase de una portadora. Se pueden compartir
+canales entre los usuarios mediante la multiplexión por división de tiempo, frecuencia y código.
+El sistema telefónico es un elemento clave en la mayoría de las redes de área amplia. Sus componentes
+principales son: lazos locales, troncales y conmutadores. ADSL ofrece velocidades de hasta 40 Mbps
+sobre el lazo local al dividirlo en muchas subportadoras que operan en paralelo. Esto excede por mucho
+las tasas de transmisión de los módems telefónicos. Las PON llevan la fibra hasta el hogar para obtener
+tasas de acceso aún mayores que ADSL.
+Las troncales transportan información digital. Se multiplexan con WDM para proveer muchos enlaces
+de alta capacidad a través de fibras individuales, así como con TDM para compartir cada enlace de tasa de
+transmisión alta entre los usuarios. Tanto la conmutación de circuitos como la conmutación de paquetes
+son importantes.
+Para las aplicaciones móviles, el sistema telefónico fijo no es adecuado. En la actualidad los teléfonos
+móviles se están usando ampliamente para voz y cada vez más para datos. Han pasado por tres generaciones.
+La primera generación, 1G, fue analógica y estaba bajo el dominio de AMPS. La 2G fue digital,
+con GSM actualmente el sistema de telefonía móvil más implementado en el mundo. La 3G es digital y
+se basa en la tecnología CDMA de banda ancha, aunque también se están implementando WCDMA y
+CDMA2000.
+El sistema de televisión por cable es un sistema alternativo para acceso a red. Evolucionó de manera
+gradual del cable coaxial a una red híbrida de fibra óptica y cable coaxial, y de la televisión a televisión
+e Internet. Potencialmente, ofrece un ancho de banda muy alto, pero en la práctica el ancho de banda real
+disponible depende mucho de lo que estén haciendo los demás usuarios, ya que es compartido.
+
+Capitulo 3 LA CAPA DE ENLACE
+DE DATOS
+
+En este capítulo estudiaremos los principios de diseño de la segunda capa, la capa de
+enlace de datos. Este estudio se enfoca en los algoritmos para lograr una comunicación
+confiable y eficiente de unidades completas de información llamadas tramas (en vez de
+bits individuales, como en la capa física) entre dos máquinas adyacentes. Por adyacente,
+queremos decir que las dos máquinas están conectadas mediante un canal de comunicaciones
+que actúa de manera conceptual como un alambre (por ejemplo, un cable coaxial, una
+línea telefónica o un canal inalámbrico). La propiedad esencial de un canal que lo hace
+asemejarse a un “alambre” es que los bits se entregan exactamente en el mismo orden en
+que se enviaron.
+A primera vista se podría pensar que este problema es tan trivial que no hay nada que
+estudiar: la máquina A sólo pone los bits en el alambre y la máquina B simplemente los toma.
+Por desgracia, en ocaciones los canales de comunicación cometen errores. Además, sólo tienen
+una tasa de transmisión de datos finita y hay un retardo de propagación distinto de cero entre
+el momento en que se envía un bit y el momento en que se recibe. Estas limitaciones tienen
+implicaciones importantes para la eficiencia de la transferencia de datos. Los protocolos usados
+para comunicaciones deben considerar todos estos factores. Dichos protocolos son el tema de
+este capítulo.
+Después de una introducción a los aspectos clave de diseño presentes en la capa de enlace
+de datos, comenzaremos nuestro estudio de sus protocolos mediante un análisis de la naturaleza
+de los errores y la manera en que se pueden detectar y corregir. Después estudiaremos
+una serie de protocolos de complejidad creciente, cada uno de los cuales resuelve una cantidad
+mayor de los problemas presentes en esta capa. Por último, concluiremos con algunos
+ejemplos de protocolos de enlace de datos.
+
+La tarea de la capa de enlace de datos es convertir el flujo de bits en bruto ofrecido por la capa física en un
+flujo de tramas para que la capa de red lo utilice. La capa de enlace puede presentar este flujo con niveles
+variables de confiabilidad, desde un servicio sin conexión ni confirmación de recepción hasta un servicio
+confiable, orientado a conexión.
+Se emplean varios métodos de entramado, incluidos el conteo de bytes, el relleno de bytes y el relleno
+de bits. Los protocolos de enlace de datos pueden proporcionar control de errores para detectar o corregir
+tramas dañadas y retransmitir tramas perdidas. Para evitar que un emisor rápido sature a un receptor lento,
+el protocolo de enlace de datos también puede proveer control de flujo. El mecanismo de ventana deslizante
+se emplea ampliamente para integrar el control de errores y el control de flujo de una manera simple.
+Cuando el tamaño de la ventana es de un paquete, el protocolo es de parada y espera.
+Los códigos para corrección y detección de errores agregan información redundante a los mensajes
+mediante el uso de una variedad de técnicas matemáticas. Los códigos convolucionales y los códigos de
+Reed-Solomon se emplean mucho para corrección de errores; la popularidad de los códigos de verificación
+de paridad de baja densidad va en aumento. Los códigos para detección de errores que se utilizan en
+la práctica incluyen las comprobaciones de redundancias cíclicas y las sumas de verificación. Todos estos
+códigos se pueden aplicar en la capa de enlace datos, así como en la capa física y en capas superiores.
+

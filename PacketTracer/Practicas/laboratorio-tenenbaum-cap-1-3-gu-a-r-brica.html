@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratorio Redes — Tenenbaum Cap. 1-3</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --fg: #1c1917;
+    --muted: #6b6560;
+    --accent: #c0392b;
+    --accent2: #1a5276;
+    --accent3: #1e8449;
+    --border: #dddad6;
+    --card: #ffffff;
+    --tag-bg: #fdecea;
+    --tag-fg: #c0392b;
+    --code-bg: #f0eeea;
+    --font-head: 'Plus Jakarta Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-head);
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--fg);
+    color: #f7f6f3;
+    padding: 40px 36px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 220px; height: 100%;
+    background: var(--accent);
+    clip-path: polygon(40% 0, 100% 0, 100% 100%, 0% 100%);
+    opacity: 0.12;
+  }
+  .header-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #a09890;
+    margin-bottom: 10px;
+  }
+  .header h1 {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.18;
+    max-width: 560px;
+    margin-bottom: 14px;
+  }
+  .header h1 span { color: var(--accent); }
+  .header-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+  }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+  }
+  .badge-red    { background: var(--accent); color: #fff; }
+  .badge-blue   { background: var(--accent2); color: #fff; }
+  .badge-green  { background: var(--accent3); color: #fff; }
+  .badge-muted  { background: #3a3530; color: #ccc; }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 860px; margin: 0 auto; padding: 0 24px 60px; }
+
+  /* ── SECTION TITLES ── */
+  .section {
+    margin-top: 44px;
+    animation: fadeUp 0.45s ease both;
+  }
+  .section:nth-child(2) { animation-delay: 0.05s; }
+  .section:nth-child(3) { animation-delay: 0.10s; }
+  .section:nth-child(4) { animation-delay: 0.15s; }
+  .section:nth-child(5) { animation-delay: 0.20s; }
+  .section:nth-child(6) { animation-delay: 0.25s; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--tag-bg);
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.1em;
+  }
+  .section-header h2 {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--fg);
+  }
+
+  /* ── ALERT BOX ── */
+  .alert {
+    border-left: 4px solid var(--accent);
+    background: var(--card);
+    padding: 16px 18px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 18px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .alert strong { color: var(--accent); }
+  .alert.blue { border-color: var(--accent2); }
+  .alert.blue strong { color: var(--accent2); }
+  .alert.green { border-color: var(--accent3); }
+  .alert.green strong { color: var(--accent3); }
+
+  /* ── OBJECTIVES GRID ── */
+  .obj-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin-top: 6px;
+  }
+  .obj-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 16px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .obj-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+  }
+  .obj-card.blue::before  { background: var(--accent2); }
+  .obj-card.green::before { background: var(--accent3); }
+  .obj-num {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .obj-card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 5px;
+  }
+  .obj-card p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .obj-tag {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 2px 7px;
+    border-radius: 3px;
+    background: var(--tag-bg);
+    color: var(--tag-fg);
+  }
+  .obj-tag.blue  { background: #eaf1fb; color: var(--accent2); }
+  .obj-tag.green { background: #eafaf1; color: var(--accent3); }
+
+  /* ── TOPOLOGY TABLE ── */
+  .ip-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: var(--card);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .ip-table thead {
+    background: var(--fg);
+    color: #f7f6f3;
+  }
+  .ip-table th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .ip-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    vertical-align: middle;
+  }
+  .ip-table tr:last-child td { border-bottom: none; }
+  .ip-table tr:nth-child(even) td { background: #faf9f7; }
+  .ip-table td:first-child { font-weight: 600; color: var(--accent2); }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .dot-red   { background: var(--accent); }
+  .dot-blue  { background: var(--accent2); }
+  .dot-green { background: var(--accent3); }
+  .dot-gray  { background: #999; }
+
+  /* ── TASKS ── */
+  .task-list { display: flex; flex-direction: column; gap: 14px; }
+  .task {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .task-num-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .task-num {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .task-pts {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  .task h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  .task p { font-size: 13px; color: var(--muted); line-height: 1.55; }
+  .task ul { margin: 8px 0 0 16px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .task-layer {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-top: 8px;
+    letter-spacing: 0.06em;
+  }
+  .layer-1 { background: #fef9e7; color: #b7770d; border: 1px solid #f7dc6f; }
+  .layer-2 { background: #eafaf1; color: #1e8449; border: 1px solid #82e0aa; }
+  .layer-3 { background: #eaf1fb; color: #1a5276; border: 1px solid #7fb3d3; }
+
+  /* ── CODE ── */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin-top: 10px;
+  }
+  code { font-family: var(--font-mono); font-size: 12px; }
+  .inline-code {
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent2);
+  }
+
+  /* ── RUBRICA ── */
+  .rubric-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .rubric-table thead {
+    background: var(--accent2);
+    color: #fff;
+  }
+  .rubric-table th {
+    padding: 10px 14px;
+    text-align: center;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  .rubric-table th:first-child { text-align: left; }
+  .rubric-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+  .rubric-table tr:last-child td { border-bottom: none; }
+  .rubric-table tr:nth-child(even) td { background: #faf9f7; }
+  .rubric-table td:first-child { font-weight: 700; color: var(--fg); }
+  .rubric-table td:not(:first-child) { text-align: center; color: var(--muted); }
+  .score-cell {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .score-100 { color: var(--accent3); }
+  .score-75  { color: #d4ac0d; }
+  .score-50  { color: #e67e22; }
+  .score-25  { color: var(--accent); }
+
+  .total-row td {
+    background: var(--fg) !important;
+    color: #f7f6f3 !important;
+    font-weight: 700;
+    font-family: var(--font-mono);
+  }
+
+  /* ── TENENBAUM REF ── */
+  .ref-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .ref-pill {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .ref-pill.active {
+    background: var(--fg);
+    color: #f7f6f3;
+    border-color: var(--fg);
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 50px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .footer p {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+  .footer-badges { display: flex; gap: 8px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ HEADER ══════════ -->
+<div class="header">
+  <p class="header-label">Laboratorio Práctico &nbsp;·&nbsp; Redes de Computadoras</p>
+  <h1>Red LAN–MAN Empresarial:<br><span>Del Bit a la Trama</span></h1>
+  <p style="color:#a09890; font-size:14px; max-width:520px; margin-top:10px;">
+    Práctica integradora de los capítulos 1 al 3 de <em>Redes de Computadoras — Tanenbaum</em>. 
+    Construcción y análisis de una red corporativa jerárquica con enlace MAN, 
+    segmentación VLAN y observación de la capa de enlace de datos.
+  </p>
+  <div class="header-meta">
+    <span class="badge badge-red">Cisco Packet Tracer</span>
+    <span class="badge badge-blue">Caps. 1 · 2 · 3</span>
+    <span class="badge badge-green">LAN + MAN + Enlace de Datos</span>
+    <span class="badge badge-muted">100 puntos</span>
+  </div>
+</div>
+
+<!-- ══════════ CONTENT ══════════ -->
+<div class="container">
+
+  <!-- ── 1. CONTEXTO ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Contexto del Escenario</h2>
+    </div>
+    <div class="alert blue">
+      <strong>Escenario:</strong> La empresa <em>TechNet S.A.</em> necesita conectar su sede central 
+      (2 departamentos: Contabilidad y Sistemas) con una sucursal remota. El enlace entre ambas 
+      ubicaciones simula una <strong>red MAN sobre fibra óptica</strong>, tal como describe Tanenbaum 
+      en los capítulos 1 y 2. Tu misión es construir, configurar y validar esta infraestructura 
+      completa en Cisco Packet Tracer.
+    </div>
+    <div class="alert green">
+      <strong>Innovación del laboratorio:</strong> A diferencia de prácticas tradicionales, aquí 
+      vas a <em>leer y analizar las tramas</em> en tiempo real usando la herramienta de simulación 
+      de PT, identificando los campos de la capa de enlace que estudia el Capítulo 3 de Tanenbaum 
+      (tipo de trama, direcciones MAC, FCS/CRC).
+    </div>
+  </div>
+
+  <!-- ── 2. OBJETIVOS ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Objetivos de Aprendizaje</h2>
+    </div>
+    <div class="obj-grid">
+      <div class="obj-card">
+        <div class="obj-num">01</div>
+        <h3>Clasificar tipos de red</h3>
+        <p>Identificar y justificar qué partes del diseño corresponden a una LAN y cuáles a una MAN según Tanenbaum Cap. 1.</p>
+        <span class="obj-tag">CAP. 1</span>
+      </div>
+      <div class="obj-card blue">
+        <div class="obj-num">02</div>
+        <h3>Medios de transmisión</h3>
+        <p>Distinguir los enlaces de par trenzado (LAN) de los enlaces de fibra óptica (MAN) y sus propiedades (Cap. 2).</p>
+        <span class="obj-tag blue">CAP. 2 · CAPA 1</span>
+      </div>
+      <div class="obj-card green">
+        <div class="obj-num">03</div>
+        <h3>VLANs y tramas 802.1Q</h3>
+        <p>Implementar segmentación lógica con VLANs y observar el encabezado de trama Ethernet extendido.</p>
+        <span class="obj-tag green">CAP. 3 · CAPA 2</span>
+      </div>
+      <div class="obj-card">
+        <div class="obj-num">04</div>
+        <h3>Control de errores</h3>
+        <p>Ubicar y explicar el campo FCS (Frame Check Sequence / CRC) en una trama capturada con el simulador de PT.</p>
+        <span class="obj-tag">CAP. 3 · CRC</span>
+      </div>
+      <div class="obj-card blue">
+        <div class="obj-num">05</div>
+        <h3>Modelo OSI en práctica</h3>
+        <p>Usar la vista OSI de PT para trazar el camino de un paquete capa por capa, relacionando cada una con Tanenbaum.</p>
+        <span class="obj-tag blue">CAP. 1 · OSI</span>
+      </div>
+      <div class="obj-card green">
+        <div class="obj-num">06</div>
+        <h3>Enrutamiento inter-VLAN</h3>
+        <p>Configurar routing entre VLANs (L3 Switch) y hacia la sucursal remota usando rutas estáticas.</p>
+        <span class="obj-tag green">CAP. 1 · TCP-IP</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 3. TOPOLOGÍA ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Topología y Plan de Direccionamiento</h2>
+    </div>
+    <div class="alert">
+      <strong>Arquitectura:</strong> 3 sitios — Sede Central (LAN jerárquica con core + acceso), 
+      Nodo MAN (router intermediario), y Sucursal remota (LAN plana). Los enlaces MAN usan fibra óptica GigabitEthernet.
+    </div>
+    <table class="ip-table">
+      <thead>
+        <tr>
+          <th>Dispositivo</th>
+          <th>Interfaz</th>
+          <th>Dirección IP</th>
+          <th>Red / VLAN</th>
+          <th>Medio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dot dot-blue"></span>R-HQ</td>
+          <td>Gi0/0</td>
+          <td>192.168.10.1/24</td>
+          <td>LAN Sede</td>
+          <td>Par trenzado</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-blue"></span>R-HQ</td>
+          <td>Gi0/0/0</td>
+          <td>10.0.0.1/30</td>
+          <td>Enlace MAN</td>
+          <td>Fibra óptica</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-green"></span>SW-Core (3560)</td>
+          <td>Vlan10</td>
+          <td>192.168.10.2/24</td>
+          <td>VLAN 10 – Contabilidad</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-green"></span>SW-Core (3560)</td>
+          <td>Vlan20</td>
+          <td>192.168.20.1/24</td>
+          <td>VLAN 20 – Sistemas</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-green"></span>SW-Core (3560)</td>
+          <td>Vlan30</td>
+          <td>192.168.30.1/24</td>
+          <td>VLAN 30 – Servidores</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-gray"></span>SRV-Central</td>
+          <td>Fa0</td>
+          <td>192.168.30.10/24</td>
+          <td>VLAN 30</td>
+          <td>Par trenzado</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-gray"></span>PC-A1 / PC-A2</td>
+          <td>Fa0</td>
+          <td>192.168.10.10–11/24</td>
+          <td>VLAN 10</td>
+          <td>Par trenzado</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-gray"></span>PC-B1 / PC-B2</td>
+          <td>Fa0</td>
+          <td>192.168.20.10–11/24</td>
+          <td>VLAN 20</td>
+          <td>Par trenzado</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-blue"></span>R-WAN</td>
+          <td>Gi0/0/0</td>
+          <td>10.0.0.2/30</td>
+          <td>MAN HQ side</td>
+          <td>Fibra óptica</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-blue"></span>R-WAN</td>
+          <td>Gi0/1/0</td>
+          <td>10.0.0.5/30</td>
+          <td>MAN Suc side</td>
+          <td>Fibra óptica</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-red"></span>R-Suc</td>
+          <td>Gi0/0/0</td>
+          <td>10.0.0.6/30</td>
+          <td>MAN Suc side</td>
+          <td>Fibra óptica</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-red"></span>R-Suc</td>
+          <td>Gi0/0</td>
+          <td>192.168.50.1/24</td>
+          <td>LAN Sucursal</td>
+          <td>Par trenzado</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-gray"></span>PC-S1 / PC-S2</td>
+          <td>Fa0</td>
+          <td>192.168.50.10–11/24</td>
+          <td>LAN Sucursal</td>
+          <td>Par trenzado</td>
+        </tr>
+        <tr>
+          <td><span class="dot dot-gray"></span>SRV-Suc</td>
+          <td>Fa0</td>
+          <td>192.168.50.20/24</td>
+          <td>LAN Sucursal</td>
+          <td>Par trenzado</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── 4. TAREAS ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Tareas del Laboratorio</h2>
+    </div>
+    <div class="task-list">
+
+      <div class="task">
+        <div class="task-num-wrap">
+          <span class="task-num">T1</span>
+          <span class="task-pts">15 pts</span>
+        </div>
+        <div>
+          <h3>Apertura y reconocimiento de topología</h3>
+          <p>Abre el archivo <span class="inline-code">.pkt</span> en Cisco Packet Tracer. Observa la topología y completa en tu informe:</p>
+          <ul>
+            <li>¿Qué dispositivos forman la <strong>LAN</strong> y cuáles el <strong>nodo MAN</strong>? Justifica con Tanenbaum Cap. 1.</li>
+            <li>¿Cuántos dominios de colisión y dominios de broadcast existen? ¿Por qué?</li>
+            <li>Identifica visualmente qué cables son de par trenzado y cuáles de fibra óptica. ¿En qué se relaciona esto con el Cap. 2?</li>
+          </ul>
+          <span class="task-layer layer-1">CAPA FÍSICA — CAP. 1 y 2</span>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-num-wrap">
+          <span class="task-num">T2</span>
+          <span class="task-pts">20 pts</span>
+        </div>
+        <div>
+          <h3>Verificación de conectividad IP</h3>
+          <p>Desde la consola de cada PC, ejecuta los siguientes <span class="inline-code">ping</span> y registra los resultados (éxito/fallo + tiempo de respuesta):</p>
+          <ul>
+            <li><code>PC-A1 → PC-A2</code> (misma VLAN, misma LAN)</li>
+            <li><code>PC-A1 → PC-B1</code> (diferente VLAN, misma LAN) — ¿Qué dispositivo enruta?</li>
+            <li><code>PC-A1 → SRV-Central</code> (VLAN de Servidores)</li>
+            <li><code>PC-A1 → PC-S1</code> (LAN → MAN → LAN Sucursal)</li>
+            <li><code>PC-S2 → SRV-Central</code> (Sucursal → Sede, cruzando el enlace MAN)</li>
+          </ul>
+          <p style="margin-top:8px;">¿Qué tipo de conmutación usa esta red según Tanenbaum Cap. 1: <em>circuitos</em> o <em>paquetes</em>? Justifica.</p>
+          <span class="task-layer layer-3">CAPA RED — CAP. 1</span>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-num-wrap">
+          <span class="task-num">T3</span>
+          <span class="task-pts">20 pts</span>
+        </div>
+        <div>
+          <h3>Análisis de tramas en modo Simulación (★ TAREA INNOVADORA)</h3>
+          <p>Activa el <strong>Modo Simulación</strong> en PT (botón abajo a la derecha). Filtra solo eventos <span class="inline-code">ICMP</span> y <span class="inline-code">ARP</span>. Luego:</p>
+          <ul>
+            <li>Envía un ping de <span class="inline-code">PC-A1 → PC-B1</span> y haz clic en el sobre de trama en SW-Core.</li>
+            <li>Abre la pestaña <strong>OSI Model</strong> del evento. Identifica capa por capa (1 → 7) qué información está presente.</li>
+            <li>Abre la pestaña <strong>Outbound PDU Details</strong>. Localiza los campos: <em>MAC destino, MAC origen, Tipo (0x8100 = 802.1Q), VLAN ID, FCS</em>.</li>
+            <li>Dibuja en tu informe la estructura de la trama Ethernet 802.1Q incluyendo todos los campos encontrados.</li>
+            <li>¿Qué función cumple el campo FCS? ¿Qué algoritmo usa? Relaciona con Tanenbaum Cap. 3 (detección de errores / CRC).</li>
+          </ul>
+          <span class="task-layer layer-2">CAPA ENLACE — CAP. 3</span>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-num-wrap">
+          <span class="task-num">T4</span>
+          <span class="task-pts">15 pts</span>
+        </div>
+        <div>
+          <h3>Verificación de VLANs y segmentación</h3>
+          <p>En SW-Core y SW-Acc1, verifica la configuración de VLANs:</p>
+          <pre>SW-Core# show vlan brief
+SW-Core# show interfaces trunk
+SW-Acc1# show vlan brief</pre>
+          <ul>
+            <li>¿Qué VLANs están activas? ¿Cuántos hosts pertenecen a cada una?</li>
+            <li>¿Los puertos trunk están transmitiendo las VLANs correctas? Pega una captura del output.</li>
+            <li>¿Puede PC-A1 hacer ping directo a PC-B1 sin pasar por el router/L3 switch? ¿Por qué? Relaciona con "dominios de broadcast" de Cap. 1.</li>
+          </ul>
+          <span class="task-layer layer-2">CAPA ENLACE — CAP. 3</span>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-num-wrap">
+          <span class="task-num">T5</span>
+          <span class="task-pts">15 pts</span>
+        </div>
+        <div>
+          <h3>Análisis del enlace MAN (Fibra óptica)</h3>
+          <p>En modo simulación, envía un ping de <span class="inline-code">PC-A1 → PC-S1</span> y observa el recorrido completo de la trama.</p>
+          <ul>
+            <li>¿Cuántos saltos (hops) atraviesa el paquete? Lista cada dispositivo intermedio.</li>
+            <li>En los routers R-HQ y R-WAN, ¿qué cambia en la trama entre el ingreso por la interfaz LAN y la salida por la interfaz de fibra?</li>
+            <li>¿El enlace MAN (10.0.0.x/30) usa una subred /30. Cuántos hosts soporta y por qué se elige esta máscara para un enlace punto a punto?</li>
+            <li>Compara la velocidad teórica de un cable de par trenzado Cat5e vs fibra óptica (Tanenbaum Cap. 2). ¿Qué ventaja ofrece la fibra en un enlace MAN?</li>
+          </ul>
+          <span class="task-layer layer-1">CAPA FÍSICA — CAP. 2</span>
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-num-wrap">
+          <span class="task-num">T6</span>
+          <span class="task-pts">15 pts</span>
+        </div>
+        <div>
+          <h3>Informe integrador — Modelo OSI vs TCP/IP</h3>
+          <p>Redacta en tu informe (mínimo 300 palabras) la respuesta a las siguientes consignas:</p>
+          <ul>
+            <li>Dibuja la pila OSI completa (7 capas) y mapea cada componente del laboratorio a su capa correspondiente.</li>
+            <li>¿Cómo se diferencia el modelo OSI del modelo TCP/IP en la práctica? ¿Qué capas "colapsan" en TCP/IP? (Cap. 1 Tanenbaum).</li>
+            <li>Explica con ejemplo del laboratorio qué significa "encapsulación": cuando PC-A1 envía un ping a PC-S1, ¿qué header se agrega en cada capa?</li>
+            <li>¿Esta red usa servicio <em>orientado a conexión</em> o <em>sin conexión</em> a nivel de red (IP)? ¿Y a nivel de enlace? (Cap. 1 y 3).</li>
+          </ul>
+          <span class="task-layer layer-1">CAPA 1-2-3 — CAP. 1</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 5. REFERENCIAS TENENBAUM ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Mapa de Conceptos — Tanenbaum</h2>
+    </div>
+    <div class="alert">
+      <strong>Cada tarea del laboratorio está anclada a conceptos específicos del libro.</strong> 
+      Usa esta tabla de referencia durante tu informe para citar el capítulo y sección correcta.
+    </div>
+    <table class="ip-table" style="margin-top:14px;">
+      <thead>
+        <tr>
+          <th>Concepto del Lab</th>
+          <th>Capítulo</th>
+          <th>Sección Tanenbaum</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>LAN, MAN, WAN</td>
+          <td>Cap. 1</td>
+          <td>Tipos de redes por cobertura geográfica</td>
+        </tr>
+        <tr>
+          <td>Modelo Cliente-Servidor</td>
+          <td>Cap. 1</td>
+          <td>Usos de las redes — empresas</td>
+        </tr>
+        <tr>
+          <td>Modelo OSI y TCP/IP</td>
+          <td>Cap. 1</td>
+          <td>Jerarquías de protocolos, capas</td>
+        </tr>
+        <tr>
+          <td>Conmutación de paquetes</td>
+          <td>Cap. 1</td>
+          <td>Servicios orientados/no orientados a conexión</td>
+        </tr>
+        <tr>
+          <td>Par trenzado (LAN)</td>
+          <td>Cap. 2</td>
+          <td>Medios guiados — par trenzado</td>
+        </tr>
+        <tr>
+          <td>Fibra óptica (MAN)</td>
+          <td>Cap. 2</td>
+          <td>Medios guiados — fibra óptica</td>
+        </tr>
+        <tr>
+          <td>Límite de Shannon / Nyquist</td>
+          <td>Cap. 2</td>
+          <td>Límites teóricos del canal</td>
+        </tr>
+        <tr>
+          <td>Trama Ethernet / 802.1Q</td>
+          <td>Cap. 3</td>
+          <td>Entramado — métodos y estructura</td>
+        </tr>
+        <tr>
+          <td>CRC / FCS — Detección de errores</td>
+          <td>Cap. 3</td>
+          <td>Códigos de detección de errores — CRC</td>
+        </tr>
+        <tr>
+          <td>Dominios de broadcast (VLANs)</td>
+          <td>Cap. 3</td>
+          <td>Control de flujo, enlace de datos</td>
+        </tr>
+        <tr>
+          <td>Encapsulación PDU por capa</td>
+          <td>Cap. 1 + 3</td>
+          <td>Jerarquía de protocolos + trama</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── 6. RÚBRICA ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Rúbrica de Evaluación</h2>
+    </div>
+
+    <table class="rubric-table">
+      <thead>
+        <tr>
+          <th style="width:28%">Criterio</th>
+          <th>Excelente<br><span style="font-size:10px;opacity:.8">100%</span></th>
+          <th>Bueno<br><span style="font-size:10px;opacity:.8">75%</span></th>
+          <th>Regular<br><span style="font-size:10px;opacity:.8">50%</span></th>
+          <th>Insuficiente<br><span style="font-size:10px;opacity:.8">25%</span></th>
+          <th style="width:8%">Pts</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>T1 · Reconocimiento de topología y tipos de red</td>
+          <td class="score-100">Identifica correctamente LAN/MAN, cuenta dominios de colisión y broadcast, justifica con Tanenbaum Cap. 1.</td>
+          <td class="score-75">Identifica LAN/MAN pero omite justificación teórica o comete un error en los dominios.</td>
+          <td class="score-50">Clasifica parcialmente los tipos de red, sin analizar dominios.</td>
+          <td class="score-25">Confunde LAN con MAN o no hace referencia al libro.</td>
+          <td><strong>15</strong></td>
+        </tr>
+        <tr>
+          <td>T2 · Conectividad IP y análisis de conmutación</td>
+          <td class="score-100">Todos los pings exitosos, documenta resultados, explica correctamente la conmutación de paquetes.</td>
+          <td class="score-75">≥4/5 pings exitosos y explica la conmutación de manera general.</td>
+          <td class="score-50">≥3/5 pings exitosos, explicación incompleta del tipo de conmutación.</td>
+          <td class="score-25">Menos de 3 pings o no analiza el tipo de conmutación.</td>
+          <td><strong>20</strong></td>
+        </tr>
+        <tr>
+          <td>T3 · Análisis de trama 802.1Q en modo simulación</td>
+          <td class="score-100">Identifica todos los campos de la trama (MAC, tipo, VLAN ID, FCS), dibuja la estructura y relaciona FCS/CRC con Cap. 3.</td>
+          <td class="score-75">Identifica la mayoría de campos, dibuja la trama pero la relación con CRC es superficial.</td>
+          <td class="score-50">Identifica solo MAC y tipo, no llega al análisis del FCS.</td>
+          <td class="score-25">No usa el modo simulación o confunde los campos.</td>
+          <td><strong>20</strong></td>
+        </tr>
+        <tr>
+          <td>T4 · VLANs y segmentación de red</td>
+          <td class="score-100">Verifica VLANs con comandos correctos, interpreta el output, explica dominios de broadcast y por qué no hay ping directo inter-VLAN.</td>
+          <td class="score-75">Ejecuta los comandos y muestra output, pero la explicación de dominios es incompleta.</td>
+          <td class="score-50">Muestra las VLANs pero no analiza los dominios de broadcast.</td>
+          <td class="score-25">No verifica VLANs o los comandos son incorrectos.</td>
+          <td><strong>15</strong></td>
+        </tr>
+        <tr>
+          <td>T5 · Enlace MAN — fibra óptica y recorrido de paquetes</td>
+          <td class="score-100">Traza todos los hops, explica el cambio de MAC en cada router, justifica la subred /30 y compara par trenzado vs fibra (Cap. 2).</td>
+          <td class="score-75">Traza los hops correctamente, justifica /30, pero la comparación de medios es superficial.</td>
+          <td class="score-50">Identifica el recorrido pero no explica el cambio de tramas ni la elección de /30.</td>
+          <td class="score-25">No usa el modo simulación o no analiza el enlace MAN.</td>
+          <td><strong>15</strong></td>
+        </tr>
+        <tr>
+          <td>T6 · Informe integrador OSI / TCP-IP</td>
+          <td class="score-100">Diagrama OSI completo, mapeo correcto de todos los componentes, explica encapsulación con ejemplo propio del lab, diferencia modelos OSI y TCP/IP.</td>
+          <td class="score-75">Diagrama correcto, explica encapsulación pero le falta profundidad en la diferencia OSI vs TCP/IP.</td>
+          <td class="score-50">Diagrama incompleto o encapsulación confusa. Menos de 300 palabras.</td>
+          <td class="score-25">Diagrama ausente, no relaciona con el laboratorio o con Tanenbaum.</td>
+          <td><strong>15</strong></td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="5" style="text-align:right; padding-right:20px; font-size:13px; letter-spacing:0.05em;">TOTAL</td>
+          <td>100</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap;">
+      <div class="alert" style="flex:1; min-width:200px; margin-bottom:0;">
+        <strong>Escala de notas:</strong><br>
+        90–100 pts → Excelente (10) &nbsp;·&nbsp;
+        75–89 pts → Muy Bueno (8–9) &nbsp;·&nbsp;
+        60–74 pts → Bueno (7) &nbsp;·&nbsp;
+        40–59 pts → Regular (6) &nbsp;·&nbsp;
+        &lt; 40 pts → Insuficiente (&lt; 6)
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 7. ENTREGABLES ── -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>Entregables Requeridos</h2>
+    </div>
+    <table class="ip-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Entregable</th>
+          <th>Formato</th>
+          <th>Incluye</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Archivo de simulación</td>
+          <td><span class="inline-code">.pkt</span></td>
+          <td>Topología funcional con todos los pings exitosos</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Capturas de pantalla</td>
+          <td>PDF / DOCX</td>
+          <td>Resultados de cada tarea (pings, show commands, modo simulación)</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Informe escrito</td>
+          <td>PDF</td>
+          <td>Análisis T1–T6, diagrama OSI, estructura de trama dibujada, referencias a Tanenbaum</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="container">
+  <div class="footer">
+    <div>
+      <p>Laboratorio: Redes de Computadoras — Tanenbaum Caps. 1–3</p>
+      <p style="margin-top:4px;">Cisco Packet Tracer &nbsp;·&nbsp; Capa Física + Enlace de Datos &nbsp;·&nbsp; LAN + MAN</p>
+    </div>
+    <div class="footer-badges">
+      <span class="badge badge-red" style="font-size:10px;">100 pts</span>
+      <span class="badge badge-blue" style="font-size:10px;">Caps. 1·2·3</span>
+      <span class="badge badge-green" style="font-size:10px;">PT Lab</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

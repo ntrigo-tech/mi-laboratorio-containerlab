@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caso SOC — Banco Nexus: Silencio en la Línea</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #f5f3ef;
+  --fg:      #1a1612;
+  --muted:   #6b6358;
+  --border:  #ddd9d2;
+  --card:    #ffffff;
+  --accent:  #b5451b;
+  --accent2: #1a4a6e;
+  --accent3: #2d6a3f;
+  --warn:    #7a4f00;
+  --warn-bg: #fff8ec;
+  --code-bg: #f0ede8;
+  --font-h:  'Syne', sans-serif;
+  --font-m:  'JetBrains Mono', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-h);background:var(--bg);color:var(--fg);font-size:15px;line-height:1.65}
+
+/* ── TICKER ── */
+.ticker-wrap{background:var(--fg);overflow:hidden;padding:9px 0;border-bottom:3px solid var(--accent)}
+.ticker-inner{display:flex;gap:0;animation:tick 22s linear infinite;white-space:nowrap}
+.ticker-inner span{font-family:var(--font-m);font-size:11px;color:#c8c0b8;letter-spacing:.08em;padding:0 36px}
+.ticker-inner span b{color:var(--accent);font-weight:600}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── HEADER ── */
+.header{padding:42px 32px 36px;background:var(--fg);color:#f5f3ef;position:relative;overflow:hidden}
+.header::after{content:'';position:absolute;bottom:0;right:0;width:260px;height:260px;
+  background:var(--accent);opacity:.08;border-radius:50%;transform:translate(30%,40%)}
+.severity{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px}
+.sev-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.sev-label{font-family:var(--font-m);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#c8c0b8}
+.header h1{font-size:34px;font-weight:800;line-height:1.12;max-width:580px;margin-bottom:10px}
+.header h1 em{color:var(--accent);font-style:normal}
+.header p{font-size:14px;color:#a09890;max-width:520px;line-height:1.6}
+.badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.badge{font-family:var(--font-m);font-size:10px;font-weight:600;letter-spacing:.07em;
+  padding:4px 10px;border-radius:3px;text-transform:uppercase}
+.b-red  {background:var(--accent);color:#fff}
+.b-blue {background:var(--accent2);color:#fff}
+.b-green{background:var(--accent3);color:#fff}
+.b-dark {background:#3a332a;color:#c8c0b8}
+.b-warn {background:var(--warn);color:#fff}
+
+/* ── LAYOUT ── */
+.container{max-width:860px;margin:0 auto;padding:0 24px 64px}
+
+/* ── SECTION ── */
+.section{margin-top:48px;animation:up .4s ease both}
+.section:nth-child(2){animation-delay:.05s}
+.section:nth-child(3){animation-delay:.10s}
+.section:nth-child(4){animation-delay:.15s}
+.section:nth-child(5){animation-delay:.20s}
+.section:nth-child(6){animation-delay:.25s}
+.section:nth-child(7){animation-delay:.30s}
+.section:nth-child(8){animation-delay:.35s}
+.section:nth-child(9){animation-delay:.40s}
+.section:nth-child(10){animation-delay:.45s}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.sec-hd{display:flex;align-items:center;gap:12px;margin-bottom:20px;
+  padding-bottom:10px;border-bottom:2px solid var(--border)}
+.sec-tag{font-family:var(--font-m);font-size:10px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent);background:#fceee9;padding:3px 9px;border-radius:3px}
+.sec-hd h2{font-size:20px;font-weight:800}
+
+/* ── ALERT BOX ── */
+.alert{border-left:4px solid var(--accent);background:var(--card);
+  padding:16px 18px;border-radius:0 6px 6px 0;margin-bottom:16px;font-size:14px;line-height:1.6}
+.alert.blue{border-color:var(--accent2)}
+.alert.green{border-color:var(--accent3)}
+.alert.warn{border-color:var(--warn);background:var(--warn-bg)}
+.alert.purple{border-color:#6c3483;background:#f9f0ff}
+.alert strong{font-weight:700}
+.alert.warn strong{color:var(--warn)}
+.alert.blue strong{color:var(--accent2)}
+.alert.green strong{color:var(--accent3)}
+.alert.purple strong{color:#6c3483}
+.alert strong.red{color:var(--accent)}
+
+/* ── TICKET CARD ── */
+.ticket{background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:24px 24px 20px;margin-bottom:18px;position:relative;overflow:hidden}
+.ticket::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent)}
+.ticket.blue::before{background:var(--accent2)}
+.ticket.green::before{background:var(--accent3)}
+.ticket.purple::before{background:#6c3483}
+.ticket-id{font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:.1em;margin-bottom:8px}
+.ticket h3{font-size:15px;font-weight:700;margin-bottom:8px}
+.ticket p{font-size:13.5px;color:var(--muted);line-height:1.6}
+.ticket ul{margin:10px 0 0 18px;font-size:13.5px;color:var(--muted);line-height:1.7}
+.ticket-footer{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.tft{font-family:var(--font-m);font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px}
+.tft-red{background:#fceee9;color:var(--accent)}
+.tft-blue{background:#e8f0f8;color:var(--accent2)}
+.tft-green{background:#e8f5ec;color:var(--accent3)}
+.tft-warn{background:var(--warn-bg);color:var(--warn)}
+.tft-purple{background:#f9f0ff;color:#6c3483}
+
+/* ── BUG CARDS ── */
+.bug-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:540px){.bug-grid{grid-template-columns:1fr}}
+.bug-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:18px 18px 16px;position:relative}
+.bug-num{font-family:var(--font-m);font-size:28px;font-weight:700;color:var(--border);line-height:1;margin-bottom:8px}
+.bug-card h3{font-size:13.5px;font-weight:700;margin-bottom:6px}
+.bug-card p{font-size:12.5px;color:var(--muted);line-height:1.55}
+.bug-card .btype{display:inline-block;margin-top:10px;font-family:var(--font-m);font-size:10px;
+  font-weight:600;padding:2px 8px;border-radius:3px;letter-spacing:.06em}
+.bt-phy{background:#fff8ec;color:var(--warn);border:1px solid #f0d98c}
+.bt-vlan{background:#fceee9;color:var(--accent);border:1px solid #f0b8a0}
+.bug-card .secret{font-family:var(--font-m);font-size:11px;color:var(--fg);
+  background:var(--fg);padding:4px 8px;border-radius:3px;
+  margin-top:10px;cursor:pointer;transition:color .3s;user-select:none}
+.bug-card .secret:hover{color:#c8c0b8}
+
+/* ── CODE ── */
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:6px;
+  padding:14px 16px;font-family:var(--font-m);font-size:12px;line-height:1.75;
+  overflow-x:auto;margin-top:10px}
+.ic{font-family:var(--font-m);font-size:12px;background:var(--code-bg);
+  padding:1px 5px;border-radius:3px;color:var(--accent2)}
+
+/* ── OBJECTIVES ── */
+.obj-list{display:flex;flex-direction:column;gap:12px}
+.obj{display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:start;
+  background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px 18px}
+.obj-n{font-family:var(--font-m);font-size:20px;font-weight:700;color:var(--accent);line-height:1}
+.obj h3{font-size:13.5px;font-weight:700;margin-bottom:4px}
+.obj p{font-size:13px;color:var(--muted);line-height:1.55}
+.obj-layer{display:inline-block;margin-top:8px;font-family:var(--font-m);font-size:10px;
+  font-weight:600;padding:2px 8px;border-radius:3px;letter-spacing:.06em}
+.l-phy{background:#fff8ec;color:var(--warn);border:1px solid #f0d98c}
+.l-dl{background:#e8f5ec;color:var(--accent3);border:1px solid #98d3ae}
+.l-net{background:#e8f0f8;color:var(--accent2);border:1px solid #90b8d8}
+.l-purple{background:#f9f0ff;color:#6c3483;border:1px solid #c39bd3}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px;background:var(--card);
+  border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.tbl thead{background:var(--fg);color:#f5f3ef}
+.tbl th{padding:10px 14px;text-align:left;font-family:var(--font-m);font-size:10px;
+  font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.tbl td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:nth-child(even) td{background:#faf8f5}
+.tbl td:first-child{font-family:var(--font-m);font-weight:600;font-size:12px;color:var(--accent2)}
+
+/* ── RUBRIC ── */
+.rub{width:100%;border-collapse:collapse;font-size:13px;background:var(--card);
+  border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.rub thead{background:var(--accent2);color:#fff}
+.rub th{padding:10px 14px;font-family:var(--font-m);font-size:10px;letter-spacing:.07em;
+  text-transform:uppercase;text-align:center}
+.rub th:first-child{text-align:left}
+.rub td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;
+  vertical-align:top;line-height:1.5;text-align:center;color:var(--muted)}
+.rub td:first-child{text-align:left;font-weight:700;color:var(--fg)}
+.rub tr:nth-child(even) td{background:#faf8f5}
+.rub tr:last-child td{border-bottom:none}
+.sc-a{color:var(--accent3);font-weight:700;font-family:var(--font-m)}
+.sc-b{color:#8a7000;font-weight:700;font-family:var(--font-m)}
+.sc-c{color:#c07020;font-weight:700;font-family:var(--font-m)}
+.sc-d{color:var(--accent);font-weight:700;font-family:var(--font-m)}
+.total-row td{background:var(--fg)!important;color:#f5f3ef!important;
+  font-family:var(--font-m);font-weight:700}
+
+/* ── CONCL ── */
+.concl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.concl-card{background:var(--card);border:1px solid var(--border);border-radius:8px;
+  padding:18px 16px 14px;position:relative;overflow:hidden}
+.concl-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;background:var(--accent)}
+.concl-card.blue::before{background:var(--accent2)}
+.concl-card.green::before{background:var(--accent3)}
+.concl-card.warn::before{background:var(--warn)}
+.concl-card.purple::before{background:#6c3483}
+.concl-icon{font-size:22px;margin-bottom:8px}
+.concl-card h3{font-size:13px;font-weight:700;margin-bottom:5px}
+.concl-card p{font-size:12.5px;color:var(--muted);line-height:1.5}
+
+/* ── PDU VIEWER SIMULATION ── */
+.pdu-frame{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:14px}
+.pdu-header{background:var(--fg);color:#f5f3ef;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.pdu-header span{font-family:var(--font-m);font-size:11px;letter-spacing:.08em}
+.pdu-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block}
+.pdu-tabs{display:flex;border-bottom:1px solid var(--border)}
+.pdu-tab{font-family:var(--font-m);font-size:11px;padding:8px 16px;cursor:pointer;
+  border-bottom:2px solid transparent;color:var(--muted);transition:all .2s;background:none;border-top:none;border-left:none;border-right:none}
+.pdu-tab.active{border-bottom-color:var(--accent2);color:var(--accent2);font-weight:600}
+.pdu-tab:hover:not(.active){color:var(--fg)}
+.pdu-content{padding:16px;display:none}
+.pdu-content.active{display:block}
+.pdu-row{display:grid;grid-template-columns:180px 1fr;gap:8px;padding:6px 0;
+  border-bottom:1px solid var(--border);align-items:start}
+.pdu-row:last-child{border-bottom:none}
+.pdu-field{font-family:var(--font-m);font-size:11px;font-weight:600;color:var(--muted)}
+.pdu-val{font-family:var(--font-m);font-size:11px;color:var(--fg)}
+.pdu-val.highlight{color:var(--accent);font-weight:600}
+.pdu-val.ok{color:var(--accent3);font-weight:600}
+.pdu-val.err{color:var(--accent);font-weight:600}
+.pdu-section{font-family:var(--font-m);font-size:10px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);background:var(--code-bg);
+  padding:4px 8px;border-radius:3px;margin:10px 0 6px;display:block}
+
+/* ── FILTER PILLS ── */
+.filter-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.fpill{font-family:var(--font-m);font-size:11px;font-weight:600;padding:5px 12px;
+  border-radius:20px;border:1px solid var(--border);color:var(--muted);
+  cursor:pointer;transition:all .15s;background:var(--card)}
+.fpill.on{background:var(--fg);color:#f5f3ef;border-color:var(--fg)}
+.fpill:hover:not(.on){background:var(--code-bg)}
+
+/* ── LAYER STACK ── */
+.layer-stack{display:flex;flex-direction:column;gap:4px;margin-top:10px}
+.layer-item{display:grid;grid-template-columns:110px 1fr;align-items:center;gap:12px;
+  padding:8px 12px;border-radius:6px;border:1px solid var(--border);background:var(--card)}
+.layer-num{font-family:var(--font-m);font-size:10px;font-weight:600;letter-spacing:.06em}
+.layer-desc{font-size:12.5px;color:var(--muted)}
+.layer-desc strong{color:var(--fg)}
+.li-7{background:#fdf6ff;border-color:#d7b8f0}.li-7 .layer-num{color:#6c3483}
+.li-4{background:#e8f0f8;border-color:#90b8d8}.li-4 .layer-num{color:var(--accent2)}
+.li-3{background:#e8f0f8;border-color:#90b8d8}.li-3 .layer-num{color:var(--accent2)}
+.li-2{background:#e8f5ec;border-color:#98d3ae}.li-2 .layer-num{color:var(--accent3)}
+.li-1{background:#fff8ec;border-color:#f0d98c}.li-1 .layer-num{color:var(--warn)}
+.li-x{background:#fceee9;border-color:#f0b8a0}.li-x .layer-num{color:var(--accent)}
+
+/* ── FOOTER ── */
+.footer{margin-top:50px;padding:20px 0;border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.footer p{font-family:var(--font-m);font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span>🔴 <b>INCIDENTE ACTIVO</b> — TICKET #NX-2024-0847 — Banco Nexus S.A.</span>
+    <span>⚠ Teléfonos IP sin comunicación inter-sucursal desde las 08:14 hs</span>
+    <span>📞 Afectados: Phone-HQ (ext. 1001) y Phone-Suc (ext. 2001)</span>
+    <span>🔎 Causa raíz: SIN DETERMINAR — equipo SOC asignado</span>
+    <span>🔴 <b>INCIDENTE ACTIVO</b> — TICKET #NX-2024-0847 — Banco Nexus S.A.</span>
+    <span>⚠ Teléfonos IP sin comunicación inter-sucursal desde las 08:14 hs</span>
+    <span>📞 Afectados: Phone-HQ (ext. 1001) y Phone-Suc (ext. 2001)</span>
+    <span>🔎 Causa raíz: SIN DETERMINAR — equipo SOC asignado</span>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="severity">
+    <span class="sev-dot"></span>
+    <span class="sev-label">Severidad P1 · Caso Activo · SOC Banco Nexus</span>
+  </div>
+  <h1>Silencio en<br>la <em>Línea Roja</em></h1>
+  <p>El sistema de telefonía IP del banco más importante del país dejó de funcionar entre sucursales. Los operadores no pueden comunicarse. Tú eres el analista SOC asignado. Tenés que encontrar la causa raíz antes de que abra el mercado.</p>
+  <div class="badges">
+    <span class="badge b-red">P1 — Crítico</span>
+    <span class="badge b-blue">Cisco Packet Tracer</span>
+    <span class="badge b-green">VoIP + Troubleshooting</span>
+    <span class="badge b-warn">Sniffer PT + SCCP</span>
+    <span class="badge b-dark">100 puntos</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ── BRIEFING ── -->
+<div class="section">
+  <div class="sec-hd"><span class="sec-tag">01 — Brief</span><h2>El Incidente</h2></div>
+  <div class="ticket">
+    <div class="ticket-id">TICKET #NX-2024-0847 · Creado: 08:14 hs · Asignado a: Analista SOC — Nivel 2</div>
+    <h3>Descripción del problema reportado</h3>
+    <p>El equipo de operaciones del <strong>Banco Nexus S.A.</strong> reporta que desde las 08:14 hs ningún teléfono IP de la <strong>Sucursal Norte</strong> puede establecer llamadas con los teléfonos de la <strong>Sucursal Sur</strong>. Ambas sucursales cuentan con routers CME que gestionan la telefonía interna.</p>
+    <p style="margin-top:10px;">El área de negocio indica que esta línea de comunicación es <em>crítica</em> para la aprobación de transferencias de alto monto que requieren autorización dual entre gerentes de ambas sucursales.</p>
+    <div class="ticket-footer">
+      <span class="tft tft-red">Impacto: Alto</span>
+      <span class="tft tft-warn">SLA: 2 horas</span>
+      <span class="tft tft-blue">Afectados: 2 extensiones</span>
+    </div>
+  </div>
+  <div class="alert warn">
+    <strong>🎯 Tu misión:</strong> Abrir el archivo <span class="ic">.pkt</span> en Cisco Packet Tracer, reproducir el problema, diagnosticar las fallas capa por capa y aplicar los fixes necesarios. Al finalizar, los dos teléfonos IP deben poder llamarse mutuamente.
+  </div>
+</div>
+
+<!-- ── FALLAS OCULTAS ── -->
+<div class="section">
+  <div class="sec-hd"><span class="sec-tag">02 — Intel</span><h2>Inteligencia del SOC: Fallas Detectadas</h2></div>
+  <div class="alert">
+    <strong>Para el docente:</strong> El laboratorio tiene <strong>2 fallas deliberadas</strong> que los alumnos deben descubrir. No compartir esta sección con los estudiantes — es la hoja de respuestas. Las tarjetas de abajo muestran los síntomas visibles; la causa raíz se revela al hacer hover sobre el texto oscuro.
+  </div>
+  <div class="bug-grid">
+    <div class="bug-card">
+      <div class="bug-num">01</div>
+      <h3>Phone-HQ no se registra en CME</h3>
+      <p>El teléfono de la Sucursal Norte aparece sin extensión en pantalla o queda congelado en <em>"Configuring CM List..."</em>. No recibe IP del pool de voz.</p>
+      <span class="btype bt-vlan">CAPA 2 — VLAN</span>
+      <div class="secret" title="Solución">▓▓▓▓ SOLUCIÓN: En SW-HQ, FastEthernet0/1 tiene 'switchport voice vlan 99'. Debe ser 'switchport voice vlan 10'. La VLAN 99 no existe → el teléfono no recibe tag de voz → DHCP pool VOICE-HQ nunca responde. ▓▓▓▓</div>
+    </div>
+    <div class="bug-card">
+      <div class="bug-num">02</div>
+      <h3>Enlace WAN entre sucursales caído</h3>
+      <p>Aunque Phone-Suc logre registrarse, ninguna llamada inter-sucursal puede establecerse. El router CME-Suc no puede alcanzar al CME-HQ.</p>
+      <span class="btype bt-phy">CAPA 1 — FÍSICA</span>
+      <div class="secret" title="Solución">▓▓▓▓ SOLUCIÓN: En CME-Suc, la interfaz FastEthernet0/1 tiene 'shutdown'. Debe ejecutarse 'no shutdown'. Es el puerto WAN hacia CME-HQ — con la interfaz apagada el enlace físico está down y los dial-peers no pueden alcanzar el CME remoto. ▓▓▓▓</div>
+    </div>
+  </div>
+  <p style="font-size:12px;color:var(--muted);margin-top:10px;font-family:var(--font-m);">💡 Pasa el cursor sobre el texto oscuro de cada tarjeta para revelar la solución (modo docente).</p>
+</div>
+
+<!-- ── OBJETIVOS ── -->
+<div class="section">
+  <div class="sec-hd"><span class="sec-tag">03 — Objetivos</span><h2>¿Qué vas a aprender en este caso?</h2></div>
+  <div class="obj-list">
+    <div class="obj">
+      <span class="obj-n">01</span>
+      <div>
+        <h3>Diagnosticar fallas en la capa física</h3>
+        <p>Identificar interfaces administrativamente apagadas como causa de pérdida de conectividad. Entender que ningún protocolo de capa superior puede funcionar si el medio físico no está operativo.</p>
+        <span class="obj-layer l-phy">Capa 1 — Física</span>
+      </div>
+    </div>
+    <div class="obj">
+      <span class="obj-n">02</span>
+      <div>
+        <h3>Detectar misconfiguraciones de VLAN de voz</h3>
+        <p>Comprender cómo una VLAN incorrecta en el puerto de acceso impide que el teléfono IP reciba su configuración de red. Relacionar la segmentación lógica con el funcionamiento de los servicios de capa superior.</p>
+        <span class="obj-layer l-dl">Capa 2 — Enlace de Datos</span>
+      </div>
+    </div>
+    <div class="obj">
+      <span class="obj-n">03</span>
+      <div>
+        <h3>Aplicar metodología de troubleshooting de abajo hacia arriba</h3>
+        <p>Utilizar el modelo de capas para ordenar la investigación: verificar primero el enlace físico, luego la segmentación lógica y finalmente la señalización de voz. Entender que el orden importa.</p>
+        <span class="obj-layer l-phy">Capa 1 → 2 → Aplicación</span>
+      </div>
+    </div>
+    <div class="obj">
+      <span class="obj-n">04</span>
+      <div>
+        <h3>Verificar configuración de telefonía IP (CME)</h3>
+        <p>Interpretar la relación entre el pool DHCP de voz, la opción 150 y la dirección de registro del CME. Entender por qué los tres deben apuntar a la misma IP para que el teléfono se registre.</p>
+        <span class="obj-layer l-net">Señalización VoIP</span>
+      </div>
+    </div>
+    <div class="obj">
+      <span class="obj-n">05</span>
+      <div>
+        <h3>Capturar y analizar paquetes en modo Simulación</h3>
+        <p>Usar el sniffer integrado de Packet Tracer para interceptar tráfico SCCP (registro de teléfono) y ICMP, leer los PDU Details capa por capa y relacionar cada campo con su función en la red.</p>
+        <span class="obj-layer l-purple">Análisis de Paquetes</span>
+      </div>
+    </div>
+    <div class="obj">
+      <span class="obj-n">06</span>
+      <div>
+        <h3>Redactar un informe de causa raíz (RCA)</h3>
+        <p>Aprender a comunicar técnicamente un incidente: qué falló, por qué falló, cómo se detectó, cómo se corrigió y cómo se previene. Habilidad clave en cualquier equipo de operaciones de red.</p>
+        <span class="obj-layer l-net">Documentación RCA</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAREAS ── -->
+<div class="section">
+  <div class="sec-hd"><span class="sec-tag">04 — Tareas</span><h2>Pasos de la Investigación</h2></div>
+
+  <div class="ticket blue">
+    <div class="ticket-id">TAREA 1 · 15 puntos · Reconocimiento inicial</div>
+    <h3>📋 Levantamiento del estado de la red</h3>
+    <p>Abrí el archivo <span class="ic">.pkt</span>. Antes de tocar cualquier configuración, relevá el estado actual de la red:</p>
+    <ul>
+      <li>¿Qué interfaces están <em>down</em> o <em>administratively down</em>? Ejecutá <span class="ic">show ip interface brief</span> en ambos routers.</li>
+      <li>¿El teléfono de la Sucursal Norte tiene extensión asignada o dice <em>"Configuring..."</em>?</li>
+      <li>¿Los PCs obtienen IP por DHCP? ¿De qué pool?</li>
+      <li>Completá la tabla de estado en tu informe: dispositivo | interfaz | estado | IP obtenida.</li>
+    </ul>
+    <div class="ticket-footer">
+      <span class="tft tft-warn">Capa 1 y 2</span>
+      <span class="tft tft-blue">Diagnóstico</span>
+    </div>
+  </div>
+
+  <div class="ticket">
+    <div class="ticket-id">TAREA 2 · 20 puntos · Análisis de VLAN de voz</div>
+    <h3>🔍 Investigación de la Sucursal Norte — problema de capa 2</h3>
+    <p>El Phone-HQ no se registra en el CME. Seguí esta secuencia de diagnóstico:</p>
+    <ul>
+      <li>En SW-HQ ejecutá: <span class="ic">show vlan brief</span> y <span class="ic">show interfaces FastEthernet0/1 switchport</span></li>
+      <li>¿La "Voice VLAN" del puerto coincide con la VLAN que usa el pool DHCP de voz en el router?</li>
+      <li>¿Qué VLAN debería estar configurada? ¿Por qué causa que el teléfono no obtenga IP si está mal?</li>
+      <li>Explicá en tu informe el mecanismo: cómo el switch señaliza la VLAN de voz al teléfono (protocolo CDP) y qué ocurre si esa VLAN no existe o es incorrecta.</li>
+      <li>Aplicá el fix y verificá que Phone-HQ obtenga extensión.</li>
+    </ul>
+    <div class="ticket-footer">
+      <span class="tft tft-red">Falla #1</span>
+      <span class="tft tft-blue">Capa 2 — VLAN</span>
+    </div>
+  </div>
+
+  <div class="ticket">
+    <div class="ticket-id">TAREA 3 · 20 puntos · Análisis del enlace WAN</div>
+    <h3>🔌 Investigación de la Sucursal Sur — problema de capa 1</h3>
+    <p>Incluso si Phone-HQ se registra, las llamadas inter-sucursal fallan. Investigá el enlace entre routers:</p>
+    <ul>
+      <li>En CME-Suc: <span class="ic">show ip interface brief</span> — ¿cuál es el estado de FastEthernet0/1?</li>
+      <li>¿Podés hacer <span class="ic">ping 10.10.10.1</span> desde CME-Suc? ¿Por qué sí o por qué no?</li>
+      <li>Explicá la diferencia entre un puerto en estado <em>"down"</em> (falla de cable/señal) y <em>"administratively down"</em> (apagado por configuración). ¿Cuál es más fácil de resolver?</li>
+      <li>¿Qué impacto tiene este problema en las rutas estáticas configuradas en CME-Suc?</li>
+      <li>Aplicá el fix y verificá conectividad WAN con ping.</li>
+    </ul>
+    <div class="ticket-footer">
+      <span class="tft tft-red">Falla #2</span>
+      <span class="tft tft-warn">Capa 1 — Física</span>
+    </div>
+  </div>
+
+  <div class="ticket blue">
+    <div class="ticket-id">TAREA 4 · 15 puntos · Verificación de telefonía</div>
+    <h3>📞 Confirmar registro y llamada inter-sucursal</h3>
+    <p>Con ambas fallas corregidas, verificá el sistema completo de telefonía:</p>
+    <ul>
+      <li>En CME-HQ: <span class="ic">show ephone registered</span> — ¿cuántos teléfonos registrados?</li>
+      <li>En CME-Suc: <span class="ic">show ephone registered</span> — ídem.</li>
+      <li>Verificá los dial-peers: <span class="ic">show dial-peer voice summary</span> en ambos routers.</li>
+      <li>Realizá una llamada de Phone-HQ (ext. 1001) a Phone-Suc (ext. 2001). ¿La llamada se establece?</li>
+      <li>Realizá la llamada inversa: de Phone-Suc a Phone-HQ. ¿También funciona?</li>
+      <li>Capturá pantallas del teléfono activo y del <span class="ic">show ephone active</span>.</li>
+    </ul>
+    <div class="ticket-footer">
+      <span class="tft tft-green">Verificación final</span>
+      <span class="tft tft-blue">VoIP</span>
+    </div>
+  </div>
+
+  <div class="ticket green">
+    <div class="ticket-id">TAREA 5 · 30 puntos · Informe RCA (Causa Raíz)</div>
+    <h3>📄 Redacción del Reporte de Causa Raíz</h3>
+    <p>Redactá un informe técnico formal (mínimo 400 palabras) dirigido al área de TI del Banco Nexus con la siguiente estructura:</p>
+    <ul>
+      <li><strong>Resumen ejecutivo:</strong> ¿Qué pasó? ¿Cuánto tiempo duró? ¿Cuál fue el impacto?</li>
+      <li><strong>Causa raíz #1:</strong> Nombre técnico, descripción, capa afectada, síntoma observado, comando que lo detectó, corrección aplicada.</li>
+      <li><strong>Causa raíz #2:</strong> Ídem.</li>
+      <li><strong>Análisis de relación entre capas:</strong> ¿Por qué una falla en capa 2 (VLAN) impide que funcione una aplicación de capa 7 (VoIP)? ¿Y una falla en capa 1?</li>
+      <li><strong>Plan de prevención:</strong> ¿Qué cambios de proceso o monitoreo hubiesen detectado esto antes? (ej: alertas de interfaz down, auditoría de VLAN).</li>
+    </ul>
+    <div class="ticket-footer">
+      <span class="tft tft-green">RCA Report</span>
+      <span class="tft tft-blue">Análisis multicapa</span>
+      <span class="tft tft-warn">400+ palabras</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── SNIFFER PT ── -->
+<div class="section">
+  <div class="sec-hd"><span class="sec-tag">05 — Sniffer</span><h2>Modo Simulación: el Sniffer de Packet Tracer</h2></div>
+
+  <div class="alert purple">
+    <strong>🔬 ¿Qué es el Modo Simulación?</strong> Es el analizador de paquetes integrado en Packet Tracer. Funciona como un Wireshark simplificado: podés interceptar cualquier trama que viaja por la red, ver su contenido capa por capa y seguir el recorrido de cada PDU en tiempo real. No genera archivos <span class="ic">.pcap</span>, pero lo que muestra es equivalente para el análisis educativo.
+  </div>
+
+  <div class="ticket purple">
+    <div class="ticket-id">TAREA BONUS · Captura y análisis de tráfico SCCP + ICMP</div>
+    <h3>🔬 Interceptar el registro del teléfono IP</h3>
+    <p>Seguí estos pasos exactos para usar el sniffer de PT:</p>
+    <ul>
+      <li><strong>Paso 1 —</strong> Hacé clic en el botón <span class="ic">Simulation</span> (parte inferior derecha de PT, ícono de reloj). La barra de tiempo se pone visible.</li>
+      <li><strong>Paso 2 —</strong> En el panel <em>Event List Filters</em>, desactivá <em>Show All</em> y activá solo: <span class="ic">SCCP</span>, <span class="ic">ICMP</span>, <span class="ic">ARP</span> y <span class="ic">UDP</span>.</li>
+      <li><strong>Paso 3 —</strong> Hacé clic en <span class="ic">Auto Capture / Play</span>. Observá los sobres de colores que aparecen en la red — cada uno es un paquete viajando.</li>
+      <li><strong>Paso 4 —</strong> Hacé clic en cualquier sobre para detener la simulación en ese punto. Se abre la ventana <em>PDU Information</em>.</li>
+      <li><strong>Paso 5 —</strong> Explorá las tres pestañas: <span class="ic">OSI Model</span>, <span class="ic">Inbound PDU Details</span>, <span class="ic">Outbound PDU Details</span>.</li>
+    </ul>
+    <p style="margin-top:10px;">Registrá en tu informe: ¿qué protocolos viste circular? ¿Cuándo apareció tráfico SCCP por primera vez? ¿Antes o después de que el teléfono mostrara su extensión?</p>
+    <div class="ticket-footer">
+      <span class="tft tft-purple">Modo Simulación</span>
+      <span class="tft tft-blue">SCCP · ICMP · ARP</span>
+    </div>
+  </div>
+
+  <!-- FILTROS INTERACTIVOS -->
+  <div style="margin-top:20px">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:10px;font-family:var(--font-m);">▶ FILTROS RECOMENDADOS — activá los protocolos relevantes para este caso:</p>
+    <div class="filter-pills">
+      <span class="fpill on" onclick="this.classList.toggle('on')">SCCP</span>
+      <span class="fpill on" onclick="this.classList.toggle('on')">ICMP</span>
+      <span class="fpill on" onclick="this.classList.toggle('on')">ARP</span>
+      <span class="fpill on" onclick="this.classList.toggle('on')">UDP</span>
+      <span class="fpill" onclick="this.classList.toggle('on')">TCP</span>
+      <span class="fpill" onclick="this.classList.toggle('on')">DHCP</span>
+      <span class="fpill" onclick="this.classList.toggle('on')">CDP</span>
+      <span class="fpill" onclick="this.classList.toggle('on')">STP</span>
+    </div>
+    <p style="font-size:11px;color:var(--muted);font-family:var(--font-m);margin-top:6px;">💡 Tip: Demasiados filtros activos genera ruido. Empezá con SCCP + ICMP y sumá los demás según lo que busques.</p>
+  </div>
+
+  <!-- PDU VIEWER SIMULADO -->
+  <div style="margin-top:24px">
+    <p style="font-size:13px;font-weight:700;margin-bottom:10px;">📦 Ejemplo de PDU Information — paquete SCCP (registro de Phone-HQ al CME)</p>
+    <div class="pdu-frame">
+      <div class="pdu-header">
+        <span class="pdu-dot"></span>
+        <span>PDU Information · SW-HQ · FastEthernet0/1 · SCCP — Skinny Registration Request</span>
+      </div>
+      <div class="pdu-tabs">
+        <button class="pdu-tab active" onclick="showTab(event,'osi')">OSI Model</button>
+        <button class="pdu-tab" onclick="showTab(event,'inbound')">Inbound PDU Details</button>
+        <button class="pdu-tab" onclick="showTab(event,'outbound')">Outbound PDU Details</button>
+      </div>
+
+      <!-- OSI TAB -->
+      <div class="pdu-content active" id="tab-osi">
+        <div class="layer-stack">
+          <div class="layer-item li-7">
+            <span class="layer-num">CAPA 7 · APLIC.</span>
+            <span class="layer-desc"><strong>SCCP (Skinny)</strong> — El teléfono envía un mensaje <em>RegisterMessage</em> al CME solicitando registro con su MAC address y el número de extensión deseado.</span>
+          </div>
+          <div class="layer-item li-4">
+            <span class="layer-num">CAPA 4 · TRANSP.</span>
+            <span class="layer-desc"><strong>TCP</strong> — Puerto origen: 49152 (efímero) → Puerto destino: <strong>2000</strong> (puerto CME). La sesión TCP ya está establecida.</span>
+          </div>
+          <div class="layer-item li-3">
+            <span class="layer-num">CAPA 3 · RED</span>
+            <span class="layer-desc"><strong>IP</strong> — Src: <span style="font-family:var(--font-m);color:var(--accent2)">192.168.20.10</span> (IP del teléfono, DHCP pool VOICE) → Dst: <span style="font-family:var(--font-m);color:var(--accent2)">192.168.20.1</span> (CME ip source-address).</span>
+          </div>
+          <div class="layer-item li-2">
+            <span class="layer-num">CAPA 2 · ENLACE</span>
+            <span class="layer-desc"><strong>Ethernet II + 802.1Q tag</strong> — VLAN ID: <span style="font-family:var(--font-m);color:var(--accent3);font-weight:700">10</span> (VLAN de voz). Trama etiquetada con CoS=5 (prioridad de voz). MAC destino: gateway CME-HQ.</span>
+          </div>
+          <div class="layer-item li-1">
+            <span class="layer-num">CAPA 1 · FÍSICA</span>
+            <span class="layer-desc"><strong>FastEthernet 100 Mbps</strong> — Señal eléctrica transmitida por par trenzado Cat5e. Duplex full. Portfast activo en el puerto del switch.</span>
+          </div>
+        </div>
+        <div style="margin-top:12px" class="alert green">
+          <strong>✅ Este es el estado CORRECTO después de aplicar el fix.</strong> Si la VLAN de voz es 99 (falla), en Capa 2 el tag sería VLAN 99 — que no está en el trunk → el paquete es descartado en SW-HQ antes de llegar al router.
+        </div>
+      </div>
+
+      <!-- INBOUND TAB -->
+      <div class="pdu-content" id="tab-inbound">
+        <span class="pdu-section">ETHERNET II + 802.1Q</span>
+        <div class="pdu-row"><span class="pdu-field">Preamble</span><span class="pdu-val">10101010 10101010 10101011</span></div>
+        <div class="pdu-row"><span class="pdu-field">Dest MAC</span><span class="pdu-val highlight">00:1A:2B:3C:4D:01 (CME-HQ Fa0/0)</span></div>
+        <div class="pdu-row"><span class="pdu-field">Src MAC</span><span class="pdu-val">00:AA:BB:CC:DD:10 (Phone-HQ)</span></div>
+        <div class="pdu-row"><span class="pdu-field">802.1Q Tag</span><span class="pdu-val ok">0x8100 — VLAN ID: 10 · CoS: 5 (Voice)</span></div>
+        <div class="pdu-row"><span class="pdu-field">EtherType</span><span class="pdu-val">0x0800 (IPv4)</span></div>
+        <span class="pdu-section">IPV4</span>
+        <div class="pdu-row"><span class="pdu-field">Version / IHL</span><span class="pdu-val">4 / 20 bytes</span></div>
+        <div class="pdu-row"><span class="pdu-field">DSCP</span><span class="pdu-val ok">EF (101110) — Expedited Forwarding, prioridad máxima</span></div>
+        <div class="pdu-row"><span class="pdu-field">Src IP</span><span class="pdu-val">192.168.20.10</span></div>
+        <div class="pdu-row"><span class="pdu-field">Dst IP</span><span class="pdu-val highlight">192.168.20.1 (CME ip source-address)</span></div>
+        <div class="pdu-row"><span class="pdu-field">TTL</span><span class="pdu-val">128</span></div>
+        <span class="pdu-section">TCP</span>
+        <div class="pdu-row"><span class="pdu-field">Src Port</span><span class="pdu-val">49152</span></div>
+        <div class="pdu-row"><span class="pdu-field">Dst Port</span><span class="pdu-val highlight">2000 (SCCP / Skinny)</span></div>
+        <div class="pdu-row"><span class="pdu-field">Flags</span><span class="pdu-val">ACK + PSH</span></div>
+        <span class="pdu-section">SCCP (SKINNY)</span>
+        <div class="pdu-row"><span class="pdu-field">Message ID</span><span class="pdu-val highlight">0x0001 — RegisterMessage</span></div>
+        <div class="pdu-row"><span class="pdu-field">Device Name</span><span class="pdu-val">SEP00AABBCCDD10</span></div>
+        <div class="pdu-row"><span class="pdu-field">Station IP</span><span class="pdu-val">192.168.20.10</span></div>
+        <div class="pdu-row"><span class="pdu-field">Max Streams</span><span class="pdu-val">0</span></div>
+        <span class="pdu-section">FRAME CHECK SEQUENCE</span>
+        <div class="pdu-row"><span class="pdu-field">FCS (CRC-32)</span><span class="pdu-val ok">0xA3F2C1D4 — Válido ✓</span></div>
+      </div>
+
+      <!-- OUTBOUND TAB -->
+      <div class="pdu-content" id="tab-outbound">
+        <div class="alert blue" style="margin-bottom:14px">
+          <strong>Outbound (respuesta CME → Phone-HQ):</strong> El CME procesa el RegisterMessage y responde con un <em>RegisterAckMessage</em> confirmando el registro y asignando la extensión.
+        </div>
+        <span class="pdu-section">SCCP — RESPUESTA CME</span>
+        <div class="pdu-row"><span class="pdu-field">Message ID</span><span class="pdu-val ok">0x0081 — RegisterAckMessage</span></div>
+        <div class="pdu-row"><span class="pdu-field">Keep Alive</span><span class="pdu-val">30 segundos</span></div>
+        <div class="pdu-row"><span class="pdu-field">Secondary Cmgr</span><span class="pdu-val">0.0.0.0 (sin redundancia)</span></div>
+        <span class="pdu-section">ESTADO DEL TELÉFONO DESPUÉS</span>
+        <div class="pdu-row"><span class="pdu-field">Pantalla</span><span class="pdu-val ok">Extensión 1001 visible ✓</span></div>
+        <div class="pdu-row"><span class="pdu-field">Estado CME</span><span class="pdu-val ok">ephone 1 registered ✓</span></div>
+        <div class="pdu-row"><span class="pdu-field">VLAN de voz</span><span class="pdu-val ok">VLAN 10 ✓ (fix aplicado)</span></div>
+        <div style="margin-top:14px" class="alert warn">
+          <strong>⚠ Sin el fix:</strong> Si <span class="ic">voice vlan 99</span> está activa, el teléfono nunca llega a enviar este RegisterMessage — el switch descarta las tramas SCCP antes de que alcancen al router. El PDU Details en ese caso mostraría que el paquete muere en SW-HQ capa 2.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUÉ BUSCAR POR PROTOCOLO -->
+  <div style="margin-top:24px">
+    <p style="font-size:13px;font-weight:700;margin-bottom:12px;">🔎 ¿Qué buscar según el protocolo capturado?</p>
+    <table class="tbl">
+      <thead><tr><th>Protocolo</th><th>Cuándo aparece</th><th>Qué analizás</th><th>Señal de problema</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>ARP</td>
+          <td>Antes de cualquier comunicación IP</td>
+          <td>¿El teléfono busca la MAC del gateway correcto?</td>
+          <td>ARP sin respuesta = VLAN incorrecta o gateway inexistente</td>
+        </tr>
+        <tr>
+          <td>DHCP</td>
+          <td>Al encender el teléfono</td>
+          <td>¿Recibe oferta del pool VOICE? ¿Viene con option 150?</td>
+          <td>DHCP Discover sin Reply = VLAN de voz mal configurada</td>
+        </tr>
+        <tr>
+          <td>SCCP</td>
+          <td>Después de obtener IP</td>
+          <td>RegisterMessage al CME. ¿Llega? ¿Hay RegisterAck?</td>
+          <td>RegisterMessage que no llega al CME = problema capa 2 o 3</td>
+        </tr>
+        <tr>
+          <td>ICMP</td>
+          <td>Al hacer ping manual</td>
+          <td>¿El paquete llega al destino? ¿Cuántos hops?</td>
+          <td>Destination Unreachable = ruta faltante o interfaz down</td>
+        </tr>
+        <tr>
+          <td>CDP</td>
+          <td>Cada 60 segundos</td>
+          <td>¿El switch anuncia la VLAN de voz al teléfono?</td>
+          <td>Sin CDP = teléfono no aprende la VLAN de voz automáticamente</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── PCAP vs PT ── -->
+<div class="section">
+  <div class="sec-hd"><span class="sec-tag">06 — Sniffer vs PCAP</span><h2>Packet Tracer vs Wireshark real: ¿cuál es la diferencia?</h2></div>
+
+  <div class="alert blue">
+    <strong>Contexto profesional:</strong> En un entorno real de producción, usarías Wireshark o <span class="ic">tcpdump</span> para capturar tráfico y exportar archivos <span class="ic">.pcap</span>. Packet Tracer no genera PCAP — pero su modo simulación cubre los mismos conceptos analíticos a nivel educativo.
+  </div>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Capacidad</th>
+        <th>Packet Tracer (Simulación)</th>
+        <th>Wireshark / tcpdump real</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Ver campos de trama Ethernet</td>
+        <td>✅ PDU Details muestra MAC, VLAN, EtherType, FCS</td>
+        <td>✅ Completo, incluyendo bytes crudos en hex</td>
+      </tr>
+      <tr>
+        <td>Ver cabeceras IP y TCP/UDP</td>
+        <td>✅ Visible en Outbound/Inbound PDU Details</td>
+        <td>✅ Completo con flags, checksums, opciones</td>
+      </tr>
+      <tr>
+        <td>Ver protocolo SCCP / SIP</td>
+        <td>✅ SCCP visible (Skinny). SIP no soportado en PT</td>
+        <td>✅ SIP + SDP + RTP completo con decodificación</td>
+      </tr>
+      <tr>
+        <td>Ver audio RTP real</td>
+        <td>❌ PT no simula payload de audio</td>
+        <td>✅ Wireshark puede reproducir el audio capturado</td>
+      </tr>
+      <tr>
+        <td>Exportar archivo .pcap</td>
+        <td>❌ No disponible en PT</td>
+        <td>✅ Formato estándar, abre en cualquier analizador</td>
+      </tr>
+      <tr>
+        <td>Seguir flujo TCP (Follow Stream)</td>
+        <td>❌ No disponible</td>
+        <td>✅ Reconstruye la sesión TCP completa</td>
+      </tr>
+      <tr>
+        <td>Filtros por expresión (BPF)</td>
+        <td>⚠ Solo por protocolo (checkboxes)</td>
+        <td>✅ Filtros complejos: ip.dst==x, tcp.port==2000, etc.</td>
+      </tr>
+      <tr>
+        <td>Ver tráfico en red real de producción</td>
+        <td>❌ Solo red simulada</td>
+        <td>✅ Captura de interfaz real del sistema operativo</td>
+      </tr>
+      <tr>
+        <td>Modelo educativo capa por capa</td>
+        <td>✅ Vista OSI explícita con explicaciones</td>
+        <td>⚠ Requiere interpretación manual del analista</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="concl-card purple">
+      <div class="concl-icon">🧩</div>
+      <h3>¿Cuándo usar PT Simulación?</h3>
+      <p>Para aprender los conceptos: entender qué campo va en qué capa, cómo viaja un paquete y por qué una mala VLAN corta la comunicación. Ideal para esta práctica.</p>
+    </div>
+    <div class="concl-card blue">
+      <div class="concl-icon">🦈</div>
+      <h3>¿Cuándo usar Wireshark + PCAP?</h3>
+      <p>Para troubleshooting en producción, análisis forense, detección de anomalías o cuando necesitás el contenido exacto de los paquetes a nivel de bytes.</p>
+    </div>
+  </div>
+
+  <div class="alert green" style="margin-top:18px">
+    <strong>💡 Próximo nivel:</strong> Si querés capturar tráfico VoIP real con SIP, RTP y exportar <span class="ic">.pcap</span> para analizar en Wireshark, se puede montar un laboratorio con routers virtuales reales (ContainerLab + Asterisk). ¡Consultale a tu docente si quieren hacer esa práctica avanzada!
+  </div>
+</div>
+
+<!-- ── COMANDOS ÚTILES ── -->
+<div class="section">
+  <div class="sec-hd"><span class="sec-tag">07 — Toolkit</span><h2>Comandos del Analista SOC</h2></div>
+  <div class="alert blue">
+    <strong>Cheat-sheet de diagnóstico.</strong> Estos son tus aliados. Usalos en orden — de la capa más baja hacia arriba.
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Comando</th><th>Dispositivo</th><th>¿Qué me dice?</th></tr></thead>
+    <tbody>
+      <tr><td>show ip interface brief</td><td>Router</td><td>Estado de todas las interfaces: up/down/admin down e IPs asignadas</td></tr>
+      <tr><td>show interfaces Fa0/1</td><td>Router</td><td>Detalle físico: errores, velocidad, dúplex, contadores de paquetes</td></tr>
+      <tr><td>show vlan brief</td><td>Switch</td><td>VLANs activas y qué puertos pertenecen a cada una</td></tr>
+      <tr><td>show interfaces Fa0/1 switchport</td><td>Switch</td><td>Modo del puerto, VLAN de acceso y VLAN de voz configurada</td></tr>
+      <tr><td>show interfaces trunk</td><td>Switch</td><td>Puertos en modo trunk y VLANs permitidas en cada trunk</td></tr>
+      <tr><td>show ip route</td><td>Router</td><td>Tabla de enrutamiento: ¿conoce el router cómo llegar a las redes remotas?</td></tr>
+      <tr><td>ping 10.10.10.2</td><td>Router</td><td>Verifica conectividad IP sobre el enlace WAN</td></tr>
+      <tr><td>show ephone registered</td><td>Router (CME)</td><td>Lista de teléfonos IP registrados en el CME con su extensión</td></tr>
+      <tr><td>show telephony-service</td><td>Router (CME)</td><td>Configuración del CME: IP source-address, max-ephones, auto-assign</td></tr>
+      <tr><td>show dial-peer voice summary</td><td>Router (CME)</td><td>Estado de los dial-peers: destino, session target, estado up/down</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── RÚBRICA ── -->
+<div class="section">
+  <div class="sec-hd"><span class="sec-tag">08 — Evaluación</span><h2>Rúbrica del Caso SOC</h2></div>
+  <table class="rub">
+    <thead>
+      <tr>
+        <th style="width:26%">Criterio</th>
+        <th>Excelente<br><span style="font-size:9px;opacity:.8">100%</span></th>
+        <th>Bueno<br><span style="font-size:9px;opacity:.8">75%</span></th>
+        <th>Regular<br><span style="font-size:9px;opacity:.8">50%</span></th>
+        <th>Insuficiente<br><span style="font-size:9px;opacity:.8">25%</span></th>
+        <th style="width:7%">Pts</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>T1 · Relevamiento inicial del estado de red</td>
+        <td class="sc-a">Tabla completa con estado de todas las interfaces, IPs y estado de teléfonos. Usa show commands correctos.</td>
+        <td class="sc-b">Tabla incompleta pero identifica los dispositivos clave con problema.</td>
+        <td class="sc-c">Detecta algún síntoma pero sin usar comandos de diagnóstico formales.</td>
+        <td class="sc-d">No realiza relevamiento sistemático o no documenta resultados.</td>
+        <td><strong>15</strong></td>
+      </tr>
+      <tr>
+        <td>T2 · Diagnóstico y fix falla VLAN de voz</td>
+        <td class="sc-a">Identifica exactamente la VLAN 99 incorrecta, explica el mecanismo CDP + VLAN de voz, aplica corrección y verifica registro del teléfono.</td>
+        <td class="sc-b">Encuentra la falla y la corrige pero la explicación del mecanismo es superficial.</td>
+        <td class="sc-c">Corrige por ensayo-error sin explicar la causa o el mecanismo.</td>
+        <td class="sc-d">No detecta la falla de VLAN o no logra que Phone-HQ se registre.</td>
+        <td><strong>20</strong></td>
+      </tr>
+      <tr>
+        <td>T3 · Diagnóstico y fix interfaz WAN apagada</td>
+        <td class="sc-a">Identifica Fa0/1 en admin-down, distingue admin-down de down, explica el impacto en rutas estáticas, aplica no shutdown y verifica ping WAN.</td>
+        <td class="sc-b">Detecta y corrige la interfaz pero no explica la diferencia down vs admin-down.</td>
+        <td class="sc-c">Activa la interfaz pero no verifica la conectividad WAN ni el impacto en rutas.</td>
+        <td class="sc-d">No encuentra la interfaz apagada o no logra restablecer el enlace WAN.</td>
+        <td><strong>20</strong></td>
+      </tr>
+      <tr>
+        <td>T4 · Verificación de llamada inter-sucursal</td>
+        <td class="sc-a">Muestra show ephone registered en ambos CME, verifica dial-peers, realiza llamada bidireccional exitosa con captura de pantalla.</td>
+        <td class="sc-b">Verifica registro y llama en un sentido; falta la verificación del sentido inverso.</td>
+        <td class="sc-c">La llamada funciona pero sin uso de comandos de verificación.</td>
+        <td class="sc-d">La llamada no se establece o no documenta la verificación.</td>
+        <td><strong>15</strong></td>
+      </tr>
+      <tr>
+        <td>T5 · Informe RCA</td>
+        <td class="sc-a">Informe completo (+400 palabras), estructura clara, análisis multicapa preciso, plan de prevención concreto y redacción técnica profesional.</td>
+        <td class="sc-b">Informe completo pero le falta profundidad en el análisis multicapa o el plan de prevención.</td>
+        <td class="sc-c">Informe incompleto (menos de 400 palabras) o le faltan secciones requeridas.</td>
+        <td class="sc-d">Informe ausente, muy corto o sin análisis técnico real.</td>
+        <td><strong>30</strong></td>
+      </tr>
+      <tr class="total-row">
+        <td colspan="5" style="text-align:right;padding-right:20px;font-size:12px;letter-spacing:.05em">TOTAL</td>
+        <td>100</td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="margin-top:16px">
+    <div class="alert" style="margin-bottom:0">
+      <strong>Escala:</strong> &nbsp;
+      90–100 → Excelente (10) &nbsp;·&nbsp;
+      75–89 → Muy bueno (8–9) &nbsp;·&nbsp;
+      60–74 → Bueno (7) &nbsp;·&nbsp;
+      40–59 → Regular (6) &nbsp;·&nbsp;
+      &lt;40 → Insuficiente
+    </div>
+  </div>
+</div>
+
+<!-- ── CONCLUSIONES LÚDICAS ── -->
+<div class="section">
+  <div class="sec-hd"><span class="sec-tag">09 — Lecciones</span><h2>Lo que te lleva este caso</h2></div>
+  <div class="concl-grid">
+    <div class="concl-card">
+      <div class="concl-icon">🔌</div>
+      <h3>Sin capa 1, no hay nada</h3>
+      <p>Una interfaz apagada detiene todo: no hay trama, no hay paquete, no hay llamada. La capa física es la base de todo el edificio.</p>
+    </div>
+    <div class="concl-card blue">
+      <div class="concl-icon">🏷️</div>
+      <h3>Una VLAN mal escrita vale mil dólares</h3>
+      <p>Un número equivocado en la VLAN de voz deja sin extensión a toda una sucursal. Los detalles en capa 2 tienen consecuencias en la aplicación.</p>
+    </div>
+    <div class="concl-card green">
+      <div class="concl-icon">🔎</div>
+      <h3>El orden del diagnóstico importa</h3>
+      <p>Siempre de abajo hacia arriba: primero verificá el cable y el puerto, después la VLAN, después el IP, después la aplicación. Saltear capas genera confusión.</p>
+    </div>
+    <div class="concl-card warn">
+      <div class="concl-icon">📋</div>
+      <h3>Documentar es parte del trabajo</h3>
+      <p>Un incidente sin RCA es un incidente que va a volver. El informe de causa raíz protege al banco y a vos como profesional.</p>
+    </div>
+    <div class="concl-card purple">
+      <div class="concl-icon">🔬</div>
+      <h3>Los paquetes no mienten</h3>
+      <p>El modo simulación no engaña: si el SCCP RegisterMessage no llega al CME, hay algo que lo bloquea en alguna capa. El sniffer te dice exactamente dónde murió.</p>
+    </div>
+    <div class="concl-card blue">
+      <div class="concl-icon">🛡️</div>
+      <h3>Pensar como el atacante… o como el SOC</h3>
+      <p>El troubleshooting y la seguridad comparten la misma lógica: seguir la evidencia, no asumir, documentar cada paso, verificar la solución.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── ENTREGABLES ── -->
+<div class="section">
+  <div class="sec-hd"><span class="sec-tag">10 — Entrega</span><h2>¿Qué tenés que entregar?</h2></div>
+  <table class="tbl">
+    <thead><tr><th>#</th><th>Entregable</th><th>Formato</th><th>Requisito mínimo</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Archivo de simulación resuelto</td><td>.pkt</td><td>Ambas fallas corregidas, llamada inter-sucursal funcionando</td></tr>
+      <tr><td>2</td><td>Capturas de diagnóstico + PDU Details</td><td>PDF / DOCX</td><td>Screenshots de cada show command, del PDU del paquete SCCP y del teléfono con llamada activa</td></tr>
+      <tr><td>3</td><td>Informe RCA</td><td>PDF</td><td>Estructura completa con las 2 causas raíz, análisis multicapa y plan de prevención</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="container">
+  <div class="footer">
+    <div>
+      <p>Caso SOC — Banco Nexus S.A. · Telefonía IP · Troubleshooting multicapa</p>
+      <p style="margin-top:4px;">Cisco Packet Tracer · VoIP CME · Sniffer PDU · Capa Física + Enlace de Datos</p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <span class="badge b-red" style="font-size:10px">P1 Crítico</span>
+      <span class="badge b-warn" style="font-size:10px">Sniffer</span>
+      <span class="badge b-blue" style="font-size:10px">100 pts</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(e, id) {
+  document.querySelectorAll('.pdu-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.pdu-content').forEach(c => c.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+</script>
+
+</body>
+</html>

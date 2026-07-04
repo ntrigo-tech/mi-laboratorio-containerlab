@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SOC — Incidente Crítico: Servicio Web Caído</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --fg: #1a1a18;
+    --muted: #6b6b65;
+    --accent: #c0392b;
+    --accent-dark: #922b21;
+    --accent-light: #fdedec;
+    --green: #1a5c38;
+    --green-light: #eafaf1;
+    --amber: #7d5a00;
+    --amber-light: #fffbeb;
+    --blue: #1a3a6b;
+    --blue-light: #eaf0fb;
+    --border: #d8d8d4;
+    --card: #ffffff;
+    --font-head: 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-head);
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .ticker-wrap {
+    background: var(--accent);
+    color: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 8px 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+  .ticker-inner {
+    display: inline-block;
+    animation: ticker 28s linear infinite;
+  }
+  @keyframes ticker {
+    0% { transform: translateX(100vw); }
+    100% { transform: translateX(-100%); }
+  }
+
+  .hero {
+    background: var(--fg);
+    color: #fff;
+    padding: 40px 32px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: rgba(192,57,43,0.18);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    padding: 4px 12px;
+    border-radius: 3px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-size: clamp(24px, 5vw, 38px);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-sub { font-size: 14px; color: #bdbdbd; font-family: var(--font-mono); }
+  .hero-meta { display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap; }
+  .hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .hero-meta-item .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #888; font-family: var(--font-mono); }
+  .hero-meta-item .value { font-size: 13px; font-weight: 600; color: #fff; }
+
+  .ticket {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--accent);
+    border-radius: 6px;
+    padding: 24px 28px;
+    margin: 0 24px;
+    position: relative;
+    transform: translateY(-20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.09);
+    animation: slideUp 0.5s ease both;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(-20px); }
+  }
+  .ticket-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .ticket-id {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+    background: var(--accent-light); color: var(--accent-dark);
+    padding: 4px 10px; border-radius: 4px;
+  }
+  .ticket-severity {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+    background: var(--accent); color: #fff;
+    padding: 3px 10px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+  .ticket-body { font-size: 14px; color: var(--fg); line-height: 1.7; border-top: 1px solid var(--border); padding-top: 14px; font-family: var(--font-mono); }
+  .ticket-body .field { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; }
+  .ticket-body .val { color: var(--fg); font-size: 13px; margin-bottom: 10px; margin-left: 4px; }
+  .ticket-body .val.critical { color: var(--accent); font-weight: 700; }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px 60px; }
+
+  .section { margin-bottom: 40px; animation: fadeIn 0.4s ease both; }
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.10s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.20s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .section-label { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 8px; }
+  .section-title { font-size: 22px; font-weight: 800; color: var(--fg); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 16px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; }
+  .card-icon { font-size: 22px; margin-bottom: 8px; }
+  .card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  .obj-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .obj-item { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; }
+  .obj-num { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--accent); background: var(--accent-light); padding: 2px 8px; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+  .obj-text { font-size: 14px; line-height: 1.55; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 14px; background: var(--card); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  th { background: var(--fg); color: #fff; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; padding: 10px 14px; text-align: left; font-weight: 600; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-family: var(--font-mono); font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: var(--bg); }
+  td.fault { color: var(--accent); font-weight: 700; }
+
+  .code-block { background: #1e1e1e; border-radius: 8px; padding: 18px 20px; margin: 10px 0; overflow-x: auto; }
+  .code-block pre { font-family: var(--font-mono); font-size: 12px; color: #d4d4d4; line-height: 1.7; }
+  .code-block .cmd { color: #9cdcfe; }
+  .code-block .comment { color: #6a9955; }
+  .code-label { font-family: var(--font-mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+
+  .task-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 18px; overflow: hidden; }
+  .task-header { display: flex; align-items: center; gap: 14px; padding: 16px 22px; border-bottom: 1px solid var(--border); background: var(--bg); }
+  .task-num { font-family: var(--font-mono); font-size: 11px; font-weight: 700; background: var(--accent); color: #fff; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; flex-shrink: 0; }
+  .task-title { font-size: 15px; font-weight: 700; }
+  .task-pts { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: var(--muted); flex-shrink: 0; }
+  .task-body { padding: 20px 22px; }
+  .task-body p { font-size: 14px; margin-bottom: 12px; line-height: 1.6; }
+  .task-body ul { padding-left: 22px; }
+  .task-body li { font-size: 13px; margin-bottom: 6px; line-height: 1.55; }
+
+  .hint-box { background: var(--amber-light); border: 1px solid #e9c46a; border-left: 4px solid var(--amber); border-radius: 6px; padding: 14px 18px; margin: 14px 0; font-size: 13px; }
+  .hint-box .hint-label { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--amber); margin-bottom: 6px; }
+  .hint-box p { color: var(--fg); line-height: 1.55; }
+
+  .answer-card { background: var(--green-light); border: 1px solid #a9dfbf; border-left: 4px solid var(--green); border-radius: 8px; padding: 0; margin-top: 16px; overflow: hidden; }
+  .answer-toggle { width: 100%; background: none; border: none; cursor: pointer; padding: 13px 18px; text-align: left; display: flex; align-items: center; gap: 10px; font-family: var(--font-head); font-size: 13px; font-weight: 700; color: var(--green); }
+  .answer-toggle .arrow { transition: transform 0.25s; font-size: 12px; }
+  .answer-toggle.open .arrow { transform: rotate(90deg); }
+  .answer-body { display: none; padding: 0 18px 16px; font-size: 13px; line-height: 1.6; color: var(--fg); }
+  .answer-body.visible { display: block; }
+
+  .capa-badge { display: inline-block; font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 9px; border-radius: 4px; margin-right: 6px; }
+  .capa-1 { background: #fde8e8; color: #922b21; }
+  .capa-2 { background: #e8f4fd; color: #1a3a6b; }
+  .capa-3 { background: #e8fdf0; color: #1a5c38; }
+
+  .rubric-table th { background: var(--accent-dark); }
+  .rubric-table tr.total td { background: var(--fg); color: #fff; font-weight: 700; }
+
+  .deliverable-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+  .deliverable-item { display: flex; gap: 14px; align-items: flex-start; background: var(--blue-light); border: 1px solid #b3cde8; border-radius: 8px; padding: 13px 18px; }
+  .deliverable-icon { font-size: 20px; flex-shrink: 0; }
+  .deliverable-text { font-size: 14px; line-height: 1.55; }
+  .deliverable-text strong { display: block; font-weight: 700; font-size: 13px; margin-bottom: 2px; color: var(--blue); }
+
+  .conclusion-block { background: var(--fg); color: #fff; border-radius: 10px; padding: 28px; }
+  .conclusion-block h3 { font-size: 18px; font-weight: 800; margin-bottom: 14px; }
+  .conclusion-block p { font-size: 14px; color: #bbb; line-height: 1.7; margin-bottom: 10px; }
+  .conclusion-block p:last-child { margin-bottom: 0; }
+  .conclusion-block em { color: #f39c12; font-style: normal; font-weight: 600; }
+
+  /* ── TOPOLOGY SVG CONTAINER ── */
+  .topo-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 16px 20px;
+    margin-top: 20px;
+    overflow-x: auto;
+  }
+  .topo-wrap svg {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+  }
+
+  footer { text-align: center; padding: 28px 24px 40px; font-family: var(--font-mono); font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <span class="ticker-inner">
+    🔴 INCIDENTE CRÍTICO — INC-2024-0847 — Servicio web inaccesible — Usuarios afectados: todos — SOC escaló a Nivel 2 — Tiempo sin servicio: 00:47 min — Ingeniero de turno notificado — Se requiere intervención inmediata &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🔴 INCIDENTE CRÍTICO — INC-2024-0847 — Servicio web inaccesible — Usuarios afectados: todos — SOC escaló a Nivel 2 — Tiempo sin servicio: 00:47 min — Ingeniero de turno notificado — Se requiere intervención inmediata
+  </span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🛡 Telecomunicaciones B — Práctica de Laboratorio</div>
+  <h1>Incidente SOC — <span>Servicio Web<br/>No Disponible</span></h1>
+  <p class="hero-sub">INC-2024-0847 · Severidad: CRÍTICA · Nivel: 2 · Estado: EN INVESTIGACIÓN</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><span class="label">Plataforma</span><span class="value">Cisco Packet Tracer</span></div>
+    <div class="hero-meta-item"><span class="label">Duración estimada</span><span class="value">60–80 min</span></div>
+    <div class="hero-meta-item"><span class="label">Modalidad</span><span class="value">Individual / Parejas</span></div>
+    <div class="hero-meta-item"><span class="label">Puntos totales</span><span class="value">100 pts</span></div>
+  </div>
+</div>
+
+<!-- TICKET SOC -->
+<div class="wrap" style="padding-top:0;">
+<div class="ticket">
+  <div class="ticket-header">
+    <span class="ticket-id">INC-2024-0847</span>
+    <span class="ticket-severity">🔴 CRÍTICO</span>
+  </div>
+  <div class="ticket-body">
+    <div class="field">Reportado por</div>
+    <div class="val">Mesa de Ayuda — Usuario "mgarcia@empresa.local" — 09:12 hs</div>
+    <div class="field">Impacto</div>
+    <div class="val critical">Todos los usuarios de la red interna no pueden acceder al sitio web corporativo www.empresa.local</div>
+    <div class="field">Síntoma principal</div>
+    <div class="val">El navegador muestra "Este sitio no está disponible". El DNS tampoco resuelve el nombre del servidor.</div>
+    <div class="field">Acción requerida</div>
+    <div class="val">El ingeniero de soporte de turno debe identificar la causa raíz y restaurar el servicio. Tiempo máximo: 90 minutos.</div>
+  </div>
+</div>
+
+<!-- SECCIÓN 01: CONTEXTO -->
+<div class="section">
+  <div class="section-label">01 — Contexto</div>
+  <div class="section-title">¿Qué es lo que está pasando?</div>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:16px;">La empresa <strong style="color:var(--fg)">Empresa Local S.A.</strong> tiene una red interna con tres puestos de trabajo, un router de borde y dos servidores: uno web y uno DNS. Esta mañana, ningún usuario puede acceder al sitio web corporativo. El equipo de SOC escaló el incidente a tu equipo.</p>
+  <div class="card-grid">
+    <div class="card"><div class="card-icon">🖥️</div><h4>Red interna</h4><p>3 PCs conectadas a un switch central, con IPs estáticas en la red 192.168.10.0/24.</p></div>
+    <div class="card"><div class="card-icon">🌐</div><h4>Servidor Web</h4><p>SRV-WEB aloja el sitio <code style="font-family:var(--font-mono);font-size:12px;">www.empresa.local</code> en la IP 192.168.10.100.</p></div>
+    <div class="card"><div class="card-icon">🔍</div><h4>Servidor DNS</h4><p>SRV-DNS resuelve el nombre del sitio. Dirección: 192.168.10.200.</p></div>
+    <div class="card"><div class="card-icon">🔌</div><h4>Router de borde</h4><p>R-BORDE conecta la LAN. Es el gateway de los equipos internos.</p></div>
+  </div>
+</div>
+
+<!-- SECCIÓN 02: TOPOLOGÍA CON SVG -->
+<div class="section">
+  <div class="section-label">02 — Topología</div>
+  <div class="section-title">Mapa de red y plan de direccionamiento</div>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:4px;">Todos los dispositivos pertenecen a la red <strong style="font-family:var(--font-mono);color:var(--fg)">192.168.10.0/24</strong>. El gateway es el router R-BORDE (192.168.10.1).</p>
+
+  <!-- SVG TOPOLOGY DIAGRAM -->
+  <div class="topo-wrap">
+    <svg viewBox="0 0 780 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:780px;font-family:'Space Grotesk',sans-serif;">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#aaa"/>
+        </marker>
+        <!-- drop shadow filter -->
+        <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000018"/>
+        </filter>
+      </defs>
+
+      <!-- ══ BACKGROUND ZONES ══ -->
+      <!-- LAN zone -->
+      <rect x="10" y="10" width="755" height="400" rx="14" fill="#f0f4f8" stroke="#d0d8e4" stroke-width="1.5"/>
+      <text x="28" y="32" font-size="10" font-weight="700" fill="#7b8fa6" letter-spacing="1" font-family="'JetBrains Mono',monospace">RED LAN — 192.168.10.0/24</text>
+
+      <!-- Servers zone -->
+      <rect x="530" y="30" width="220" height="370" rx="10" fill="#f5eeff" stroke="#c9aff0" stroke-width="1.2" stroke-dasharray="5,3"/>
+      <text x="548" y="52" font-size="9" font-weight="700" fill="#7c3aed" letter-spacing="1" font-family="'JetBrains Mono',monospace">SERVIDORES</text>
+
+      <!-- ══ CABLE LINES ══ -->
+      <!-- R-BORDE → SW-CORE -->
+      <line x1="200" y1="210" x2="310" y2="210" stroke="#2ecc71" stroke-width="2.5"/>
+      <text x="240" y="202" font-size="9" fill="#1a5c38" font-weight="600" font-family="'JetBrains Mono',monospace">Gi0/0</text>
+      <text x="240" y="222" font-size="9" fill="#1a5c38" font-family="'JetBrains Mono',monospace">Gi0/1</text>
+
+      <!-- SW-CORE → PC-Soporte -->
+      <line x1="390" y1="178" x2="390" y2="110" stroke="#3498db" stroke-width="2"/>
+      <text x="395" y="150" font-size="9" fill="#1a3a6b" font-family="'JetBrains Mono',monospace">Fa0/1</text>
+
+      <!-- SW-CORE → PC-Admin -->
+      <line x1="390" y1="210" x2="500" y2="210" stroke="#3498db" stroke-width="2"/>
+      <text x="430" y="204" font-size="9" fill="#1a3a6b" font-family="'JetBrains Mono',monospace">Fa0/2</text>
+
+      <!-- SW-CORE → PC-RRHH -->
+      <line x1="390" y1="242" x2="390" y2="310" stroke="#3498db" stroke-width="2"/>
+      <text x="395" y="285" font-size="9" fill="#1a3a6b" font-family="'JetBrains Mono',monospace">Fa0/3</text>
+
+      <!-- SW-CORE → SRV-WEB (FAULT - dashed red) -->
+      <line x1="460" y1="195" x2="540" y2="135" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="6,4"/>
+      <text x="474" y="158" font-size="9" fill="#c0392b" font-weight="700" font-family="'JetBrains Mono',monospace">Fa0/10</text>
+
+      <!-- SW-CORE → SRV-DNS -->
+      <line x1="460" y1="225" x2="540" y2="295" stroke="#2ecc71" stroke-width="2"/>
+      <text x="474" y="278" font-size="9" fill="#1a5c38" font-family="'JetBrains Mono',monospace">Fa0/11</text>
+
+      <!-- ══ ROUTER R-BORDE ══ -->
+      <g filter="url(#shadow)">
+        <rect x="60" y="175" width="140" height="70" rx="10" fill="#1a3a6b" stroke="#3498db" stroke-width="2"/>
+      </g>
+      <!-- router icon -->
+      <circle cx="90" cy="210" r="16" fill="none" stroke="#3498db" stroke-width="2"/>
+      <line x1="74" y1="210" x2="106" y2="210" stroke="#3498db" stroke-width="1.5"/>
+      <line x1="90" y1="194" x2="90" y2="226" stroke="#3498db" stroke-width="1.5"/>
+      <path d="M80,200 Q90,193 100,200" fill="none" stroke="#3498db" stroke-width="1.2"/>
+      <path d="M80,220 Q90,227 100,220" fill="none" stroke="#3498db" stroke-width="1.2"/>
+      <text x="113" y="206" font-size="11" font-weight="700" fill="#fff">R-BORDE</text>
+      <text x="113" y="220" font-size="9" fill="#9cdcfe" font-family="'JetBrains Mono',monospace">192.168.10.1</text>
+      <text x="113" y="233" font-size="8" fill="#888" font-family="'JetBrains Mono',monospace">Cisco 2911</text>
+      <!-- fault badge on router -->
+      <rect x="63" y="163" width="80" height="16" rx="4" fill="#f39c12"/>
+      <text x="69" y="174" font-size="9" font-weight="700" fill="#fff" font-family="'JetBrains Mono',monospace">⚠ FALLA 2</text>
+
+      <!-- ══ SWITCH SW-CORE ══ -->
+      <g filter="url(#shadow)">
+        <rect x="312" y="185" width="148" height="50" rx="8" fill="#1e5c38" stroke="#2ecc71" stroke-width="2"/>
+      </g>
+      <!-- switch icon: stacked lines -->
+      <rect x="322" y="198" width="30" height="5" rx="2" fill="#2ecc71"/>
+      <rect x="322" y="207" width="30" height="5" rx="2" fill="#2ecc71"/>
+      <rect x="322" y="216" width="30" height="5" rx="2" fill="#2ecc71"/>
+      <text x="360" y="205" font-size="11" font-weight="700" fill="#fff">SW-CORE</text>
+      <text x="360" y="220" font-size="9" fill="#a9dfbf" font-family="'JetBrains Mono',monospace">Cisco 2960</text>
+
+      <!-- ══ PC-SOPORTE ══ -->
+      <g filter="url(#shadow)">
+        <rect x="340" y="50" width="110" height="55" rx="8" fill="#fff" stroke="#3498db" stroke-width="1.5"/>
+      </g>
+      <text x="350" y="70" font-size="18">🖥️</text>
+      <text x="375" y="70" font-size="11" font-weight="700" fill="#1a1a18">PC-Soporte</text>
+      <text x="355" y="85" font-size="9" fill="#6b6b65" font-family="'JetBrains Mono',monospace">192.168.10.10</text>
+      <text x="355" y="98" font-size="8" fill="#999" font-family="'JetBrains Mono',monospace">Fa0 · GW .1</text>
+
+      <!-- ══ PC-ADMIN ══ -->
+      <g filter="url(#shadow)">
+        <rect x="502" y="183" width="110" height="55" rx="8" fill="#fff" stroke="#3498db" stroke-width="1.5"/>
+      </g>
+      <text x="512" y="203" font-size="18">🖥️</text>
+      <text x="537" y="203" font-size="11" font-weight="700" fill="#1a1a18">PC-Admin</text>
+      <text x="515" y="218" font-size="9" fill="#6b6b65" font-family="'JetBrains Mono',monospace">192.168.10.20</text>
+      <text x="515" y="231" font-size="8" fill="#999" font-family="'JetBrains Mono',monospace">Fa0 · GW .1</text>
+
+      <!-- ══ PC-RRHH ══ -->
+      <g filter="url(#shadow)">
+        <rect x="340" y="315" width="110" height="55" rx="8" fill="#fff" stroke="#3498db" stroke-width="1.5"/>
+      </g>
+      <text x="350" y="335" font-size="18">🖥️</text>
+      <text x="375" y="335" font-size="11" font-weight="700" fill="#1a1a18">PC-RRHH</text>
+      <text x="355" y="350" font-size="9" fill="#6b6b65" font-family="'JetBrains Mono',monospace">192.168.10.30</text>
+      <text x="355" y="363" font-size="8" fill="#999" font-family="'JetBrains Mono',monospace">Fa0 · GW .1</text>
+
+      <!-- ══ SRV-WEB ══ -->
+      <g filter="url(#shadow)">
+        <rect x="544" y="60" width="140" height="65" rx="8" fill="#fff" stroke="#c0392b" stroke-width="2.5"/>
+      </g>
+      <!-- fault overlay -->
+      <rect x="544" y="60" width="140" height="65" rx="8" fill="#c0392b" fill-opacity="0.06"/>
+      <text x="554" y="82" font-size="18">🌐</text>
+      <text x="582" y="82" font-size="11" font-weight="700" fill="#922b21">SRV-WEB</text>
+      <text x="556" y="97" font-size="9" fill="#6b6b65" font-family="'JetBrains Mono',monospace">192.168.10.100</text>
+      <text x="556" y="110" font-size="8" fill="#999" font-family="'JetBrains Mono',monospace">www.empresa.local</text>
+      <!-- fault banner on SRV-WEB -->
+      <rect x="548" y="122" width="130" height="16" rx="4" fill="#c0392b"/>
+      <text x="572" y="133" font-size="9" font-weight="700" fill="#fff" font-family="'JetBrains Mono',monospace">⚠ FALLA 1 — PUERTO</text>
+
+      <!-- ══ SRV-DNS ══ -->
+      <g filter="url(#shadow)">
+        <rect x="544" y="260" width="140" height="65" rx="8" fill="#fff" stroke="#7c3aed" stroke-width="1.5"/>
+      </g>
+      <text x="554" y="282" font-size="18">🔍</text>
+      <text x="582" y="282" font-size="11" font-weight="700" fill="#1a1a18">SRV-DNS</text>
+      <text x="556" y="297" font-size="9" fill="#6b6b65" font-family="'JetBrains Mono',monospace">192.168.10.200</text>
+      <text x="556" y="310" font-size="8" fill="#999" font-family="'JetBrains Mono',monospace">empresa.local zone</text>
+      <rect x="548" y="322" width="130" height="14" rx="4" fill="#2ecc71" fill-opacity="0.25"/>
+      <text x="572" y="332" font-size="8" font-weight="700" fill="#1a5c38" font-family="'JetBrains Mono',monospace">✓ OPERATIVO</text>
+
+      <!-- ══ LEGEND ══ -->
+      <rect x="28" y="360" width="270" height="38" rx="6" fill="#fff" stroke="#d8d8d4" stroke-width="1"/>
+      <line x1="40" y1="374" x2="65" y2="374" stroke="#2ecc71" stroke-width="2.5"/>
+      <text x="70" y="378" font-size="9" fill="#444" font-family="'JetBrains Mono',monospace">Enlace activo</text>
+      <line x1="140" y1="374" x2="165" y2="374" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="5,3"/>
+      <text x="170" y="378" font-size="9" fill="#c0392b" font-weight="700" font-family="'JetBrains Mono',monospace">Enlace caído (FALLA)</text>
+      <line x1="40" y1="391" x2="65" y2="391" stroke="#3498db" stroke-width="2"/>
+      <text x="70" y="395" font-size="9" fill="#444" font-family="'JetBrains Mono',monospace">Enlace cliente–switch</text>
+    </svg>
+  </div>
+
+  <!-- IP TABLE -->
+  <table style="margin-top:18px;">
+    <thead>
+      <tr>
+        <th>Dispositivo</th>
+        <th>Rol</th>
+        <th>IP</th>
+        <th>Puerto Switch</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>R-BORDE</strong></td><td>Router / Gateway</td><td>192.168.10.1</td><td>Gi0/1 (uplink)</td><td>🟢 Activo</td></tr>
+      <tr><td><strong>PC-Soporte</strong></td><td>Estación de trabajo</td><td>192.168.10.10</td><td>Fa0/1</td><td>🟢 Activo</td></tr>
+      <tr><td><strong>PC-Admin</strong></td><td>Estación de trabajo</td><td>192.168.10.20</td><td>Fa0/2</td><td>🟢 Activo</td></tr>
+      <tr><td><strong>PC-RRHH</strong></td><td>Estación de trabajo</td><td>192.168.10.30</td><td>Fa0/3</td><td>🟢 Activo</td></tr>
+      <tr><td><strong>SRV-WEB</strong></td><td>Servidor HTTP</td><td>192.168.10.100</td><td>Fa0/10</td><td class="fault">⚠ FALLA 1 — shutdown</td></tr>
+      <tr><td><strong>SRV-DNS</strong></td><td>Servidor DNS</td><td>192.168.10.200</td><td>Fa0/11</td><td>🟢 Activo</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECCIÓN 03: OBJETIVOS -->
+<div class="section">
+  <div class="section-label">03 — Objetivos</div>
+  <div class="section-title">¿Qué vas a aprender?</div>
+  <div class="obj-list">
+    <div class="obj-item"><span class="obj-num">O1</span><span class="obj-text">Identificar el estado de los puertos de un switch mediante comandos de verificación de capa 2.</span></div>
+    <div class="obj-item"><span class="obj-num">O2</span><span class="obj-text">Distinguir entre medios de transmisión guiados (cobre) y su impacto en la conectividad a nivel físico.</span></div>
+    <div class="obj-item"><span class="obj-num">O3</span><span class="obj-text">Verificar el alcance de la red local usando <code style="font-family:var(--font-mono)">ping</code> como herramienta de diagnóstico.</span></div>
+    <div class="obj-item"><span class="obj-num">O4</span><span class="obj-text">Comprender cómo una trama de datos (capa 2) necesita un enlace físico activo (capa 1) para ser entregada.</span></div>
+    <div class="obj-item"><span class="obj-num">O5</span><span class="obj-text">Analizar tablas de enrutamiento de un router y verificar la existencia de rutas correctas.</span></div>
+    <div class="obj-item"><span class="obj-num">O6</span><span class="obj-text">Restaurar la conectividad de la red aplicando correcciones en capa 1 y capa 3.</span></div>
+  </div>
+</div>
+
+<!-- SECCIÓN 04: ACTIVIDADES -->
+<div class="section">
+  <div class="section-label">04 — Actividades</div>
+  <div class="section-title">Tareas del ingeniero de turno</div>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:18px;">Seguí los pasos en orden. Cada actividad te acerca más a la causa raíz. Documentá todo — el informe final es parte de la nota.</p>
+
+  <!-- T1 -->
+  <div class="task-card">
+    <div class="task-header">
+      <span class="task-num">T1</span>
+      <span class="task-title">Verificación de conectividad básica</span>
+      <span class="task-pts">15 pts</span>
+    </div>
+    <div class="task-body">
+      <p>Lo primero que hace cualquier ingeniero de red ante un incidente es comprobar qué funciona y qué no. Abrí el archivo <strong>.pkt</strong> y desde <strong>PC-Soporte</strong> realizá los siguientes pings:</p>
+      <div class="code-label">Desde PC-Soporte → Desktop → Command Prompt</div>
+      <div class="code-block"><pre>
+<span class="cmd">ping 192.168.10.1</span>    <span class="comment">← ¿Llega al gateway?</span>
+<span class="cmd">ping 192.168.10.20</span>   <span class="comment">← ¿Llega a PC-Admin?</span>
+<span class="cmd">ping 192.168.10.100</span>  <span class="comment">← ¿Llega al servidor web?</span>
+<span class="cmd">ping 192.168.10.200</span>  <span class="comment">← ¿Llega al servidor DNS?</span></pre></div>
+      <div class="hint-box">
+        <div class="hint-label">🔎 Pista del SOC</div>
+        <p>Uno de esos pings va a fallar. Anotá exactamente cuál y cuál el mensaje de error que aparece. Ese resultado es tu primera evidencia.</p>
+      </div>
+      <p>Completá esta tabla en tu informe:</p>
+      <table>
+        <thead><tr><th>Destino</th><th>IP</th><th>Resultado</th><th>Posible causa</th></tr></thead>
+        <tbody>
+          <tr><td>Gateway</td><td>192.168.10.1</td><td>_________</td><td>_________</td></tr>
+          <tr><td>PC-Admin</td><td>192.168.10.20</td><td>_________</td><td>_________</td></tr>
+          <tr><td>SRV-WEB</td><td>192.168.10.100</td><td>_________</td><td>_________</td></tr>
+          <tr><td>SRV-DNS</td><td>192.168.10.200</td><td>_________</td><td>_________</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- T2 -->
+  <div class="task-card">
+    <div class="task-header">
+      <span class="task-num">T2</span>
+      <span class="task-title">Inspección del switch — Estado de puertos</span>
+      <span class="task-pts">20 pts</span>
+    </div>
+    <div class="task-body">
+      <p>Si el ping al servidor web falló, el problema puede estar en el enlace físico. El switch es el dispositivo que interconecta todo. Revisá el estado de sus puertos.</p>
+      <div class="code-label">Desde SW-CORE → CLI</div>
+      <div class="code-block"><pre>
+<span class="cmd">enable</span>
+<span class="cmd">show interfaces status</span>          <span class="comment">← Estado de todos los puertos</span>
+<span class="cmd">show interfaces FastEthernet0/10</span>  <span class="comment">← Puerto del servidor web</span></pre></div>
+      <div class="hint-box">
+        <div class="hint-label">💡 ¿Qué buscar?</div>
+        <p>En la columna <strong>Status</strong>, un puerto en estado <strong>"disabled"</strong> o <strong>"administratively down"</strong> indica que fue apagado manualmente. Esto es una falla de <span class="capa-badge capa-1">Capa 1</span> — el enlace físico no está activo.</p>
+      </div>
+      <p><strong>Para tu informe:</strong> ¿Qué relación existe entre el estado de un puerto del switch y la capacidad de un dispositivo de comunicarse en la red? (3–5 oraciones)</p>
+    </div>
+  </div>
+
+  <!-- T3 -->
+  <div class="task-card">
+    <div class="task-header">
+      <span class="task-num">T3</span>
+      <span class="task-title">Corrección Falla 1 — Restaurar puerto del switch</span>
+      <span class="task-pts">20 pts</span>
+    </div>
+    <div class="task-body">
+      <p>El puerto <strong>FastEthernet0/10</strong> del switch (conectado a SRV-WEB) está apagado administrativamente. Aplicá la corrección:</p>
+      <div class="code-label">Desde SW-CORE → CLI</div>
+      <div class="code-block"><pre>
+<span class="cmd">enable</span>
+<span class="cmd">configure terminal</span>
+<span class="cmd">interface FastEthernet0/10</span>
+<span class="cmd">no shutdown</span>
+<span class="cmd">end</span></pre></div>
+      <div class="hint-box">
+        <div class="hint-label">🧠 Para pensar</div>
+        <p>¿Por qué un ping exitoso entre dos dispositivos no garantiza que el servicio web esté disponible? ¿Qué capas del modelo intervienen en una petición HTTP que no intervienen en un ping ICMP?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- T4 -->
+  <div class="task-card">
+    <div class="task-header">
+      <span class="task-num">T4</span>
+      <span class="task-title">Inspección del router — Tabla de enrutamiento</span>
+      <span class="task-pts">20 pts</span>
+    </div>
+    <div class="task-body">
+      <p>Con el puerto del switch restaurado, el ping funciona. Pero si el navegador aún no muestra la página, hay otra falla pendiente. Revisá el router:</p>
+      <div class="code-label">Desde R-BORDE → CLI</div>
+      <div class="code-block"><pre>
+<span class="cmd">enable</span>
+<span class="cmd">show ip route</span>         <span class="comment">← Ver todas las rutas</span>
+<span class="cmd">show running-config</span>   <span class="comment">← Ver configuración activa</span></pre></div>
+      <div class="hint-box">
+        <div class="hint-label">🔎 ¿Qué buscar?</div>
+        <p>Buscá la línea <code style="font-family:var(--font-mono)">S* 0.0.0.0/0</code> en el <code style="font-family:var(--font-mono)">show ip route</code>. ¿El next-hop apunta a una dirección que existe en la red? Si apunta a una IP fantasma, los paquetes de retorno no tienen destino válido.</p>
+      </div>
+      <div class="answer-card">
+        <button class="answer-toggle" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('visible');">
+          <span class="arrow">▶</span> 🔐 Respuesta — Solo para el docente
+        </button>
+        <div class="answer-body">
+          <p><strong>Falla 2:</strong> El router tiene configurada <code style="font-family:var(--font-mono)">ip route 0.0.0.0 0.0.0.0 192.168.99.254</code>. El next-hop <strong>192.168.99.254</strong> no existe — es una IP inventada. Esta es una falla de <span class="capa-badge capa-3">Capa 3</span> — la capa de red.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- T5 -->
+  <div class="task-card">
+    <div class="task-header">
+      <span class="task-num">T5</span>
+      <span class="task-title">Corrección Falla 2 — Ruta por defecto</span>
+      <span class="task-pts">15 pts</span>
+    </div>
+    <div class="task-body">
+      <p>Eliminá la ruta incorrecta del router:</p>
+      <div class="code-label">Desde R-BORDE → CLI</div>
+      <div class="code-block"><pre>
+<span class="cmd">enable</span>
+<span class="cmd">configure terminal</span>
+<span class="cmd">no ip route 0.0.0.0 0.0.0.0 192.168.99.254</span>
+<span class="cmd">end</span>
+<span class="cmd">show ip route</span>   <span class="comment">← Verificar que la ruta incorrecta desapareció</span></pre></div>
+      <div class="hint-box">
+        <div class="hint-label">✅ Prueba final</div>
+        <p>Desde cualquier PC, abrí <strong>Desktop → Web Browser</strong> y escribí: <code style="font-family:var(--font-mono)">http://www.empresa.local</code>. Debería cargar la página del servidor web.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- T6 -->
+  <div class="task-card">
+    <div class="task-header">
+      <span class="task-num">T6</span>
+      <span class="task-title">Modo Simulación — Observando los paquetes</span>
+      <span class="task-pts">10 pts</span>
+    </div>
+    <div class="task-body">
+      <p>Con las fallas corregidas, usá el <strong>Modo Simulación</strong> para observar cómo viajan los datos:</p>
+      <ul>
+        <li>Hacé clic en la pestaña <strong>Simulation</strong> (ícono del reloj, esquina inferior derecha).</li>
+        <li>Filtrá para ver solo <strong>HTTP</strong>, <strong>DNS</strong> e <strong>ICMP</strong>.</li>
+        <li>Desde PC-Soporte, abrí el Web Browser y escribí <code style="font-family:var(--font-mono)">http://www.empresa.local</code>.</li>
+        <li>Presioná <strong>Play</strong> y observá el recorrido de los paquetes.</li>
+      </ul>
+      <div class="hint-box">
+        <div class="hint-label">🔎 Para tu informe</div>
+        <p>¿Qué protocolo viaja primero — DNS o HTTP — y por qué? ¿Cuántos dispositivos intermedios atraviesan los paquetes antes de llegar al servidor?</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECCIÓN 05: PREGUNTAS -->
+<div class="section">
+  <div class="section-label">05 — Análisis</div>
+  <div class="section-title">Preguntas para el informe</div>
+  <div class="obj-list">
+    <div class="obj-item"><span class="obj-num">A</span><span class="obj-text"><span class="capa-badge capa-1">Capa 1</span> ¿Qué sucede con las tramas de datos cuando el puerto de un switch está en estado <em>shutdown</em>? ¿Pueden llegar al destino aunque la configuración IP sea correcta?</span></div>
+    <div class="obj-item"><span class="obj-num">B</span><span class="obj-text"><span class="capa-badge capa-2">Capa 2</span> El switch lee <strong>direcciones MAC</strong> para decidir hacia qué puerto enviar una trama. ¿Qué diferencia hay entre una dirección MAC y una dirección IP? ¿En qué capa opera cada una?</span></div>
+    <div class="obj-item"><span class="obj-num">C</span><span class="obj-text"><span class="capa-badge capa-3">Capa 3</span> Explicá con tus palabras para qué sirve una <strong>ruta por defecto</strong> en un router. ¿Qué pasa cuando esa ruta apunta a una IP inexistente?</span></div>
+    <div class="obj-item"><span class="obj-num">D</span><span class="obj-text">¿Por qué ante una falla de conectividad siempre se recomienda verificar primero las capas inferiores (física → enlace → red) antes que las superiores (transporte → aplicación)?</span></div>
+    <div class="obj-item"><span class="obj-num">E</span><span class="obj-text">Describí el proceso completo que ocurre desde que un usuario escribe <code style="font-family:var(--font-mono)">www.empresa.local</code> hasta que la página aparece en pantalla. Nombrá los protocolos involucrados (al menos DNS y HTTP).</span></div>
+  </div>
+</div>
+
+<!-- SECCIÓN 06: RÚBRICA -->
+<div class="section">
+  <div class="section-label">06 — Rúbrica</div>
+  <div class="section-title">Criterios de evaluación</div>
+  <table class="rubric-table">
+    <thead><tr><th>Criterio</th><th>Descripción</th><th>Puntos</th></tr></thead>
+    <tbody>
+      <tr><td><strong>T1 — Verificación</strong></td><td>Tabla de ping completa con resultados correctos y causas identificadas.</td><td>15</td></tr>
+      <tr><td><strong>T2 — Inspección switch</strong></td><td>Identifica el puerto caído y lo asocia a una falla de Capa 1. Responde la pregunta de análisis.</td><td>20</td></tr>
+      <tr><td><strong>T3 — Corrección Falla 1</strong></td><td>Aplica <code style="font-family:var(--font-mono)">no shutdown</code> correctamente. El ping a SRV-WEB funciona.</td><td>20</td></tr>
+      <tr><td><strong>T4 — Inspección router</strong></td><td>Identifica la ruta incorrecta y explica por qué es inválida.</td><td>20</td></tr>
+      <tr><td><strong>T5 — Corrección Falla 2</strong></td><td>Elimina la ruta incorrecta. El navegador carga la página web.</td><td>15</td></tr>
+      <tr><td><strong>T6 — Simulación</strong></td><td>Describe el flujo DNS → HTTP observado en el modo simulación.</td><td>10</td></tr>
+      <tr class="total"><td colspan="2">TOTAL</td><td>100 pts</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECCIÓN 07: CONCLUSIONES -->
+<div class="section">
+  <div class="section-label">07 — Conclusiones</div>
+  <div class="section-title">Cierre del incidente</div>
+  <div class="conclusion-block">
+    <h3>🎯 Misión cumplida, ingeniero.</h3>
+    <p>Encontraste no una, sino <em>dos fallas</em> que actuaban en conjunto para derribar el servicio web. Una pequeña y silenciosa — un puerto apagado. Otra más traicionera — una ruta que señalaba al vacío. En redes reales, los incidentes raramente tienen una sola causa.</p>
+    <p>Lo más importante no es saber los comandos de memoria. Es entender que cuando algo no funciona, hay que seguir el camino de los datos desde el cable físico hasta la aplicación, capa por capa, sin saltarse pasos.</p>
+    <p>Recordá: <em>un byte que no llega siempre tiene una razón. Tu trabajo es encontrarla.</em></p>
+  </div>
+</div>
+
+<!-- SECCIÓN 08: ENTREGABLE -->
+<div class="section">
+  <div class="section-label">08 — Entregable</div>
+  <div class="section-title">¿Qué tenés que entregar?</div>
+  <div class="deliverable-list">
+    <div class="deliverable-item">
+      <span class="deliverable-icon">📁</span>
+      <div class="deliverable-text">
+        <strong>Archivo .pkt corregido</strong>
+        El archivo con las dos fallas resueltas. Al abrirlo, el sitio debe ser accesible desde cualquier PC. Nombre: <code style="font-family:var(--font-mono)">ApellidoNombre_Incidente.pkt</code>
+      </div>
+    </div>
+    <div class="deliverable-item">
+      <span class="deliverable-icon">📄</span>
+      <div class="deliverable-text">
+        <strong>Informe de Incidente (PDF o Word)</strong>
+        Con: tabla de pings, capturas de <code style="font-family:var(--font-mono)">show interfaces status</code> y <code style="font-family:var(--font-mono)">show ip route</code>, descripción de cada falla, comandos de corrección, respuestas A–E y captura del navegador con la página funcionando.
+      </div>
+    </div>
+    <div class="deliverable-item">
+      <span class="deliverable-icon">📸</span>
+      <div class="deliverable-text">
+        <strong>Capturas de pantalla clave</strong>
+        (1) Ping fallido antes de la corrección, (2) <code style="font-family:var(--font-mono)">show interfaces status</code> con puerto caído, (3) <code style="font-family:var(--font-mono)">show ip route</code> con ruta incorrecta, (4) página web funcionando en el navegador.
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<footer>
+  Telecomunicaciones B · Laboratorio de Redes · Incidente SOC INC-2024-0847 · Cisco Packet Tracer
+</footer>
+
+<script>
+  document.querySelectorAll('.answer-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('open');
+      btn.nextElementSibling.classList.toggle('visible');
+    });
+  });
+</script>
+</body>
+</html>
