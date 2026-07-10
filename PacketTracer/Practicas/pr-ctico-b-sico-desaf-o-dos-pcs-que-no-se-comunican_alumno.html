@@ -446,76 +446,65 @@
     </div>
   </section>
 
-
-  <svg width="250" height="125" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+  <svg width="100%" height="100%" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="600" fill="#f0f0f0"/>
+  
   <defs>
-    <symbol id="icon-switch" viewBox="0 0 100 100">
-      <rect x="10" y="30" width="80" height="40" fill="gray" stroke="darkgray" stroke-width="2"/>
-      <rect x="15" y="35" width="20" height="10" fill="lightblue" stroke="none"/>
-      <rect x="40" y="35" width="20" height="10" fill="lightblue" stroke="none"/>
-      <rect x="65" y="35" width="20" height="10" fill="lightblue" stroke="none"/>
-      <rect x="15" y="55" width="20" height="10" fill="lightblue" stroke="none"/>
-      <rect x="40" y="55" width="20" height="10" fill="lightblue" stroke="none"/>
-      <rect x="65" y="55" width="20" height="10" fill="lightblue" stroke="none"/>
+    <symbol id="switch-2960" viewBox="0 0 100 50">
+      <rect x="0" y="0" width="100" height="50" fill="#7f8c8d" stroke="#34495e" stroke-width="2"/>
+      <rect x="10" y="10" width="20" height="12" fill="#95a5a6" stroke="#ecf0f1"/>
+      <rect x="40" y="10" width="20" height="12" fill="#95a5a6" stroke="#ecf0f1"/>
+      <rect x="70" y="10" width="20" height="12" fill="#95a5a6" stroke="#ecf0f1"/>
+      <rect x="10" y="28" width="20" height="12" fill="#95a5a6" stroke="#ecf0f1"/>
+      <rect x="40" y="28" width="20" height="12" fill="#95a5a6" stroke="#ecf0f1"/>
+      <rect x="70" y="28" width="20" height="12" fill="#95a5a6" stroke="#ecf0f1"/>
     </symbol>
-    
-    <symbol id="icon-pc" viewBox="0 0 100 100">
-      <rect x="10" y="10" width="80" height="60" fill="white" stroke="gray" stroke-width="2"/>
-      <rect x="20" y="20" width="60" height="40" fill="gray" stroke="darkgray" stroke-width="2"/>
-      <rect x="25" y="75" width="50" height="15" fill="gray" stroke="darkgray" stroke-width="2"/>
-      <rect x="40" y="70" width="20" height="5" fill="gray" stroke="darkgray" stroke-width="2"/>
+
+    <symbol id="pc-monitor" viewBox="0 0 100 90">
+      <rect x="0" y="0" width="100" height="70" fill="#ffffff" stroke="#7f8c8d" stroke-width="3" rx="4"/>
+      <rect x="8" y="8" width="84" height="54" fill="#707070"/>
+      <rect x="40" y="70" width="20" height="12" fill="#7f8c8d"/>
+      <rect x="25" y="82" width="50" height="8" fill="#7f8c8d" rx="2"/>
     </symbol>
-    
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,10 L10,5 z" fill="green"/>
+
+    <marker id="link-status" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+      <path d="M 0 10 L 5 0 L 10 10 Z" fill="#008000"/>
     </marker>
   </defs>
-  
-  <rect width="100%" height="100%" fill="white"/>
-  
-  <rect x="50" y="50" width="250" height="400" fill="#c0d0f0" stroke="darkgray" stroke-width="1"/>
-  <text x="175" y="465" font-family="Arial" font-size="20" text-anchor="middle" fill="black">Sala A</text>
-  
-  <rect x="700" y="50" width="250" height="400" fill="#d0f0f0" stroke="darkgray" stroke-width="1"/>
-  <text x="825" y="465" font-family="Arial" font-size="20" text-anchor="middle" fill="black">Sala B</text>
-  
-  <use href="#icon-pc" x="125" y="210" width="100" height="100"/>
-  <text x="175" y="325" font-family="Arial" font-size="16" text-anchor="middle" fill="black">PC-PT PC1</text>
-  <text x="175" y="225" font-family="Arial" font-size="16" text-anchor="middle" fill="black">Fa0</text>
-  
-  <use href="#icon-switch" x="450" y="20" width="100" height="100"/>
-  <text x="500" y="110" font-family="Arial" font-size="16" text-anchor="middle" fill="black">2960-24TT S1</text>
-  
-  <use href="#icon-switch" x="450" y="350" width="100" height="100"/>
-  <text x="500" y="440" font-family="Arial" font-size="16" text-anchor="middle" fill="black">2960-24TT SW2</text>
-  
-  <use href="#icon-pc" x="800" y="210" width="100" height="100"/>
-  <text x="850" y="325" font-family="Arial" font-size="16" text-anchor="middle" fill="black">PC-PT PC2</text>
-  <text x="830" y="225" font-family="Arial" font-size="16" text-anchor="middle" fill="black">Fa0</text>
-  
-  <line x1="210" y1="240" x2="465" y2="90" stroke="black" stroke-width="2"/>
-  <text x="430" y="90" font-family="Arial" font-size="14" text-anchor="middle" fill="black">Fa0/1</text>
-  
-  <line x1="500" y1="90" x2="500" y2="380" stroke="black" stroke-width="2" stroke-dasharray="5,5"/>
-  <text x="500" y="130" font-family="Arial" font-size="14" text-anchor="middle" fill="black">Fa0/24</text>
-  <text x="500" y="340" font-family="Arial" font-size="14" text-anchor="middle" fill="black">Fa0/24</text>
-  
-  <line x1="520" y1="380" x2="820" y2="240" stroke="black" stroke-width="2"/>
-  <text x="560" y="380" font-family="Arial" font-size="14" text-anchor="middle" fill="black">Fa0/1</text>
-  
-  <path d="M210,240 L220,245 L215,235 z" fill="green"/>
-  
-  <path d="M465,90 L455,95 L460,85 z" fill="green"/>
-  
-  <path d="M500,90 L505,100 L495,100 z" fill="green"/>
-  
-  <path d="M500,380 L505,370 L495,370 z" fill="green"/>
-  
-  <path d="M520,380 L530,375 L525,385 z" fill="green"/>
-  
-  <path d="M820,240 L810,235 L815,245 z" fill="green"/>
 
-</svg>
+  <rect x="30" y="30" width="300" height="500" fill="#b4c7e7" stroke="#7f8c8d" stroke-width="1"/>
+  <text x="180" y="560" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" font-weight="bold" fill="#333333">Sala A</text>
+
+  <rect x="870" y="30" width="300" height="500" fill="#c5ebea" stroke="#7f8c8d" stroke-width="1"/>
+  <text x="1020" y="560" font-family="Arial, sans-serif" font-size="22" text-anchor="middle" font-weight="bold" fill="#333333">Sala B</text>
+
+  <line x1="215" y1="265" x2="550" y2="90" stroke="#000000" stroke-width="2"/>
+  
+  <line x1="600" y1="115" x2="600" y2="450" stroke="#000000" stroke-width="2" stroke-dasharray="6,6"/>
+  
+  <line x1="650" y1="475" x2="985" y2="265" stroke="#000000" stroke-width="2"/>
+
+  <use href="#pc-monitor" x="130" y="230" width="100" height="90"/>
+  <text x="180" y="350" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#000000">PC-PT PC1</text>
+  <text x="180" y="220" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#000000">Fa0</text>
+
+  <use href="#switch-2960" x="550" y="40" width="100" height="50"/>
+  <text x="600" y="110" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#000000">2960-24TT S1</text>
+
+  <use href="#switch-2960" x="550" y="450" width="100" height="50"/>
+  <text x="600" y="520" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#000000">2960-24TT SW2</text>
+
+  <use href="#pc-monitor" x="970" y="230" width="100" height="90"/>
+  <text x="1020" y="350" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#000000">PC-PT PC2</text>
+  <text x="1020" y="220" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#000000">Fa0</text>
+
+  <text x="500" y="90" font-family="Arial, sans-serif" font-size="14" fill="#000000">Fa0/1</text>
+  <text x="600" y="135" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#000000">Fa0/24</text>
+
+  <text x="600" y="435" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#000000">Fa0/24</text>
+  <text x="680" y="475" font-family="Arial, sans-serif" font-size="14" fill="#000000">Fa0/1</text>
+
+  </svg>
 
 
 
