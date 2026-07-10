@@ -503,7 +503,7 @@
       <h3>📋 Reporte del NOC — Ticket #2024-0712</h3>
       <p><strong>Hora del reporte:</strong> 09:47 hs &nbsp;|&nbsp; <strong>Impacto:</strong> Total — sin acceso a BD</p>
       <p>Personal de mantenimiento realizó trabajos en el rack del piso 3 durante la noche. Al iniciar el turno matutino, los usuarios del área reportan que no pueden conectarse al servidor de base de datos (<code>192.168.10.100</code>). El ping desde <strong>PC1</strong> hacia el servidor falla al 100%.</p>
-      <p>Se sospecha que durante los trabajos nocturnos <strong>se dañó el cable de fibra óptica</strong> que conecta SW-ACC1 al SW-CORE. La fibra no puede reemplazarse hasta que llegue el técnico de cableado estructurado (ETA: 4 horas).</p>
+      <p>Se sospecha que durante los trabajos nocturnos <strong>se dañó el cable de fibra óptica</strong> que conecta SW-ACC1 al SW-CORE. La fibra no puede reemplazarse hasta que llegue el técnico de cableado estructurado (ETR -Estimated Time to Restore/Repair-: 4 horas).</p>
       <p>⚠️ <strong>La operación no puede esperar 4 horas.</strong> Debés restablecer la conectividad usando la infraestructura existente.</p>
     </div>
   </section>
@@ -591,7 +591,7 @@
         <div class="consigna-num">1</div>
         <div class="consigna-body">
           <strong>Verificación inicial del incidente</strong>
-          <p>Abrí el archivo <code>.pkt</code> en Packet Tracer. Desde <strong>PC1</strong>, ejecutá un ping hacia el servidor de base de datos (<code>192.168.10.100</code>). Capturá el resultado y confirmá la pérdida de conectividad. Anotá el porcentaje de pérdida de paquetes.</p>
+          <p>Abrí el archivo <code>.pkt</code> entregado en Packet Tracer. Desde <strong>PC1</strong>ejecutá un ping hacia el servidor de base de datos (<code>192.168.10.100</code>). Capturá el resultado y confirmá la pérdida de conectividad. Anotá el porcentaje de pérdida de paquetes.</p>
         </div>
       </li>
 
@@ -607,7 +607,7 @@
         <div class="consigna-num">3</div>
         <div class="consigna-body">
           <strong>Análisis del árbol Spanning Tree (Capa 2)</strong>
-          <p>En <strong>SW-ACC1</strong>, ejecutá <code>show spanning-tree</code>. Identificá el estado actual del puerto <code>Fa0/24</code> (enlace de backup hacia SW-ACC2). ¿Por qué ese puerto estaba en estado <em>Blocking</em> cuando la fibra funcionaba? ¿Cuál es la topología STP ahora que la fibra está caída?</p>
+          <p>En <strong>SW-ACC1</strong>ejecutá <code>show spanning-tree</code>. Identificá el estado actual del puerto <code>Fa0/24</code> (enlace de backup hacia SW-ACC2). ¿Por qué ese puerto estaba en estado <em>Blocking</em> cuando la fibra funcionaba? ¿Cuál es la topología STP ahora que la fibra está caída?</p>
         </div>
       </li>
 
@@ -615,7 +615,7 @@
         <div class="consigna-num">4</div>
         <div class="consigna-body">
           <strong>Implementación del plan de contingencia — Activación del enlace de respaldo</strong>
-          <p>La solución inmediata es habilitar el tráfico a través del enlace de backup <strong>SW-ACC1 ↔ SW-ACC2</strong>. Para ello, el STP debe reconverger y elevar el puerto Fa0/24 al estado <em>Forwarding</em>. Verificá que el enlace físico esté activo e investigá cómo forzar la convergencia STP si fuera necesario. Documentá los pasos realizados.</p>
+          <p>La solución inmediata es habilitar el tráfico a través del enlace de backup <strong>SW-ACC1 ↔ SW-ACC2</strong>Para ello, el STP debe reconverger y elevar el puerto Fa0/24 al estado <em>Forwarding</em>. Verificá que el enlace físico esté activo e investigá cómo forzar la convergencia STP si fuera necesario. Documentá los pasos realizados.</p>
         </div>
       </li>
 
@@ -623,7 +623,7 @@
         <div class="consigna-num">5</div>
         <div class="consigna-body">
           <strong>Verificación de la restauración</strong>
-          <p>Desde <strong>PC1</strong>, ejecutá nuevamente el ping hacia <code>192.168.10.100</code>. El tráfico ahora debería fluir por la ruta alternativa: <strong>PC1 → SW-ACC1 → SW-ACC2 → SW-CORE → SRV-DB</strong>. Verificá la conectividad y documentá el nuevo porcentaje de éxito.</p>
+          <p>Desde <strong>PC1</strong>ejecutá nuevamente el ping hacia <code>192.168.10.100</code>. El tráfico ahora debería fluir por la ruta alternativa: <strong>PC1 → SW-ACC1 → SW-ACC2 → SW-CORE → SRV-DB</strong>. Verificá la conectividad y documentá el nuevo porcentaje de éxito.</p>
         </div>
       </li>
 
@@ -773,7 +773,7 @@
 </main>
 
 <footer>
-  <span>Telecomunicaciones B · Trabajo Práctico — Desafío Capa 1 & 2</span>
+  <span>Telecomunicaciones B · Unidad 5 Redes — Recuperación ante Corte de Fibra Óptica</span>
   <span>Herramienta: Cisco Packet Tracer · Agosto 2026</span>
 </footer>
 
