@@ -631,22 +631,23 @@
     </ul>
   </section>
 
-<p>&nbsp;</p>
-<!-- COMANDOS DE REFERENCIA -->
-<section>
-<div class="section-label">05 &middot; Referencia de comandos</div>
-<h2>Comandos &uacute;tiles para el diagn&oacute;stico</h2>
-<div class="code-block"><span class="c">── Verificaci&oacute;n desde los PCs </span></div>
-<div class="code-block"><span class="k">ping</span> <span class="v">192.168.10.20&nbsp; &nbsp;&nbsp;</span>! Probar conectividad</div>
-<div class="code-block"><span class="k">ipconfig&nbsp; &nbsp;&nbsp;</span><span class="c">! Ver configuraci&oacute;n de red (desde CMD del PC)</span> <span class="c">!</span></div>
-<div class="code-block">&nbsp;</div>
-<div class="code-block"><span class="c">── Diagn&oacute;stico en los switches</span></div>
-<div class="code-block"><span class="k">show vlan brief</span>&nbsp; &nbsp;&nbsp;<span class="c">! Ver todas las VLANs y qu&eacute; puertos tiene cada una</span>&nbsp;</div>
-<div class="code-block"><span class="k">show interfaces status</span>&nbsp; &nbsp;&nbsp;<span class="c">! Estado r&aacute;pido de todos los puertos</span></div>
-<div class="code-block"><span class="k">show interfaces Fa0/24 switchport</span>&nbsp; &nbsp;&nbsp;<span class="c">! Detalle del modo y VLAN del puerto</span></div>
-<div class="code-block"><span class="k">show running-config</span>&nbsp; &nbsp;&nbsp;<span class="c">! Ver toda la configuraci&oacute;n activa</span> <span class="c">! </span></div>
-<div class="code-block">&nbsp;</div>
-</section>
+ <!-- COMANDOS DE REFERENCIA -->
+  <section>
+    <div class="section-label">05 · Referencia de comandos</div>
+    <h2>Comandos útiles para el diagnóstico</h2>
+
+    <div class="code-block">
+<span class="c">! ── Verificación desde los PCs ─────────────────────────────</span>
+<span class="k">ping</span> <span class="v">192.168.10.20</span>       <span class="c">  ! Probar conectividad</span>
+<span class="k">ipconfig</span>                  <span class="c">  ! Ver configuración de red (desde CMD del PC)</span>
+
+<span class="c">! ── Diagnóstico en los switches ────────────────────────────</span>
+<span class="k">show vlan brief</span>            <span class="c">  ! Ver todas las VLANs y qué puertos tiene cada una</span>
+<span class="k">show interfaces status</span>     <span class="c">  ! Estado rápido de todos los puertos</span>
+<span class="k">show interfaces Fa0/24 switchport</span>  <span class="c">! Detalle del modo y VLAN del puerto</span>
+<span class="k">show running-config</span>        <span class="c">  ! Ver toda la configuración activa</span>
+
+</div>
   
     <div class="callout callout-amber">
       <strong>⚠️ ¿Qué es la diferencia entre access y trunk?</strong><br/>
