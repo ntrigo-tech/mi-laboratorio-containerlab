@@ -447,86 +447,76 @@
   </section>
 
 
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 700" width="20%" height="20%" style="background-color: #ffffff; font-family: Arial, sans-serif;">
+  <svg width="1000" height="500" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <style>
-      .room-label { font-size: 14px; fill: #333333; font-weight: bold; }
-      .device-label { font-size: 12px; fill: #000000; text-anchor: middle; font-weight: 500; }
-      .model-label { font-size: 11px; fill: #333333; text-anchor: middle; }
-      .link-straight { stroke: #000000; stroke-width: 2.5; stroke-linecap: round; }
-      .link-crossover { stroke: #000000; stroke-width: 2.5; stroke-dasharray: 6,6; stroke-linecap: round; }
-      .link-light { fill: #2ecc71; stroke: #27ae60; stroke-width: 0.5; }
-    </style>
+    <symbol id="icon-switch" viewBox="0 0 100 100">
+      <rect x="10" y="30" width="80" height="40" fill="gray" stroke="darkgray" stroke-width="2"/>
+      <rect x="15" y="35" width="20" height="10" fill="lightblue" stroke="none"/>
+      <rect x="40" y="35" width="20" height="10" fill="lightblue" stroke="none"/>
+      <rect x="65" y="35" width="20" height="10" fill="lightblue" stroke="none"/>
+      <rect x="15" y="55" width="20" height="10" fill="lightblue" stroke="none"/>
+      <rect x="40" y="55" width="20" height="10" fill="lightblue" stroke="none"/>
+      <rect x="65" y="55" width="20" height="10" fill="lightblue" stroke="none"/>
+    </symbol>
     
-    <g id="switch-icon">
-      <path d="M 5,15 L 25,5 L 75,5 L 55,15 Z" fill="#71a1c1" stroke="#34495e" stroke-width="1"/>
-      <path d="M 5,15 L 55,15 L 55,30 L 5,30 Z" fill="#5486a9" stroke="#34495e" stroke-width="1"/>
-      <path d="M 55,15 L 75,5 L 75,20 L 55,30 Z" fill="#3a688a" stroke="#34495e" stroke-width="1"/>
-      <rect x="10" y="18" width="35" height="4" fill="#2c3e50" opacity="0.7"/>
-      <line x1="10" y1="26" x2="45" y2="26" stroke="#ffffff" stroke-width="1" stroke-dasharray="2,2" opacity="0.8"/>
-      <path d="M 20,10 L 35,10 M 35,10 L 30,7 M 35,10 L 30,13" stroke="#ffffff" stroke-width="1" fill="none"/>
-      <path d="M 60,10 L 45,10 M 45,10 L 50,7 M 45,10 L 50,13" stroke="#ffffff" stroke-width="1" fill="none"/>
-    </g>
-
-    <g id="pc-icon">
-      <rect x="10" y="5" width="40" height="28" rx="2" fill="#d5dbdb" stroke="#7f8c8d" stroke-width="1.5"/>
-      <rect x="13" y="8" width="34" height="22" fill="#54b3e5"/>
-      <path d="M 13,8 L 35,8 L 13,25 Z" fill="#ffffff" opacity="0.15"/>
-      <path d="M 26,33 L 34,33 L 36,40 L 24,40 Z" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="1"/>
-      <ellipse cx="30" cy="40" rx="12" ry="3" fill="#95a5a6" stroke="#7f8c8d" stroke-width="1"/>
-      <path d="M 15,42 L 45,42 L 48,46 L 12,46 Z" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="1"/>
-    </g>
+    <symbol id="icon-pc" viewBox="0 0 100 100">
+      <rect x="10" y="10" width="80" height="60" fill="white" stroke="gray" stroke-width="2"/>
+      <rect x="20" y="20" width="60" height="40" fill="gray" stroke="darkgray" stroke-width="2"/>
+      <rect x="25" y="75" width="50" height="15" fill="gray" stroke="darkgray" stroke-width="2"/>
+      <rect x="40" y="70" width="20" height="5" fill="gray" stroke="darkgray" stroke-width="2"/>
+    </symbol>
     
-    <polygon id="light-up" points="0,0 -5,10 5,10" class="link-light"/>
-    <polygon id="light-down" points="0,10 -5,0 5,0" class="link-light"/>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,10 L10,5 z" fill="green"/>
+    </marker>
   </defs>
+  
+  <rect width="100%" height="100%" fill="white"/>
+  
+  <rect x="50" y="50" width="250" height="400" fill="#c0d0f0" stroke="darkgray" stroke-width="1"/>
+  <text x="175" y="465" font-family="Arial" font-size="20" text-anchor="middle" fill="black">Sala A</text>
+  
+  <rect x="700" y="50" width="250" height="400" fill="#d0f0f0" stroke="darkgray" stroke-width="1"/>
+  <text x="825" y="465" font-family="Arial" font-size="20" text-anchor="middle" fill="black">Sala B</text>
+  
+  <use href="#icon-pc" x="125" y="210" width="100" height="100"/>
+  <text x="175" y="325" font-family="Arial" font-size="16" text-anchor="middle" fill="black">PC-PT PC1</text>
+  <text x="175" y="225" font-family="Arial" font-size="16" text-anchor="middle" fill="black">Fa0</text>
+  
+  <use href="#icon-switch" x="450" y="20" width="100" height="100"/>
+  <text x="500" y="110" font-family="Arial" font-size="16" text-anchor="middle" fill="black">2960-24TT S1</text>
+  
+  <use href="#icon-switch" x="450" y="350" width="100" height="100"/>
+  <text x="500" y="440" font-family="Arial" font-size="16" text-anchor="middle" fill="black">2960-24TT SW2</text>
+  
+  <use href="#icon-pc" x="800" y="210" width="100" height="100"/>
+  <text x="850" y="325" font-family="Arial" font-size="16" text-anchor="middle" fill="black">PC-PT PC2</text>
+  <text x="830" y="225" font-family="Arial" font-size="16" text-anchor="middle" fill="black">Fa0</text>
+  
+  <line x1="210" y1="240" x2="465" y2="90" stroke="black" stroke-width="2"/>
+  <text x="430" y="90" font-family="Arial" font-size="14" text-anchor="middle" fill="black">Fa0/1</text>
+  
+  <line x1="500" y1="90" x2="500" y2="380" stroke="black" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="500" y="130" font-family="Arial" font-size="14" text-anchor="middle" fill="black">Fa0/24</text>
+  <text x="500" y="340" font-family="Arial" font-size="14" text-anchor="middle" fill="black">Fa0/24</text>
+  
+  <line x1="520" y1="380" x2="820" y2="240" stroke="black" stroke-width="2"/>
+  <text x="560" y="380" font-family="Arial" font-size="14" text-anchor="middle" fill="black">Fa0/1</text>
+  
+  <path d="M210,240 L220,245 L215,235 z" fill="green"/>
+  
+  <path d="M465,90 L455,95 L460,85 z" fill="green"/>
+  
+  <path d="M500,90 L505,100 L495,100 z" fill="green"/>
+  
+  <path d="M500,380 L505,370 L495,370 z" fill="green"/>
+  
+  <path d="M520,380 L530,375 L525,385 z" fill="green"/>
+  
+  <path d="M820,240 L810,235 L815,245 z" fill="green"/>
 
-  <g id="sala-a">
-    <rect x="20" y="20" width="360" height="280" fill="#cfe2f3" stroke="#9fc5e8" stroke-width="1.5" rx="4"/>
-    <text x="370" y="285" text-anchor="end" class="room-label">Sala A</text>
-    
-    <g transform="translate(160, 50)">
-      <use href="#switch-icon"/>
-      <text x="40" y="45" class="model-label">2960-24TT</text>
-      <text x="40" y="60" class="device-label">SW1</text>
-    </g>
-    
-    <g transform="translate(170, 160)">
-      <use href="#pc-icon"/>
-      <text x="30" y="60" class="model-label">PC-PT</text>
-      <text x="30" y="75" class="device-label">PC1</text>
-    </g>
-  </g>
-
-  <g id="sala-b">
-    <rect x="20" y="340" width="360" height="280" fill="#d0f4de" stroke="#a2e8dd" stroke-width="1.5" rx="4"/>
-    <text x="370" y="605" text-anchor="end" class="room-label">Sala B</text>
-    
-    <g transform="translate(160, 420)">
-      <use href="#switch-icon"/>
-      <text x="40" y="45" class="model-label">2960-24TT</text>
-      <text x="40" y="60" class="device-label">SW2</text>
-    </g>
-    
-    <g transform="translate(170, 520)">
-      <use href="#pc-icon"/>
-      <text x="30" y="60" class="model-label">PC-PT</text>
-      <text x="30" y="75" class="device-label">PC2</text>
-    </g>
-  </g>
-
-  <g id="connections">
-    <line x1="200" y1="80" x2="200" y2="160" class="link-straight"/>
-    <use href="#light-down" transform="translate(200, 85)"/>
-    
-    <line x1="200" y1="220" x2="200" y2="420" class="link-crossover"/>
-    <use href="#light-up" transform="translate(200, 395)"/>
-
-    <line x1="200" y1="450" x2="200" y2="520" class="link-straight"/>
-    <use href="#light-down" transform="translate(200, 455)"/>
-    <use href="#light-up" transform="translate(200, 505)"/>
-  </g>
 </svg>
+
 
 
   <!-- CONSIGNAS -->
