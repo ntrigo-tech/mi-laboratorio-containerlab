@@ -40,6 +40,13 @@
     padding-bottom: 60px;
   }
 
+  /* ── TICKER ── */
+.ticker-wrap{background:var(--fg);overflow:hidden;padding:9px 0;border-bottom:3px solid var(--accent)}
+.ticker-inner{display:flex;gap:0;animation:tick 22s linear infinite;white-space:nowrap}
+.ticker-inner span{font-family:var(--font-m);font-size:11px;color:#c8c0b8;letter-spacing:.08em;padding:0 36px}
+.ticker-inner span b{color:var(--accent);font-weight:600}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  
   /* ── HEADER ── */
   header {
     background: var(--fg);
