@@ -6,652 +6,820 @@
 <title>Práctico — Desafío Capa 1 & 2</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg: #f7f6f3;
-    --fg: #1a1917;
-    --muted: #6b6560;
-    --accent: #c0392b;
-    --accent-light: #fdf0ef;
-    --accent-border: #e8b4b0;
-    --green: #1e6b3a;
-    --green-light: #edf7f1;
-    --green-border: #a8d5b9;
-    --blue: #1a4b8c;
-    --blue-light: #eef3fb;
-    --blue-border: #a8bfe8;
-    --orange: #b84d00;
-    --orange-light: #fef4ec;
-    --orange-border: #f0c89a;
-    --border: #ddd9d4;
-    --code-bg: #1c1917;
-    --code-fg: #f0ede8;
-    --font-head: 'Plus Jakarta Sans', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-  }
+:root {
+--bg: #f7f6f3;
+--fg: #1a1917;
+--muted: #6b6560;
+--accent: #c0392b;
+--accent-light: #fdf0ef;
+--accent-border: #e8b4b0;
+--green: #1e6b3a;
+--green-light: #edf7f1;
+--green-border: #a8d5b9;
+--blue: #1a4b8c;
+--blue-light: #eef3fb;
+--blue-border: #a8bfe8;
+--orange: #b84d00;
+--orange-light: #fef4ec;
+--orange-border: #f0c89a;
+--purple: #6c3fa0;
+--purple-light: #f4eefb;
+--purple-border: #cbb0e0;
+--border: #ddd9d4;
+--code-bg: #1c1917;
+--code-fg: #f0ede8;
+--font-head: 'Plus Jakarta Sans', sans-serif;
+--font-mono: 'JetBrains Mono', monospace;
+}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: var(--font-head);
-    background: var(--bg);
-    color: var(--fg);
-    font-size: 15px;
-    line-height: 1.7;
-    padding: 0 0 60px;
-  }
+body {
+font-family: var(--font-head);
+background: var(--bg);
+color: var(--fg);
+font-size: 15px;
+line-height: 1.7;
+padding: 0 0 60px;
+}
 
-  /* ── HEADER ── */
-  header {
-    background: var(--fg);
-    color: #f7f6f3;
-    padding: 36px 32px 28px;
-    border-bottom: 4px solid var(--accent);
-    animation: fadeDown 0.5s ease both;
-  }
-  .header-tag {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #a09a94;
-    margin-bottom: 10px;
-  }
-  header h1 {
-    font-size: 28px;
-    font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 6px;
-  }
-  header h1 span { color: var(--accent); }
-  .header-sub {
-    font-size: 14px;
-    color: #c0bab4;
-    font-weight: 400;
-  }
-  .meta-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 20px;
-    padding-top: 18px;
-    border-top: 1px solid #333;
-  }
-  .meta-item { font-size: 13px; color: #a09a94; }
-  .meta-item strong { color: #f7f6f3; font-weight: 600; }
+/* ── HEADER ── */
+header {
+background: var(--fg);
+color: #f7f6f3;
+padding: 36px 32px 28px;
+border-bottom: 4px solid var(--accent);
+animation: fadeDown 0.5s ease both;
+}
+.header-tag {
+font-family: var(--font-mono);
+font-size: 11px;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: #a09a94;
+margin-bottom: 10px;
+}
+header h1 {
+font-size: 28px;
+font-weight: 800;
+line-height: 1.2;
+margin-bottom: 6px;
+}
+header h1 span { color: var(--accent); }
+.header-sub {
+font-size: 14px;
+color: #c0bab4;
+font-weight: 400;
+}
+.meta-row {
+display: flex;
+flex-wrap: wrap;
+gap: 20px;
+margin-top: 20px;
+padding-top: 18px;
+border-top: 1px solid #333;
+}
+.meta-item { font-size: 13px; color: #a09a94; }
+.meta-item strong { color: #f7f6f3; font-weight: 600; }
 
-  /* ── ALERT BOX ── */
-  .alert {
-    margin: 28px 32px 0;
-    background: var(--accent-light);
-    border: 1px solid var(--accent-border);
-    border-left: 4px solid var(--accent);
-    border-radius: 6px;
-    padding: 16px 20px;
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-    animation: fadeUp 0.5s 0.1s ease both;
-  }
-  .alert-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
-  .alert-body { }
-  .alert-body strong { font-weight: 700; color: var(--accent); display: block; margin-bottom: 3px; }
-  .alert-body p { font-size: 14px; color: #5a1f1a; line-height: 1.6; }
+/* ── ALERT BOX ── */
+.alert {
+margin: 28px 32px 0;
+background: var(--accent-light);
+border: 1px solid var(--accent-border);
+border-left: 4px solid var(--accent);
+border-radius: 6px;
+padding: 16px 20px;
+display: flex;
+gap: 14px;
+align-items: flex-start;
+animation: fadeUp 0.5s 0.1s ease both;
+}
+.alert-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.alert-body { }
+.alert-body strong { font-weight: 700; color: var(--accent); display: block; margin-bottom: 3px; }
+.alert-body p { font-size: 14px; color: #5a1f1a; line-height: 1.6; }
 
-  /* ── MAIN CONTENT ── */
-  main { padding: 0 32px; }
+/* ── MAIN CONTENT ── */
+main { padding: 0 32px; }
 
-  section {
-    margin-top: 36px;
-    animation: fadeUp 0.45s ease both;
-  }
-  section:nth-child(1) { animation-delay: 0.15s; }
-  section:nth-child(2) { animation-delay: 0.22s; }
-  section:nth-child(3) { animation-delay: 0.29s; }
-  section:nth-child(4) { animation-delay: 0.36s; }
-  section:nth-child(5) { animation-delay: 0.43s; }
-  section:nth-child(6) { animation-delay: 0.50s; }
-  section:nth-child(7) { animation-delay: 0.57s; }
+section {
+margin-top: 36px;
+animation: fadeUp 0.45s ease both;
+}
+section:nth-child(1) { animation-delay: 0.15s; }
+section:nth-child(2) { animation-delay: 0.22s; }
+section:nth-child(3) { animation-delay: 0.29s; }
+section:nth-child(4) { animation-delay: 0.36s; }
+section:nth-child(5) { animation-delay: 0.43s; }
+section:nth-child(6) { animation-delay: 0.50s; }
+section:nth-child(7) { animation-delay: 0.57s; }
+section:nth-child(8) { animation-delay: 0.64s; }
+section:nth-child(9) { animation-delay: 0.71s; }
+section:nth-child(10) { animation-delay: 0.78s; }
 
-  .section-label {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
+.section-label {
+font-family: var(--font-mono);
+font-size: 10.5px;
+font-weight: 600;
+letter-spacing: 0.14em;
+text-transform: uppercase;
+color: var(--muted);
+margin-bottom: 8px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.section-label::after {
+content: '';
+flex: 1;
+height: 1px;
+background: var(--border);
+}
 
-  h2 {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--fg);
-    margin-bottom: 12px;
-    line-height: 1.3;
-  }
+h2 {
+font-size: 20px;
+font-weight: 800;
+color: var(--fg);
+margin-bottom: 12px;
+line-height: 1.3;
+}
 
-  p { margin-bottom: 12px; color: var(--fg); }
+p { margin-bottom: 12px; color: var(--fg); }
 
-  /* ── TOPOLOGY TABLE ── */
-  .topo-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 4px;
-  }
-  .topo-card {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 16px;
-    background: #fff;
-  }
-  .topo-card .device-role {
-    font-size: 10.5px;
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin-bottom: 4px;
-  }
-  .topo-card .device-name {
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 2px;
-  }
-  .topo-card .device-ip {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--blue);
-  }
-  .topo-card.router { border-left: 3px solid var(--blue); }
-  .topo-card.switch { border-left: 3px solid var(--green); }
-  .topo-card.host   { border-left: 3px solid var(--muted); }
-  .topo-card.server { border-left: 3px solid var(--orange); }
+/* ── OBJETIVOS ── */
+.obj-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+margin-top: 4px;
+}
+.obj-card {
+background: #fff;
+border: 1px solid var(--border);
+border-left: 3px solid var(--purple);
+border-radius: 8px;
+padding: 16px 18px;
+display: flex;
+gap: 12px;
+align-items: flex-start;
+}
+.obj-icon {
+font-size: 18px;
+flex-shrink: 0;
+width: 30px;
+height: 30px;
+border-radius: 50%;
+background: var(--purple-light);
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.obj-body strong { font-weight: 700; font-size: 14px; display: block; margin-bottom: 3px; }
+.obj-body p { font-size: 13.5px; color: #4a4540; margin: 0; }
 
-  /* ── SCENARIO BOX ── */
-  .scenario {
-    background: var(--accent-light);
-    border: 1px solid var(--accent-border);
-    border-radius: 8px;
-    padding: 22px 24px;
-    margin-top: 4px;
-  }
-  .scenario h3 {
-    font-size: 16px;
-    font-weight: 800;
-    color: var(--accent);
-    margin-bottom: 10px;
-  }
-  .scenario p { color: #4a1a17; font-size: 14px; margin-bottom: 8px; }
-  .scenario p:last-child { margin-bottom: 0; }
+/* ── TOPOLOGY TABLE ── */
+.topo-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+margin-top: 4px;
+}
+.topo-card {
+border: 1px solid var(--border);
+border-radius: 8px;
+padding: 14px 16px;
+background: #fff;
+}
+.topo-card .device-role {
+font-size: 10.5px;
+font-family: var(--font-mono);
+text-transform: uppercase;
+letter-spacing: 0.1em;
+color: var(--muted);
+margin-bottom: 4px;
+}
+.topo-card .device-name {
+font-size: 15px;
+font-weight: 700;
+margin-bottom: 2px;
+}
+.topo-card .device-ip {
+font-family: var(--font-mono);
+font-size: 13px;
+color: var(--blue);
+}
+.topo-card.router { border-left: 3px solid var(--blue); }
+.topo-card.switch { border-left: 3px solid var(--green); }
+.topo-card.host { border-left: 3px solid var(--muted); }
+.topo-card.server { border-left: 3px solid var(--orange); }
 
-  /* ── FAILURE TABLE ── */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13.5px;
-    margin-top: 4px;
-    background: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-  }
-  thead { background: var(--fg); color: #f7f6f3; }
-  thead th {
-    padding: 11px 14px;
-    font-weight: 700;
-    text-align: left;
-    font-size: 12px;
-    letter-spacing: 0.04em;
-  }
-  tbody tr:nth-child(even) { background: #faf9f7; }
-  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
-  tbody tr:last-child td { border-bottom: none; }
-  .badge {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 4px;
-    letter-spacing: 0.04em;
-  }
-  .badge-red   { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); }
-  .badge-green { background: var(--green-light);  color: var(--green);  border: 1px solid var(--green-border); }
-  .badge-blue  { background: var(--blue-light);   color: var(--blue);   border: 1px solid var(--blue-border); }
+/* ── SVG DIAGRAM WRAP ── */
+.diagram-wrap {
+margin-top: 16px;
+background: #fff;
+border: 1px solid var(--border);
+border-radius: 10px;
+padding: 12px;
+}
+.diagram-wrap svg { display: block; width: 50%; height: auto; }
+.diagram-legend {
+display: flex;
+flex-wrap: wrap;
+gap: 16px;
+padding: 10px 6px 2px;
+font-size: 12px;
+color: var(--muted);
+}
+.diagram-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
 
-  /* ── CONSIGNAS ── */
-  .consigna-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
-  .consigna-item {
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 16px;
-  }
-  .consigna-num {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    font-weight: 600;
-    color: #fff;
-    background: var(--fg);
-    border-radius: 50%;
-    width: 26px;
-    height: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-  .consigna-body { flex: 1; }
-  .consigna-body strong { font-weight: 700; display: block; margin-bottom: 3px; font-size: 14px; }
-  .consigna-body p { font-size: 13.5px; color: #4a4540; margin: 0; }
+/* ── SCENARIO BOX ── */
+.scenario {
+background: var(--accent-light);
+border: 1px solid var(--accent-border);
+border-radius: 8px;
+padding: 22px 24px;
+margin-top: 4px;
+}
+.scenario h3 {
+font-size: 16px;
+font-weight: 800;
+color: var(--accent);
+margin-bottom: 10px;
+}
+.scenario p { color: #4a1a17; font-size: 14px; margin-bottom: 8px; }
+.scenario p:last-child { margin-bottom: 0; }
 
-  /* ── CODE BLOCK ── */
-  .code-block {
-    background: var(--code-bg);
-    color: var(--code-fg);
-    font-family: var(--font-mono);
-    font-size: 12.5px;
-    line-height: 1.7;
-    border-radius: 8px;
-    padding: 18px 20px;
-    overflow-x: auto;
-    margin-top: 10px;
-    border: 1px solid #2e2a27;
-  }
-  .code-comment { color: #7a7065; }
-  .code-cmd     { color: #f0ede8; }
-  .code-kw      { color: #e8a87c; }
-  .code-ok      { color: #7dcea0; }
+/* ── FAILURE TABLE ── */
+table {
+width: 100%;
+border-collapse: collapse;
+font-size: 13.5px;
+margin-top: 4px;
+background: #fff;
+border-radius: 8px;
+overflow: hidden;
+border: 1px solid var(--border);
+}
+thead { background: var(--fg); color: #f7f6f3; }
+thead th {
+padding: 11px 14px;
+font-weight: 700;
+text-align: left;
+font-size: 12px;
+letter-spacing: 0.04em;
+}
+tbody tr:nth-child(even) { background: #faf9f7; }
+tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:last-child td { border-bottom: none; }
+.badge {
+display: inline-block;
+font-family: var(--font-mono);
+font-size: 11px;
+font-weight: 600;
+padding: 2px 8px;
+border-radius: 4px;
+letter-spacing: 0.04em;
+}
+.badge-red { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); }
+.badge-green { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+.badge-blue { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-border); }
+.badge-purple { background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple-border); }
+.badge-orange { background: var(--orange-light); color: var(--orange); border: 1px solid var(--orange-border); }
 
-  /* ── TIP / CALLOUT ── */
-  .callout {
-    border-radius: 8px;
-    padding: 14px 18px;
-    font-size: 13.5px;
-    margin-top: 10px;
-    border-left: 4px solid;
-  }
-  .callout-green { background: var(--green-light); border-color: var(--green); color: #184a28; }
-  .callout-blue  { background: var(--blue-light);  border-color: var(--blue);  color: #163870; }
-  .callout-orange { background: var(--orange-light); border-color: var(--orange); color: #5c2600; }
-  .callout strong { font-weight: 700; }
+/* ── CONSIGNAS ── */
+.consigna-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.consigna-item {
+display: flex;
+gap: 14px;
+align-items: flex-start;
+background: #fff;
+border: 1px solid var(--border);
+border-radius: 8px;
+padding: 14px 16px;
+}
+.consigna-num {
+font-family: var(--font-mono);
+font-size: 13px;
+font-weight: 600;
+color: #fff;
+background: var(--fg);
+border-radius: 50%;
+width: 26px;
+height: 26px;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+margin-top: 1px;
+}
+.consigna-item.alt .consigna-num { background: var(--purple); }
+.consigna-body { flex: 1; }
+.consigna-body strong { font-weight: 700; display: block; margin-bottom: 3px; font-size: 14px; }
+.consigna-body p { font-size: 13.5px; color: #4a4540; margin: 0; }
 
-  /* ── ENTREGABLE ── */
-  .entregable-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-  .entregable-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    font-size: 13.5px;
-  }
-  .entregable-item .check { font-size: 16px; }
+/* ── CODE BLOCK ── */
+.code-block {
+background: var(--code-bg);
+color: var(--code-fg);
+font-family: var(--font-mono);
+font-size: 12.5px;
+line-height: 1.7;
+border-radius: 8px;
+padding: 18px 20px;
+overflow-x: auto;
+margin-top: 10px;
+border: 1px solid #2e2a27;
+}
+.code-comment { color: #7a7065; }
+.code-cmd { color: #f0ede8; }
+.code-kw { color: #e8a87c; }
+.code-ok { color: #7dcea0; }
 
-  /* ── DIVIDER ── */
-  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0 0; }
+/* ── TIP / CALLOUT ── */
+.callout {
+border-radius: 8px;
+padding: 14px 18px;
+font-size: 13.5px;
+margin-top: 10px;
+border-left: 4px solid;
+}
+.callout-green { background: var(--green-light); border-color: var(--green); color: #184a28; }
+.callout-blue { background: var(--blue-light); border-color: var(--blue); color: #163870; }
+.callout-orange { background: var(--orange-light); border-color: var(--orange); color: #5c2600; }
+.callout-purple { background: var(--purple-light); border-color: var(--purple); color: #3a1f5c; }
+.callout strong { font-weight: 700; }
 
-  /* ── FOOTER ── */
-  footer {
-    margin-top: 40px;
-    padding: 20px 32px;
-    border-top: 1px solid var(--border);
-    font-size: 12px;
-    color: var(--muted);
-    font-family: var(--font-mono);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
+/* ── ENTREGABLE ── */
+.entregable-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.entregable-item {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 12px 16px;
+background: #fff;
+border: 1px solid var(--border);
+border-radius: 7px;
+font-size: 13.5px;
+}
+.entregable-item .check { font-size: 16px; }
 
-  /* ── ANIMATIONS ── */
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+/* ── RÚBRICA ── */
+.rubrica-table { font-size: 13px; }
+.rubrica-table th, .rubrica-table td { vertical-align: top; }
+.nivel-logrado { color: var(--green); font-weight: 700; }
+.nivel-parcial { color: var(--orange); font-weight: 700; }
+.nivel-no-logrado { color: var(--accent); font-weight: 700; }
+.rubrica-score {
+font-family: var(--font-mono);
+font-weight: 700;
+white-space: nowrap;
+}
+
+/* ── CONCLUSIONES ── */
+.conclusion-box {
+background: linear-gradient(135deg, #1c1917, #262220);
+color: #f0ede8;
+border-radius: 10px;
+padding: 26px 28px;
+margin-top: 4px;
+}
+.conclusion-box h3 {
+font-size: 17px;
+font-weight: 800;
+color: #fff;
+margin-bottom: 12px;
+}
+.conclusion-box p {
+color: #cfc9c2;
+font-size: 14px;
+margin-bottom: 10px;
+}
+.conclusion-box p:last-child { margin-bottom: 0; }
+.conclusion-box strong { color: #f0c89a; }
+
+/* ── DIVIDER ── */
+hr { border: none; border-top: 1px solid var(--border); margin: 32px 0 0; }
+
+/* ── FOOTER ── */
+footer {
+margin-top: 40px;
+padding: 20px 32px;
+border-top: 1px solid var(--border);
+font-size: 12px;
+color: var(--muted);
+font-family: var(--font-mono);
+display: flex;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 6px;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown {
+from { opacity: 0; transform: translateY(-10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(12px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+.topo-grid, .obj-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-tag">Trabajo Práctico Redes · Telecomunicaciones B</div>
-  <h1>Unidad 5 - Redes<br/><span>Recuperación ante Corte de Fibra Óptica</span></h1>
-  <p class="header-sub">Simulación de falla de enlace y reestablecimiento de conectividad en la red</p>
-  <div class="meta-row">
-    <div class="meta-item">Duración estimada: <strong>45 – 60 min</strong></div>
-    <div class="meta-item">Herramienta: <strong>Cisco Packet Tracer</strong></div>
-    <div class="meta-item">Nivel: <strong>Operador de Red</strong></div>
-    <div class="meta-item">Modalidad: <strong>Individual / Grupal</strong></div>
-  </div>
+<div class="header-tag">Trabajo Práctico Redes · Telecomunicaciones B</div>
+<h1>Unidad 5 - Redes<br/><span>Recuperación ante Corte de Fibra Óptica</span></h1>
+<p class="header-sub">Simulación de falla de enlace y reestablecimiento de conectividad en la red</p>
+<div class="meta-row">
+<div class="meta-item">Duración estimada: <strong>45 – 60 min</strong></div>
+<div class="meta-item">Herramienta: <strong>Cisco Packet Tracer</strong></div>
+<div class="meta-item">Nivel: <strong>Operador de Red</strong></div>
+<div class="meta-item">Modalidad: <strong>Individual / Grupal</strong></div>
+</div>
 </header>
 
 <div class="alert" style="animation: fadeUp 0.4s 0.08s ease both;">
-  <div class="alert-icon">🚨</div>
-  <div class="alert-body">
-    <strong>INCIDENTE ACTIVO — PRIORIDAD ALTA</strong>
-    <p>El departamento de sistemas reportó pérdida de acceso al servidor de base de datos desde las estaciones de trabajo del piso 3. El NOC (Centro de Operaciones de Red) escala el incidente al equipo de operadores. Tu misión: diagnosticar, encontrar la causa raíz y restaurar la conectividad <strong>sin reemplazar el hardware físico dañado</strong>.</p>
-  </div>
+<div class="alert-icon">🚨</div>
+<div class="alert-body">
+<strong>INCIDENTE ACTIVO — PRIORIDAD ALTA</strong>
+<p>El departamento de sistemas reportó pérdida de acceso al servidor de base de datos desde las estaciones de trabajo del piso 3. El NOC (Centro de Operaciones de Red) escala el incidente al equipo de operadores. Tu misión: diagnosticar, encontrar la causa raíz y restaurar la conectividad <strong>sin reemplazar el hardware físico dañado</strong>.</p>
+</div>
 </div>
 
 <main>
 
-  <!-- CONTEXTO -->
-  <section>
-    <div class="section-label">01 · Contexto del escenario</div>
-    <h2>Descripción del entorno de red</h2>
-    <p>La empresa opera una red LAN conmutada de dos capas. El <strong>SW-CORE</strong> actúa como switch de distribución central y conecta el servidor de base de datos. Los switches de acceso (<strong>SW-ACC1</strong> y <strong>SW-ACC2</strong>) brindan conectividad a las estaciones de trabajo. Existe un enlace de respaldo entre ambos switches de acceso, previsto para situaciones de contingencia.</p>
+<!-- OBJETIVOS -->
+<section>
+<div class="section-label">01 · Objetivos</div>
+<h2>Qué vas a lograr con este práctico</h2>
+<div class="obj-grid">
+<div class="obj-card">
+<div class="obj-icon">🎯</div>
+<div class="obj-body">
+<strong>Diagnosticar fallas de Capa 1</strong>
+<p>Utilizar comandos de verificación de interfaces para identificar un enlace físico caído y diferenciarlo de una falla lógica.</p>
+</div>
+</div>
+<div class="obj-card">
+<div class="obj-icon">🌳</div>
+<div class="obj-body">
+<strong>Interpretar el comportamiento de STP</strong>
+<p>Comprender por qué un puerto redundante permanece en Blocking y cómo reacciona el árbol de expansión ante la caída de un enlace activo.</p>
+</div>
+</div>
+<div class="obj-card">
+<div class="obj-icon">🛠️</div>
+<div class="obj-body">
+<strong>Aplicar un plan de contingencia</strong>
+<p>Restablecer la conectividad usando infraestructura redundante existente, sin reemplazar el medio físico dañado.</p>
+</div>
+</div>
+<div class="obj-card">
+<div class="obj-icon">🧭</div>
+<div class="obj-body">
+<strong>Verificar y trazar la ruta activa</strong>
+<p>Confirmar la restauración del servicio y representar gráficamente el nuevo camino que sigue el tráfico tras la contingencia.</p>
+</div>
+</div>
+<div class="obj-card">
+<div class="obj-icon">📄</div>
+<div class="obj-body">
+<strong>Redactar un informe de incidente (RCA)</strong>
+<p>Documentar diagnóstico, solución aplicada y recomendaciones siguiendo una estructura profesional de análisis de causa raíz.</p>
+</div>
+</div>
+<div class="obj-card">
+<div class="obj-icon">💬</div>
+<div class="obj-body">
+<strong>Reflexionar sobre el diseño de red</strong>
+<p>Vincular la teoría de redundancia y convergencia con decisiones concretas de diseño que reducen el impacto de futuras fallas.</p>
+</div>
+</div>
+</div>
+</section>
 
-    <div class="topo-grid" style="margin-top:16px;">
-      <div class="topo-card router">
-        <div class="device-role">Router Gateway</div>
-        <div class="device-name">R1</div>
-        <div class="device-ip">192.168.10.1 / 24</div>
-      </div>
-      <div class="topo-card server">
-        <div class="device-role">Servidor Base de Datos</div>
-        <div class="device-name">SRV-DB</div>
-        <div class="device-ip">192.168.10.100 / 24</div>
-      </div>
-      <div class="topo-card switch">
-        <div class="device-role">Switch Core (Distribución)</div>
-        <div class="device-name">SW-CORE</div>
-        <div class="device-ip">STP Root — Priority 4096</div>
-      </div>
-      <div class="topo-card switch">
-        <div class="device-role">Switch Acceso A (afectado)</div>
-        <div class="device-name">SW-ACC1</div>
-        <div class="device-ip">Gi0/1 → SW-CORE: CAÍDO</div>
-      </div>
-      <div class="topo-card switch">
-        <div class="device-role">Switch Acceso B</div>
-        <div class="device-name">SW-ACC2</div>
-        <div class="device-ip">Gi0/1 → SW-CORE: ACTIVO</div>
-      </div>
-      <div class="topo-card host">
-        <div class="device-role">Estación de Trabajo</div>
-        <div class="device-name">PC1</div>
-        <div class="device-ip">192.168.10.10 / 24</div>
-      </div>
-    </div>
-  </section>
+<!-- CONTEXTO -->
+<section>
+<div class="section-label">02 · Contexto del escenario</div>
+<h2>Descripción del entorno de red</h2>
+<p>La empresa opera una red LAN conmutada de dos capas. El <strong>SW-CORE</strong> actúa como switch de distribución central y conecta el servidor de base de datos. Los switches de acceso (<strong>SW-ACC1</strong> y <strong>SW-ACC2</strong>) brindan conectividad a las estaciones de trabajo. Existe un enlace de respaldo entre ambos switches de acceso, previsto para situaciones de contingencia.</p>
 
-  <svg width="600" height="300" viewBox="0 0 1200 1000" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="1000" fill="#e9e0cf"/>
-  
-  <defs>
-    <symbol id="icon-switch" viewBox="0 0 100 50">
-      <rect x="0" y="0" width="100" height="50" fill="#5a738e" stroke="#2c3e50" stroke-width="2" rx="3"/>
-      <rect x="10" y="10" width="15" height="10" fill="#ecf0f1"/>
-      <rect x="32" y="10" width="15" height="10" fill="#ecf0f1"/>
-      <rect x="54" y="10" width="15" height="10" fill="#ecf0f1"/>
-      <rect x="75" y="10" width="15" height="10" fill="#ecf0f1"/>
-      <rect x="10" y="30" width="15" height="10" fill="#ecf0f1"/>
-      <rect x="32" y="30" width="15" height="10" fill="#ecf0f1"/>
-      <rect x="54" y="30" width="15" height="10" fill="#ecf0f1"/>
-      <rect x="75" y="30" width="15" height="10" fill="#ecf0f1"/>
-    </symbol>
+<div class="topo-grid" style="margin-top:16px;">
+<div class="topo-card router">
+<div class="device-role">Router Gateway</div>
+<div class="device-name">R1</div>
+<div class="device-ip">192.168.10.1 / 24</div>
+</div>
+<div class="topo-card server">
+<div class="device-role">Servidor Base de Datos</div>
+<div class="device-name">SRV-DB</div>
+<div class="device-ip">192.168.10.100 / 24</div>
+</div>
+<div class="topo-card switch">
+<div class="device-role">Switch Core (Distribución)</div>
+<div class="device-name">SW-CORE</div>
+<div class="device-ip">STP Root — Priority 4096</div>
+</div>
+<div class="topo-card switch">
+<div class="device-role">Switch Acceso A (afectado)</div>
+<div class="device-name">SW-ACC1</div>
+<div class="device-ip">Gi0/1 → SW-CORE: CAÍDO</div>
+</div>
+<div class="topo-card switch">
+<div class="device-role">Switch Acceso B</div>
+<div class="device-name">SW-ACC2</div>
+<div class="device-ip">Gi0/1 → SW-CORE: ACTIVO</div>
+</div>
+<div class="topo-card host">
+<div class="device-role">Estación de Trabajo</div>
+<div class="device-name">PC1</div>
+<div class="device-ip">192.168.10.10 / 24</div>
+</div>
+</div>
 
-    <symbol id="icon-router" viewBox="0 0 100 60">
-      <ellipse cx="50" cy="20" rx="45" ry="15" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
-      <rect x="5" y="20" width="90" height="25" fill="#7f8c8d" stroke="#2c3e50" stroke-width="2"/>
-      <ellipse cx="50" cy="45" rx="45" ry="15" fill="#95a5a6" stroke="#2c3e50" stroke-width="2"/>
-      <path d="M 25 20 L 40 20 M 40 20 L 35 15 M 40 20 L 35 25" stroke="#ffffff" stroke-width="3" fill="none"/>
-      <path d="M 75 20 L 60 20 M 60 20 L 65 15 M 60 20 L 65 25" stroke="#ffffff" stroke-width="3" fill="none"/>
-    </symbol>
+<div class="diagram-wrap">
+<svg viewBox="0 0 1200 1000" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagrama de topología de red con enlace de fibra caído entre SW-CORE y SW-ACC1">
+<rect width="1200" height="1000" fill="#f7f6f3"/>
 
-    <symbol id="icon-pc" viewBox="0 0 100 90">
-      <rect x="5" y="5" width="90" height="60" fill="#ffffff" stroke="#7f8c8d" stroke-width="3" rx="4"/>
-      <rect x="12" y="12" width="76" height="46" fill="#555555"/>
-      <rect x="42" y="65" width="16" height="15" fill="#7f8c8d"/>
-      <rect x="25" y="80" width="50" height="7" fill="#7f8c8d" rx="2"/>
-    </symbol>
+<defs>
+<symbol id="icon-switch" viewBox="0 0 100 50">
+<rect x="0" y="0" width="100" height="50" fill="#1e6b3a" stroke="#123f22" stroke-width="2" rx="4"/>
+<rect x="10" y="10" width="15" height="10" fill="#d7f0e0" rx="1"/>
+<rect x="32" y="10" width="15" height="10" fill="#d7f0e0" rx="1"/>
+<rect x="54" y="10" width="15" height="10" fill="#d7f0e0" rx="1"/>
+<rect x="75" y="10" width="15" height="10" fill="#d7f0e0" rx="1"/>
+<rect x="10" y="30" width="15" height="10" fill="#a8d5b9" rx="1"/>
+<rect x="32" y="30" width="15" height="10" fill="#a8d5b9" rx="1"/>
+<rect x="54" y="30" width="15" height="10" fill="#a8d5b9" rx="1"/>
+<rect x="75" y="30" width="15" height="10" fill="#a8d5b9" rx="1"/>
+</symbol>
 
-    <symbol id="icon-server" viewBox="0 0 70 100">
-      <rect x="0" y="0" width="70" height="100" fill="#607d8b" stroke="#37474f" stroke-width="2" rx="3"/>
-      <line x1="10" y1="20" x2="60" y2="20" stroke="#cfd8dc" stroke-width="4"/>
-      <line x1="10" y1="40" x2="60" y2="40" stroke="#cfd8dc" stroke-width="4"/>
-      <circle cx="15" cy="70" r="4" fill="#4caf50"/>
-      <circle cx="30" cy="70" r="4" fill="#ffeb3b"/>
-      <rect x="45" y="65" width="15" height="10" fill="#37474f"/>
-    </symbol>
-  </defs>
+<symbol id="icon-router" viewBox="0 0 100 60">
+<ellipse cx="50" cy="20" rx="45" ry="15" fill="#1a4b8c" stroke="#0f2d54" stroke-width="2"/>
+<rect x="5" y="20" width="90" height="25" fill="#1a4b8c" stroke="#0f2d54" stroke-width="2"/>
+<ellipse cx="50" cy="45" rx="45" ry="15" fill="#2f68b5" stroke="#0f2d54" stroke-width="2"/>
+<path d="M 25 20 L 40 20 M 40 20 L 35 15 M 40 20 L 35 25" stroke="#eef3fb" stroke-width="3" fill="none"/>
+<path d="M 75 20 L 60 20 M 60 20 L 65 15 M 60 20 L 65 25" stroke="#eef3fb" stroke-width="3" fill="none"/>
+</symbol>
 
-  <rect x="50" y="50" width="300" height="500" fill="#c0d0f0" stroke="#7f8c8d" stroke-width="1" rx="5"/>
-  <text x="280" y="530" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333333">Core</text>
+<symbol id="icon-pc" viewBox="0 0 100 90">
+<rect x="5" y="5" width="90" height="60" fill="#ffffff" stroke="#6b6560" stroke-width="3" rx="4"/>
+<rect x="12" y="12" width="76" height="46" fill="#2c2a28"/>
+<rect x="42" y="65" width="16" height="15" fill="#6b6560"/>
+<rect x="25" y="80" width="50" height="7" fill="#6b6560" rx="2"/>
+</symbol>
 
-  <rect x="750" y="150" width="300" height="250" fill="#e2d5f3" stroke="#7f8c8d" stroke-width="1" rx="5"/>
-  <text x="980" y="380" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333333">Acceso B</text>
+<symbol id="icon-server" viewBox="0 0 70 100">
+<rect x="0" y="0" width="70" height="100" fill="#b84d00" stroke="#6e2e00" stroke-width="2" rx="3"/>
+<line x1="10" y1="20" x2="60" y2="20" stroke="#fce3cc" stroke-width="4"/>
+<line x1="10" y1="40" x2="60" y2="40" stroke="#fce3cc" stroke-width="4"/>
+<circle cx="15" cy="70" r="4" fill="#7dcea0"/>
+<circle cx="30" cy="70" r="4" fill="#f6d97a"/>
+<rect x="45" y="65" width="15" height="10" fill="#6e2e00"/>
+</symbol>
+</defs>
 
-  <rect x="740" y="580" width="320" height="350" fill="#d0f0f0" stroke="#7f8c8d" stroke-width="1" rx="5"/>
-  <text x="970" y="910" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333333">Acceso A</text>
+<rect x="50" y="50" width="300" height="500" fill="#eef3fb" stroke="#a8bfe8" stroke-width="1.5" rx="8"/>
+<text x="200" y="530" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#1a4b8c">Core</text>
 
+<rect x="750" y="150" width="300" height="250" fill="#edf7f1" stroke="#a8d5b9" stroke-width="1.5" rx="8"/>
+<text x="900" y="380" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#1e6b3a">Acceso B</text>
 
-  <line x1="200" y1="160" x2="200" y2="250" stroke="#000000" stroke-width="2.5"/>
-  <line x1="200" y1="300" x2="200" y2="380" stroke="#000000" stroke-width="2.5"/>
+<rect x="740" y="580" width="320" height="350" fill="#fdf0ef" stroke="#e8b4b0" stroke-width="1.5" rx="8"/>
+<text x="900" y="910" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#c0392b">Acceso A (afectado)</text>
 
-  <line x1="820" y1="800" x2="900" y2="800" stroke="#000000" stroke-width="2.5"/>
+<!-- enlaces activos -->
+<line x1="200" y1="160" x2="200" y2="250" stroke="#1a4b8c" stroke-width="3"/>
+<line x1="200" y1="300" x2="200" y2="380" stroke="#1a4b8c" stroke-width="3"/>
+<line x1="820" y1="800" x2="900" y2="800" stroke="#1e6b3a" stroke-width="3"/>
+<line x1="900" y1="300" x2="900" y2="775" stroke="#1e6b3a" stroke-width="3"/>
 
-  <line x1="250" y1="275" x2="850" y2="275" stroke="#000000" stroke-width="2.5" stroke-dasharray="6,6"/>
-  
-  <line x1="250" y1="285" x2="900" y2="785" stroke="#000000" stroke-width="2.5" stroke-dasharray="6,6"/>
-  
-  <line x1="900" y1="300" x2="900" y2="775" stroke="#000000" stroke-width="2.5" stroke-dasharray="6,6"/>
+<!-- enlace de fibra caído (Core -> Acceso A) -->
+<line x1="250" y1="275" x2="850" y2="275" stroke="#c0392b" stroke-width="4" stroke-dasharray="10,8"/>
 
+<!-- enlace de backup (Acceso A <-> Acceso B), bloqueado por STP -->
+<line x1="250" y1="285" x2="900" y2="785" stroke="#6c3fa0" stroke-width="3" stroke-dasharray="6,6"/>
 
-  <use href="#icon-router" x="150" y="100" width="100" height="60"/>
-  <text x="200" y="180" font-family="Arial, sans-serif" font-size="15" text-anchor="middle" fill="#000000">2911</text>
-  <text x="200" y="195" font-family="Arial, sans-serif" font-size="15" text-anchor="middle" fill="#000000">R1</text>
+<!-- marca de corte sobre la fibra caída -->
+<g transform="translate(545,275)">
+<circle r="22" fill="#fdf0ef" stroke="#c0392b" stroke-width="2.5"/>
+<path d="M -10 -10 L 10 10 M 10 -10 L -10 10" stroke="#c0392b" stroke-width="4" stroke-linecap="round"/>
+</g>
 
-  <use href="#icon-switch" x="150" y="250" width="100" height="50"/>
-  <text x="200" y="315" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#000000">2960-24TT</text>
-  <text x="200" y="330" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#000000">SW-CORE</text>
+<use href="#icon-router" x="150" y="100" width="100" height="60"/>
+<text x="200" y="180" font-family="JetBrains Mono, monospace" font-size="14" text-anchor="middle" fill="#1a1917">2911</text>
+<text x="200" y="197" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="15" font-weight="700" text-anchor="middle" fill="#1a1917">R1</text>
 
-  <use href="#icon-server" x="165" y="380" width="70" height="100"/>
-  <text x="200" y="500" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#000000">Server-PT</text>
-  <text x="200" y="515" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#000000">SRV-DB</text>
+<use href="#icon-switch" x="150" y="250" width="100" height="50"/>
+<text x="200" y="317" font-family="JetBrains Mono, monospace" font-size="13" text-anchor="middle" fill="#1a1917">2960-24TT</text>
+<text x="200" y="333" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="#1a1917">SW-CORE</text>
 
-  <use href="#icon-switch" x="850" y="250" width="100" height="50"/>
-  <text x="900" y="315" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#000000">2960-24TT</text>
-  <text x="900" y="330" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#000000">SW-ACC2</text>
+<use href="#icon-server" x="165" y="380" width="70" height="100"/>
+<text x="200" y="500" font-family="JetBrains Mono, monospace" font-size="13" text-anchor="middle" fill="#1a1917">Server-PT</text>
+<text x="200" y="517" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="#1a1917">SRV-DB</text>
 
-  <use href="#icon-pc" x="750" y="750" width="80" height="75"/>
-  <text x="790" y="845" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#000000">PC-PT</text>
-  <text x="790" y="860" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#000000">PC1</text>
+<use href="#icon-switch" x="850" y="250" width="100" height="50"/>
+<text x="900" y="317" font-family="JetBrains Mono, monospace" font-size="13" text-anchor="middle" fill="#1a1917">2960-24TT</text>
+<text x="900" y="333" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="#1a1917">SW-ACC2</text>
 
-  <use href="#icon-switch" x="900" y="775" width="100" height="50"/>
-  <text x="950" y="840" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#000000">2960-24TT</text>
-  <text x="950" y="855" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#000000">SW-ACC1</text>
+<use href="#icon-pc" x="750" y="750" width="80" height="75"/>
+<text x="790" y="847" font-family="JetBrains Mono, monospace" font-size="13" text-anchor="middle" fill="#1a1917">PC-PT</text>
+<text x="790" y="863" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="#1a1917">PC1</text>
 
+<use href="#icon-switch" x="900" y="775" width="100" height="50"/>
+<text x="950" y="842" font-family="JetBrains Mono, monospace" font-size="13" text-anchor="middle" fill="#1a1917">2960-24TT</text>
+<text x="950" y="858" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="#1a1917">SW-ACC1</text>
 
-  <polygon points="200,205 205,215 195,215" fill="#008000"/> <polygon points="200,245 205,235 195,235" fill="#008000"/>
-  <polygon points="200,345 205,355 195,355" fill="#008000"/> <polygon points="255,275 265,270 265,280" fill="#008000"/> <polygon points="845,275 835,270 835,280" fill="#008000"/>
-  
-  <polygon points="900,305 905,315 895,315" fill="#008000"/> <polygon points="900,765 905,755 895,755" fill="#008000"/>
+<!-- flechas de estado activo -->
+<polygon points="200,205 205,215 195,215" fill="#1e6b3a"/>
+<polygon points="200,245 205,235 195,235" fill="#1e6b3a"/>
+<polygon points="200,345 205,355 195,355" fill="#1e6b3a"/>
+<polygon points="900,305 905,315 895,315" fill="#1e6b3a"/>
+<polygon points="900,765 905,755 895,755" fill="#1e6b3a"/>
+<polygon points="825,800 835,795 835,805" fill="#1e6b3a"/>
+<polygon points="895,800 885,795 885,805" fill="#1e6b3a"/>
 
-  <polygon points="825,800 835,795 835,805" fill="#008000"/> <polygon points="895,800 885,795 885,805" fill="#008000"/>
+<!-- etiqueta enlace caído -->
+<rect x="470" y="230" width="150" height="26" rx="5" fill="#c0392b"/>
+<text x="545" y="248" font-family="JetBrains Mono, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#ffffff">FIBRA CAÍDA</text>
 
-  <polygon points="255,288 268,288 263,278" fill="#ff0000"/> <polygon points="890,778 878,773 883,783" fill="#ff0000"/> </svg>
+<!-- etiqueta enlace backup -->
+<rect x="470" y="500" width="185" height="26" rx="5" fill="#6c3fa0"/>
+<text x="562" y="518" font-family="JetBrains Mono, monospace" font-size="12.5" font-weight="600" text-anchor="middle" fill="#ffffff">BACKUP — BLOCKING</text>
+</svg>
+<div class="diagram-legend">
+<span><i class="legend-dot" style="background:#1e6b3a;"></i>Enlace activo (forwarding)</span>
+<span><i class="legend-dot" style="background:#c0392b;"></i>Fibra dañada (down)</span>
+<span><i class="legend-dot" style="background:#6c3fa0;"></i>Backup en Blocking (STP)</span>
+</div>
+</div>
+</section>
 
+<!-- SITUACIÓN -->
+<section>
+<div class="section-label">03 · Situación de falla</div>
+<h2>El incidente</h2>
 
-  <!-- SITUACIÓN -->
-  <section>
-    <div class="section-label">02 · Situación de falla</div>
-    <h2>El incidente</h2>
+<div class="scenario">
+<h3>📋 Reporte del NOC — Ticket #2024-0712</h3>
+<p><strong>Hora del reporte:</strong> 09:47 hs &nbsp;|&nbsp; <strong>Impacto:</strong> Total — sin acceso a BD</p>
+<p>Personal de mantenimiento realizó trabajos en el rack del piso 3 durante la noche. Al iniciar el turno matutino, los usuarios del área reportan que no pueden conectarse al servidor de base de datos (<code>192.168.10.100</code>). El ping desde <strong>PC1</strong> hacia el servidor falla al 100%.</p>
+<p>Se sospecha que durante los trabajos nocturnos <strong>se dañó el cable de fibra óptica</strong> que conecta SW-ACC1 al SW-CORE. La fibra no puede reemplazarse hasta que llegue el técnico de cableado estructurado (ETR -Estimated Time to Restore/Repair-: 4 horas).</p>
+<p>⚠️ <strong>La operación no puede esperar 4 horas.</strong> Debés restablecer la conectividad usando la infraestructura existente.</p>
+</div>
+</section>
 
-    <div class="scenario">
-      <h3>📋 Reporte del NOC — Ticket #2024-0712</h3>
-      <p><strong>Hora del reporte:</strong> 09:47 hs &nbsp;|&nbsp; <strong>Impacto:</strong> Total — sin acceso a BD</p>
-      <p>Personal de mantenimiento realizó trabajos en el rack del piso 3 durante la noche. Al iniciar el turno matutino, los usuarios del área reportan que no pueden conectarse al servidor de base de datos (<code>192.168.10.100</code>). El ping desde <strong>PC1</strong> hacia el servidor falla al 100%.</p>
-      <p>Se sospecha que durante los trabajos nocturnos <strong>se dañó el cable de fibra óptica</strong> que conecta SW-ACC1 al SW-CORE. La fibra no puede reemplazarse hasta que llegue el técnico de cableado estructurado (ETR -Estimated Time to Restore/Repair-: 4 horas).</p>
-      <p>⚠️ <strong>La operación no puede esperar 4 horas.</strong> Debés restablecer la conectividad usando la infraestructura existente.</p>
-    </div>
-  </section>
+<!-- ANÁLISIS DE FALLA -->
+<section>
+<div class="section-label">04 · Análisis de la falla</div>
+<h2>Tabla de estado de enlaces</h2>
+<table>
+<thead>
+<tr>
+<th>Enlace</th>
+<th>Dispositivo A</th>
+<th>Puerto A</th>
+<th>Dispositivo B</th>
+<th>Puerto B</th>
+<th>Estado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Troncal Core</td>
+<td>R1</td>
+<td><span style="font-family:var(--font-mono);font-size:12px;">Gi0/0</span></td>
+<td>SW-CORE</td>
+<td><span style="font-family:var(--font-mono);font-size:12px;">Gi0/1</span></td>
+<td><span class="badge badge-green">ACTIVO</span></td>
+</tr>
+<tr>
+<td>Fibra Core→ACC1</td>
+<td>SW-CORE</td>
+<td><span style="font-family:var(--font-mono);font-size:12px;">Fa0/1</span></td>
+<td>SW-ACC1</td>
+<td><span style="font-family:var(--font-mono);font-size:12px;">Gi0/1</span></td>
+<td><span class="badge badge-red">CAÍDO 🔴</span></td>
+</tr>
+<tr>
+<td>Fibra Core→ACC2</td>
+<td>SW-CORE</td>
+<td><span style="font-family:var(--font-mono);font-size:12px;">Fa0/2</span></td>
+<td>SW-ACC2</td>
+<td><span style="font-family:var(--font-mono);font-size:12px;">Gi0/1</span></td>
+<td><span class="badge badge-green">ACTIVO</span></td>
+</tr>
+<tr>
+<td>Backup ACC1→ACC2</td>
+<td>SW-ACC1</td>
+<td><span style="font-family:var(--font-mono);font-size:12px;">Fa0/24</span></td>
+<td>SW-ACC2</td>
+<td><span style="font-family:var(--font-mono);font-size:12px;">Fa0/24</span></td>
+<td><span class="badge badge-blue">DISPONIBLE</span></td>
+</tr>
+<tr>
+<td>Acceso PC1</td>
+<td>PC1</td>
+<td><span style="font-family:var(--font-mono);font-size:12px;">Fa0</span></td>
+<td>SW-ACC1</td>
+<td><span style="font-family:var(--font-mono);font-size:12px;">Fa0/1</span></td>
+<td><span class="badge badge-green">ACTIVO</span></td>
+</tr>
+<tr>
+<td>Acceso SRV-DB</td>
+<td>SRV-DB</td>
+<td><span style="font-family:var(--font-mono);font-size:12px;">Fa0</span></td>
+<td>SW-CORE</td>
+<td><span style="font-family:var(--font-mono);font-size:12px;">Fa0/3</span></td>
+<td><span class="badge badge-green">ACTIVO</span></td>
+</tr>
+</tbody>
+</table>
 
-  <!-- ANÁLISIS DE FALLA -->
-  <section>
-    <div class="section-label">03 · Análisis de la falla</div>
-    <h2>Tabla de estado de enlaces</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Enlace</th>
-          <th>Dispositivo A</th>
-          <th>Puerto A</th>
-          <th>Dispositivo B</th>
-          <th>Puerto B</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Troncal Core</td>
-          <td>R1</td>
-          <td><span style="font-family:var(--font-mono);font-size:12px;">Gi0/0</span></td>
-          <td>SW-CORE</td>
-          <td><span style="font-family:var(--font-mono);font-size:12px;">Gi0/1</span></td>
-          <td><span class="badge badge-green">ACTIVO</span></td>
-        </tr>
-        <tr>
-          <td>Fibra Core→ACC1</td>
-          <td>SW-CORE</td>
-          <td><span style="font-family:var(--font-mono);font-size:12px;">Fa0/1</span></td>
-          <td>SW-ACC1</td>
-          <td><span style="font-family:var(--font-mono);font-size:12px;">Gi0/1</span></td>
-          <td><span class="badge badge-red">CAÍDO 🔴</span></td>
-        </tr>
-        <tr>
-          <td>Fibra Core→ACC2</td>
-          <td>SW-CORE</td>
-          <td><span style="font-family:var(--font-mono);font-size:12px;">Fa0/2</span></td>
-          <td>SW-ACC2</td>
-          <td><span style="font-family:var(--font-mono);font-size:12px;">Gi0/1</span></td>
-          <td><span class="badge badge-green">ACTIVO</span></td>
-        </tr>
-        <tr>
-          <td>Backup ACC1→ACC2</td>
-          <td>SW-ACC1</td>
-          <td><span style="font-family:var(--font-mono);font-size:12px;">Fa0/24</span></td>
-          <td>SW-ACC2</td>
-          <td><span style="font-family:var(--font-mono);font-size:12px;">Fa0/24</span></td>
-          <td><span class="badge badge-blue">DISPONIBLE</span></td>
-        </tr>
-        <tr>
-          <td>Acceso PC1</td>
-          <td>PC1</td>
-          <td><span style="font-family:var(--font-mono);font-size:12px;">Fa0</span></td>
-          <td>SW-ACC1</td>
-          <td><span style="font-family:var(--font-mono);font-size:12px;">Fa0/1</span></td>
-          <td><span class="badge badge-green">ACTIVO</span></td>
-        </tr>
-        <tr>
-          <td>Acceso SRV-DB</td>
-          <td>SRV-DB</td>
-          <td><span style="font-family:var(--font-mono);font-size:12px;">Fa0</span></td>
-          <td>SW-CORE</td>
-          <td><span style="font-family:var(--font-mono);font-size:12px;">Fa0/3</span></td>
-          <td><span class="badge badge-green">ACTIVO</span></td>
-        </tr>
-      </tbody>
-    </table>
+<div class="callout callout-orange" style="margin-top:14px;">
+<strong>🔍 Pista clave:</strong> El enlace de backup entre SW-ACC1 y SW-ACC2 existe físicamente y está operativo. El Spanning Tree Protocol (STP) lo tiene en estado <em>Blocking</em> para evitar loops. ¿Qué pasaría si este enlace pudiera transportar tráfico hacia SW-CORE a través de SW-ACC2?
+</div>
+</section>
 
-    <div class="callout callout-orange" style="margin-top:14px;">
-      <strong>🔍 Pista clave:</strong> El enlace de backup entre SW-ACC1 y SW-ACC2 existe físicamente y está operativo. El Spanning Tree Protocol (STP) lo tiene en estado <em>Blocking</em> para evitar loops. ¿Qué pasaría si este enlace pudiera transportar tráfico hacia SW-CORE a través de SW-ACC2?
-    </div>
-  </section>
+<!-- CONSIGNAS -->
+<section>
+<div class="section-label">05 · Consignas de trabajo</div>
+<h2>Tareas a realizar</h2>
 
-  <!-- CONSIGNAS -->
-  <section>
-    <div class="section-label">04 · Consignas de trabajo</div>
-    <h2>Tareas a realizar</h2>
+<ul class="consigna-list">
 
-    <ul class="consigna-list">
+<li class="consigna-item">
+<div class="consigna-num">1</div>
+<div class="consigna-body">
+<strong>Verificación inicial del incidente</strong>
+<p>Abrí el archivo <code>.pkt</code> entregado en Packet Tracer. Desde <strong>PC1</strong>ejecutá un ping hacia el servidor de base de datos (<code>192.168.10.100</code>). Capturá el resultado y confirmá la pérdida de conectividad. Anotá el porcentaje de pérdida de paquetes.</p>
+</div>
+</li>
 
-      <li class="consigna-item">
-        <div class="consigna-num">1</div>
-        <div class="consigna-body">
-          <strong>Verificación inicial del incidente</strong>
-          <p>Abrí el archivo <code>.pkt</code> entregado en Packet Tracer. Desde <strong>PC1</strong>ejecutá un ping hacia el servidor de base de datos (<code>192.168.10.100</code>). Capturá el resultado y confirmá la pérdida de conectividad. Anotá el porcentaje de pérdida de paquetes.</p>
-        </div>
-      </li>
+<li class="consigna-item">
+<div class="consigna-num">2</div>
+<div class="consigna-body">
+<strong>Diagnóstico de capa física (Capa 1)</strong>
+<p>Ingresá a la CLI de <strong>SW-ACC1</strong> y ejecutá el comando <code>show interfaces</code> (o <code>show interfaces status</code>). Identificá qué interfaz aparece como <em>"down/down"</em>. ¿Coincide con el enlace reportado como dañado? Documentá la interfaz afectada y su estado.</p>
+</div>
+</li>
 
-      <li class="consigna-item">
-        <div class="consigna-num">2</div>
-        <div class="consigna-body">
-          <strong>Diagnóstico de capa física (Capa 1)</strong>
-          <p>Ingresá a la CLI de <strong>SW-ACC1</strong> y ejecutá el comando <code>show interfaces</code> (o <code>show interfaces status</code>). Identificá qué interfaz aparece como <em>"down/down"</em>. ¿Coincide con el enlace reportado como dañado? Documentá la interfaz afectada y su estado.</p>
-        </div>
-      </li>
+<li class="consigna-item">
+<div class="consigna-num">3</div>
+<div class="consigna-body">
+<strong>Análisis del árbol Spanning Tree (Capa 2)</strong>
+<p>En <strong>SW-ACC1</strong>ejecutá <code>show spanning-tree</code>. Identificá el estado actual del puerto <code>Fa0/24</code> (enlace de backup hacia SW-ACC2). ¿Por qué ese puerto estaba en estado <em>Blocking</em> cuando la fibra funcionaba? ¿Cuál es la topología STP ahora que la fibra está caída?</p>
+</div>
+</li>
 
-      <li class="consigna-item">
-        <div class="consigna-num">3</div>
-        <div class="consigna-body">
-          <strong>Análisis del árbol Spanning Tree (Capa 2)</strong>
-          <p>En <strong>SW-ACC1</strong>ejecutá <code>show spanning-tree</code>. Identificá el estado actual del puerto <code>Fa0/24</code> (enlace de backup hacia SW-ACC2). ¿Por qué ese puerto estaba en estado <em>Blocking</em> cuando la fibra funcionaba? ¿Cuál es la topología STP ahora que la fibra está caída?</p>
-        </div>
-      </li>
+<li class="consigna-item">
+<div class="consigna-num">4</div>
+<div class="consigna-body">
+<strong>Implementación del plan de contingencia — Activación del enlace de respaldo</strong>
+<p>La solución inmediata es habilitar el tráfico a través del enlace de backup <strong>SW-ACC1 ↔ SW-ACC2</strong>Para ello, el STP debe reconverger y elevar el puerto Fa0/24 al estado <em>Forwarding</em>. Verificá que el enlace físico esté activo e investigá cómo forzar la convergencia STP si fuera necesario. Documentá los pasos realizados.</p>
+</div>
+</li>
 
-      <li class="consigna-item">
-        <div class="consigna-num">4</div>
-        <div class="consigna-body">
-          <strong>Implementación del plan de contingencia — Activación del enlace de respaldo</strong>
-          <p>La solución inmediata es habilitar el tráfico a través del enlace de backup <strong>SW-ACC1 ↔ SW-ACC2</strong>Para ello, el STP debe reconverger y elevar el puerto Fa0/24 al estado <em>Forwarding</em>. Verificá que el enlace físico esté activo e investigá cómo forzar la convergencia STP si fuera necesario. Documentá los pasos realizados.</p>
-        </div>
-      </li>
+<li class="consigna-item">
+<div class="consigna-num">5</div>
+<div class="consigna-body">
+<strong>Verificación de la restauración</strong>
+<p>Desde <strong>PC1</strong>ejecutá nuevamente el ping hacia <code>192.168.10.100</code>. El tráfico ahora debería fluir por la ruta alternativa: <strong>PC1 → SW-ACC1 → SW-ACC2 → SW-CORE → SRV-DB</strong>. Verificá la conectividad y documentá el nuevo porcentaje de éxito.</p>
+</div>
+</li>
 
-      <li class="consigna-item">
-        <div class="consigna-num">5</div>
-        <div class="consigna-body">
-          <strong>Verificación de la restauración</strong>
-          <p>Desde <strong>PC1</strong>ejecutá nuevamente el ping hacia <code>192.168.10.100</code>. El tráfico ahora debería fluir por la ruta alternativa: <strong>PC1 → SW-ACC1 → SW-ACC2 → SW-CORE → SRV-DB</strong>. Verificá la conectividad y documentá el nuevo porcentaje de éxito.</p>
-        </div>
-      </li>
+<li class="consigna-item">
+<div class="consigna-num">6</div>
+<div class="consigna-body">
+<strong>Trazado de ruta activa (Verificación avanzada)</strong>
+<p>Usá la herramienta de <strong>Simulación</strong> de Packet Tracer (modo simulación → filtro ICMP). Enviá un ping desde PC1 al servidor y observá el recorrido paquete a paquete. Dibujá en un esquema el camino que sigue el tráfico antes y después de la falla. ¿Cuántos saltos de capa 2 tiene la ruta de contingencia?</p>
+</div>
+</li>
 
-      <li class="consigna-item">
-        <div class="consigna-num">6</div>
-        <div class="consigna-body">
-          <strong>Trazado de ruta activa (Verificación avanzada)</strong>
-          <p>Usá la herramienta de <strong>Simulación</strong> de Packet Tracer (modo simulación → filtro ICMP). Enviá un ping desde PC1 al servidor y observá el recorrido paquete a paquete. Dibujá en un esquema el camino que sigue el tráfico antes y después de la falla. ¿Cuántos saltos de capa 2 tiene la ruta de contingencia?</p>
-        </div>
-      </li>
+<li class="consigna-item">
+<div class="consigna-num">7</div>
+<div class="consigna-body">
+<strong>Informe de incidente — RCA (Análisis de Causa Raíz)</strong>
+<p>Redactá un breve informe de incidente (máx. 1 página) que incluya: (a) descripción de la falla, (b) diagnóstico realizado con los comandos utilizados, (c) solución aplicada, (d) ruta de contingencia activa, y (e) recomendaciones para evitar futuros incidentes o reducir el tiempo de recuperación.</p>
+</div>
+</li>
 
-      <li class="consigna-item">
-        <div class="consigna-num">7</div>
-        <div class="consigna-body">
-          <strong>Informe de incidente — RCA (Análisis de Causa Raíz)</strong>
-          <p>Redactá un breve informe de incidente (máx. 1 página) que incluya: (a) descripción de la falla, (b) diagnóstico realizado con los comandos utilizados, (c) solución aplicada, (d) ruta de contingencia activa, y (e) recomendaciones para evitar futuros incidentes o reducir el tiempo de recuperación.</p>
-        </div>
-      </li>
+</ul>
+</section>
 
-    </ul>
-  </section>
+<!-- COMANDOS ÚTILES -->
+<section>
+<div class="section-label">06 · Referencia técnica</div>
+<h2>Comandos útiles para el diagnóstico</h2>
 
-  <!-- COMANDOS ÚTILES -->
-  <section>
-    <div class="section-label">05 · Referencia técnica</div>
-    <h2>Comandos útiles para el diagnóstico</h2>
-
-    <div class="code-block">
+<div class="code-block">
 <span class="code-comment">! ── Verificación de estado de interfaces ──────────────────</span>
 <span class="code-kw">show interfaces</span>
 <span class="code-kw">show interfaces status</span>
@@ -666,115 +834,143 @@
 <span class="code-kw">show mac address-table</span>
 
 <span class="code-comment">! ── Verificación de conectividad desde PC1 ─────────────────</span>
-<span class="code-kw">ping 192.168.10.100</span>          <span class="code-comment">! desde PC1 → SRV-DB</span>
-<span class="code-kw">ping 192.168.10.1</span>            <span class="code-comment">! desde PC1 → Gateway R1</span>
+<span class="code-kw">ping 192.168.10.100</span> <span class="code-comment">! desde PC1 → SRV-DB</span>
+<span class="code-kw">ping 192.168.10.1</span> <span class="code-comment">! desde PC1 → Gateway R1</span>
 
 <span class="code-comment">! ── Habilitar/deshabilitar interface (si necesitás forzar algo) ─</span>
 <span class="code-kw">interface FastEthernet0/24</span>
 <span class="code-kw"> no shutdown</span>
 </div>
 
-    <div class="callout callout-blue" style="margin-top:12px;">
-      <strong>💡 Recordá:</strong> En Packet Tracer podés hacer clic derecho sobre un enlace para inspeccionarlo, o usar el <strong>modo Simulación</strong> (botón abajo a la derecha) para ver el recorrido ICMP paso a paso. Filtrá por protocolo ICMP para mayor claridad.
-    </div>
-  </section>
+<div class="callout callout-blue" style="margin-top:12px;">
+<strong>💡 Recordá:</strong> En Packet Tracer podés hacer clic derecho sobre un enlace para inspeccionarlo, o usar el <strong>modo Simulación</strong> (botón abajo a la derecha) para ver el recorrido ICMP paso a paso. Filtrá por protocolo ICMP para mayor claridad.
+</div>
+</section>
 
-  <!-- PREGUNTAS CONCEPTUALES -->
-  <section>
-    <div class="section-label">06 · Preguntas conceptuales</div>
-    <h2>Para reflexionar</h2>
+<!-- PREGUNTAS GENERALES -->
+<section>
+<div class="section-label">07 · Preguntas generales</div>
+<h2>Para reflexionar</h2>
 
-    <ul class="consigna-list">
-      <li class="consigna-item">
-        <div class="consigna-num">A</div>
-        <div class="consigna-body">
-          <strong>¿Por qué el STP bloqueaba el enlace de backup si era necesario como contingencia?</strong>
-          <p>Explicá el propósito del Spanning Tree Protocol y por qué un puerto en Blocking no implica que el enlace esté dañado.</p>
-        </div>
-      </li>
-      <li class="consigna-item">
-        <div class="consigna-num">B</div>
-        <div class="consigna-body">
-          <strong>¿Qué mecanismo permite que STP reconverja automáticamente?</strong>
-          <p>Compará el comportamiento de STP clásico (802.1D) con Rapid STP (802.1w). ¿Cuánto tiempo tarda cada uno en reconverger? ¿Cuál está configurado en este laboratorio?</p>
-        </div>
-      </li>
-      <li class="consigna-item">
-        <div class="consigna-num">C</div>
-        <div class="consigna-body">
-          <strong>¿Cómo mejorarías este diseño para reducir el impacto de futuras fallas de fibra?</strong>
-          <p>Proponé al menos dos mejoras de diseño (por ejemplo: PortFast, UplinkFast, RSTP, enlaces redundantes activos, EtherChannel). Justificá cada propuesta.</p>
-        </div>
-      </li>
-      <li class="consigna-item">
-        <div class="consigna-num">D</div>
-        <div class="consigna-body">
-          <strong>¿Qué diferencia hay entre un corte de Capa 1 y una falla de Capa 2?</strong>
-          <p>Si el enlace físico estuviera bien pero el puerto estuviera en estado <em>err-disabled</em> o en la VLAN incorrecta, ¿cómo cambiaría el diagnóstico y la solución?</p>
-        </div>
-      </li>
-    </ul>
-  </section>
+<ul class="consigna-list">
+<li class="consigna-item alt">
+<div class="consigna-num">A</div>
+<div class="consigna-body">
+<strong>¿Por qué el STP bloqueaba el enlace de backup si era necesario como contingencia?</strong>
+<p>Explicá el propósito del Spanning Tree Protocol y por qué un puerto en Blocking no implica que el enlace esté dañado.</p>
+</div>
+</li>
+<li class="consigna-item alt">
+<div class="consigna-num">B</div>
+<div class="consigna-body">
+<strong>¿Qué mecanismo permite que STP reconverja automáticamente?</strong>
+<p>Compará el comportamiento de STP clásico (802.1D) con Rapid STP (802.1w). ¿Cuánto tiempo tarda cada uno en reconverger? ¿Cuál está configurado en este laboratorio?</p>
+</div>
+</li>
+<li class="consigna-item alt">
+<div class="consigna-num">C</div>
+<div class="consigna-body">
+<strong>¿Cómo mejorarías este diseño para reducir el impacto de futuras fallas de fibra?</strong>
+<p>Proponé al menos dos mejoras de diseño (por ejemplo: PortFast, UplinkFast, RSTP, enlaces redundantes activos, EtherChannel). Justificá cada propuesta.</p>
+</div>
+</li>
+<li class="consigna-item alt">
+<div class="consigna-num">D</div>
+<div class="consigna-body">
+<strong>¿Qué diferencia hay entre un corte de Capa 1 y una falla de Capa 2?</strong>
+<p>Si el enlace físico estuviera bien pero el puerto estuviera en estado <em>err-disabled</em> o en la VLAN incorrecta, ¿cómo cambiaría el diagnóstico y la solución?</p>
+</div>
+</li>
+</ul>
+</section>
 
-  <!-- CRITERIOS DE EVALUACIÓN -->
-  <section>
-    <div class="section-label">07 · Evaluación</div>
-    <h2>Criterios de corrección</h2>
-    <table>
-      <thead>
-        <tr><th>Criterio</th><th>Indicador</th><th>Puntaje</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Diagnóstico de Capa 1</td>
-          <td>Identificó correctamente la interfaz caída con <code>show interfaces</code></td>
-          <td style="font-family:var(--font-mono);font-weight:600;">20 pts</td>
-        </tr>
-        <tr>
-          <td>Análisis STP</td>
-          <td>Describió el estado del puerto de backup y el motivo del Blocking</td>
-          <td style="font-family:var(--font-mono);font-weight:600;">20 pts</td>
-        </tr>
-        <tr>
-          <td>Restauración de conectividad</td>
-          <td>Ping exitoso PC1 → SRV-DB luego de la intervención</td>
-          <td style="font-family:var(--font-mono);font-weight:600;">25 pts</td>
-        </tr>
-        <tr>
-          <td>Trazado de ruta activa</td>
-          <td>Diagrama correcto con la ruta de contingencia y saltos L2</td>
-          <td style="font-family:var(--font-mono);font-weight:600;">15 pts</td>
-        </tr>
-        <tr>
-          <td>Informe RCA</td>
-          <td>Claridad, precisión técnica y recomendaciones fundamentadas</td>
-          <td style="font-family:var(--font-mono);font-weight:600;">20 pts</td>
-        </tr>
-      </tbody>
-    </table>
+<!-- RÚBRICA Y CRITERIO DE EVALUACIÓN -->
+<section>
+<div class="section-label">08 · Evaluación</div>
+<h2>Rúbrica de corrección</h2>
+<p style="font-size:13.5px;color:var(--muted);">Cada criterio se corrige según el nivel de desempeño alcanzado. El puntaje indicado es el máximo posible para ese criterio.</p>
 
-    <div class="callout callout-green" style="margin-top:14px;">
-      <strong>✅ Condición de aprobación:</strong> Conectividad restaurada (ping exitoso) + análisis correcto de la causa raíz. Sin restauración de conectividad, el práctico no se aprueba aunque el informe esté bien redactado.
-    </div>
-  </section>
+<table class="rubrica-table">
+<thead>
+<tr><th>Criterio</th><th>Logrado</th><th>Parcial</th><th>No logrado</th><th>Máx.</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>Diagnóstico de Capa 1</td>
+<td><span class="nivel-logrado">Identifica la interfaz caída con el comando correcto y explica el estado</span></td>
+<td><span class="nivel-parcial">Identifica la interfaz pero sin justificar el comando o el estado</span></td>
+<td><span class="nivel-no-logrado">No identifica la interfaz afectada</span></td>
+<td class="rubrica-score">20 pts</td>
+</tr>
+<tr>
+<td>Análisis STP</td>
+<td><span class="nivel-logrado">Describe el estado del puerto de backup y justifica el motivo del Blocking</span></td>
+<td><span class="nivel-parcial">Describe el estado pero no explica correctamente la causa</span></td>
+<td><span class="nivel-no-logrado">No analiza el comportamiento de STP</span></td>
+<td class="rubrica-score">20 pts</td>
+</tr>
+<tr>
+<td>Restauración de conectividad</td>
+<td><span class="nivel-logrado">Ping exitoso PC1 → SRV-DB tras la intervención, sin pérdida de paquetes</span></td>
+<td><span class="nivel-parcial">Restaura parcialmente (pérdida intermitente) o con pasos innecesarios</span></td>
+<td><span class="nivel-no-logrado">No logra restablecer la conectividad</span></td>
+<td class="rubrica-score">25 pts</td>
+</tr>
+<tr>
+<td>Trazado de ruta activa</td>
+<td><span class="nivel-logrado">Diagrama correcto con ruta de contingencia y cantidad de saltos L2</span></td>
+<td><span class="nivel-parcial">Diagrama incompleto o con saltos mal contabilizados</span></td>
+<td><span class="nivel-no-logrado">No presenta el trazado</span></td>
+<td class="rubrica-score">15 pts</td>
+</tr>
+<tr>
+<td>Informe RCA</td>
+<td><span class="nivel-logrado">Informe claro, técnicamente preciso, con recomendaciones fundamentadas</span></td>
+<td><span class="nivel-parcial">Informe presente pero incompleto o con imprecisiones técnicas</span></td>
+<td><span class="nivel-no-logrado">No entrega informe o carece de estructura mínima</span></td>
+<td class="rubrica-score">20 pts</td>
+</tr>
+</tbody>
+</table>
 
-  <!-- ENTREGABLES -->
-  <section>
-    <div class="section-label">08 · Entregables</div>
-    <h2>¿Qué tenés que entregar?</h2>
-    <div class="entregable-grid">
-      <div class="entregable-item"><div class="check">📁</div><div>Archivo <strong>.pkt</strong> guardado luego de restaurar la conectividad (el ping debe funcionar al abrir el archivo)</div></div>
-      <div class="entregable-item"><div class="check">📸</div><div>Capturas de pantalla: estado de interfaces ANTES y DESPUÉS, y el resultado del ping exitoso</div></div>
-      <div class="entregable-item"><div class="check">📝</div><div>Respuestas a las preguntas conceptuales (A, B, C, D) — mínimo 3 líneas por respuesta</div></div>
-      <div class="entregable-item"><div class="check">📋</div><div>Informe de incidente RCA (consigna 7) — máximo 1 carilla, con comandos usados y ruta alternativa documentada</div></div>
-    </div>
-  </section>
+<div class="callout callout-purple" style="margin-top:16px;">
+<strong>📐 Criterio de evaluación:</strong> El puntaje total surge de la suma de los cinco criterios (100 pts). Se considera <strong>Logrado</strong> cuando el puntaje acumulado es ≥ 80 pts, <strong>Aprobado con observaciones</strong> entre 60 y 79 pts, y <strong>No aprobado</strong> por debajo de 60 pts. La ponderación prioriza la restauración efectiva del servicio (25 pts) por sobre la documentación, reflejando la urgencia real de un incidente operativo.
+</div>
+
+<div class="callout callout-green" style="margin-top:10px;">
+<strong>✅ Condición de aprobación:</strong> Conectividad restaurada (ping exitoso) + análisis correcto de la causa raíz. Sin restauración de conectividad, el práctico no se aprueba aunque el informe esté bien redactado.
+</div>
+</section>
+
+<!-- ENTREGABLES -->
+<section>
+<div class="section-label">09 · Entregables</div>
+<h2>¿Qué tenés que entregar?</h2>
+<div class="entregable-grid">
+<div class="entregable-item"><div class="check">📁</div><div>Archivo <strong>.pkt</strong> guardado luego de restaurar la conectividad (el ping debe funcionar al abrir el archivo)</div></div>
+<div class="entregable-item"><div class="check">📸</div><div>Capturas de pantalla: estado de interfaces ANTES y DESPUÉS, y el resultado del ping exitoso</div></div>
+<div class="entregable-item"><div class="check">📝</div><div>Respuestas a las preguntas generales (A, B, C, D) — mínimo 3 líneas por respuesta</div></div>
+<div class="entregable-item"><div class="check">📋</div><div>Informe de incidente RCA (consigna 7) — máximo 1 carilla, con comandos usados y ruta alternativa documentada</div></div>
+</div>
+</section>
+
+<!-- CONCLUSIONES -->
+<section>
+<div class="section-label">10 · Conclusiones</div>
+<h2>Cierre del práctico</h2>
+<div class="conclusion-box">
+<h3>Lo que este incidente simulado deja como aprendizaje</h3>
+<p>Este práctico reproduce una situación real de operación de red: una falla física inesperada que exige una respuesta rápida sin depender del reemplazo inmediato del hardware. La clave no estuvo en la falla en sí, sino en reconocer que <strong>la redundancia ya existía</strong> en la topología — el desafío fue identificarla y activarla correctamente a través del comportamiento de STP.</p>
+<p>Diagnosticar por capas (primero Capa 1, luego Capa 2) es un hábito profesional que evita conclusiones apresuradas: un enlace "caído" a nivel físico puede tener causas y soluciones muy distintas a una falla lógica de VLAN o de árbol de expansión.</p>
+<p>Finalmente, la elaboración del informe RCA no es un trámite administrativo: es la herramienta que transforma un incidente puntual en una mejora de diseño futura, reduciendo el <strong>MTTR (Mean Time To Repair)</strong> de la organización y evitando que el mismo problema vuelva a paralizar el servicio.</p>
+</div>
+</section>
 
 </main>
 
 <footer>
-  <span>Telecomunicaciones B · Unidad 5 Redes — Recuperación ante Corte de Fibra Óptica</span>
-  <span>Herramienta: Cisco Packet Tracer · Agosto 2026</span>
+<span>Telecomunicaciones B · Unidad 5 Redes — Recuperación ante Corte de Fibra Óptica</span>
+<span>Herramienta: Cisco Packet Tracer · Agosto 2026</span>
 </footer>
 
 </body>
