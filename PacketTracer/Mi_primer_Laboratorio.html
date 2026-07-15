@@ -1,154 +1,1572 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guía de Iniciación: Cisco Packet Tracer</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #2d3748; background-color: #f7fafc; margin: 0; padding: 30px; }
-        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        h1 { color: #1a365d; border-bottom: 3px solid #2b6cb0; padding-bottom: 12px; margin-top: 0; font-size: 2.2rem; }
-        h2 { color: #2b6cb0; margin-top: 35px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; font-size: 1.6rem; }
-        h3 { color: #2d3748; margin-top: 25px; font-size: 1.25rem; border-left: 4px solid #4299e1; padding-left: 10px; }
-        p { margin-bottom: 15px; text-align: justify; }
-        ul, ol { margin-bottom: 20px; padding-left: 25px; }
-        li { margin-bottom: 8px; }
-        .ccna-box { background-color: #fffaf0; border-left: 4px solid #dd6b20; padding: 20px; border-radius: 4px; margin: 20px 0; font-size: 0.95rem; }
-        .ccna-box.tip { background-color: #ebf8ff; border-left: 4px solid #3182ce; }
-        .exercise { background-color: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .exercise-title { font-weight: bold; color: #2c5282; font-size: 1.15rem; margin-bottom: 15px; display: flex; align-items: center; }
-        .badge { display: inline-block; padding: 4px 8px; background-color: #4a5568; color: white; border-radius: 4px; font-size: 0.75rem; margin-right: 10px; font-weight: bold; text-transform: uppercase; }
-        .badge.setup { background-color: #2b6cb0; }
-        .badge.topo { background-color: #319795; }
-        .badge.cli { background-color: #805ad5; }
-        .badge.save { background-color: #38a169; }
-        code { font-family: 'Courier New', Courier, monospace; background-color: #edf2f7; padding: 2px 6px; border-radius: 4px; font-size: 0.95rem; color: #b83280; font-weight: bold; }
-        pre { background-color: #1a202c; color: #edf2f7; padding: 15px; border-radius: 6px; font-family: 'Courier New', Courier, monospace; overflow-x: auto; font-size: 0.9rem; line-height: 1.4; }
-        details { background-color: #f7fafc; border: 1px solid #edf2f7; border-radius: 4px; padding: 12px 18px; margin-top: 15px; }
-        details summary { font-weight: bold; color: #4a5568; cursor: pointer; user-select: none; }
-        details summary:hover { color: #2b6cb0; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de Redes — OSI · TCP/IP · Subnetting · Comandos IOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf8f5;
+  --bg-alt:#f2ede4;
+  --fg:#241f18;
+  --muted:#6b6255;
+  --border:#e2d9c8;
+  --accent:#b5541a;
+  --accent-2:#0f6e5e;
+  --accent-3:#1d5c9e;
+  --card:#ffffff;
+  --font-head:'Plus Jakarta Sans',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --radius:10px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--font-head);
+  background:var(--bg);
+  color:var(--fg);
+  font-size:16px;
+  line-height:1.6;
+}
+::selection{background:var(--accent);color:#fff;}
+
+/* ---------- Layout shell ---------- */
+.shell{display:flex;min-height:100vh;}
+nav.side{
+  width:260px;
+  flex-shrink:0;
+  background:var(--bg-alt);
+  border-right:1px solid var(--border);
+  padding:28px 18px;
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow-y:auto;
+}
+nav.side .brand{
+  font-weight:800;
+  font-size:1.05rem;
+  letter-spacing:-0.02em;
+  margin-bottom:4px;
+  color:var(--accent);
+}
+nav.side .sub{
+  font-size:0.75rem;
+  color:var(--muted);
+  margin-bottom:22px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+}
+nav.side a{
+  display:block;
+  font-size:0.86rem;
+  color:var(--fg);
+  text-decoration:none;
+  padding:6px 10px;
+  border-radius:6px;
+  margin-bottom:2px;
+  border-left:2px solid transparent;
+}
+nav.side a:hover{background:#e8dfcd;}
+nav.side .grp{
+  font-size:0.7rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--muted);
+  margin:16px 0 6px 10px;
+  font-weight:700;
+}
+main{flex:1;min-width:0;padding:48px 56px 120px;max-width:1000px;}
+
+@media (max-width:860px){
+  nav.side{position:relative;height:auto;width:100%;top:auto;}
+  .shell{flex-direction:column;}
+  main{padding:32px 20px 80px;}
+}
+
+/* ---------- Hero ---------- */
+.hero{
+  padding-bottom:28px;
+  border-bottom:2px solid var(--border);
+  margin-bottom:40px;
+  animation:rise .5s ease both;
+}
+.hero .eyebrow{
+  font-family:var(--font-mono);
+  font-size:0.78rem;
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  font-weight:600;
+}
+.hero h1{
+  font-size:2.6rem;
+  font-weight:800;
+  letter-spacing:-0.03em;
+  margin:8px 0 10px;
+  line-height:1.08;
+}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:640px;}
+
+@keyframes rise{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ---------- Sections ---------- */
+section{margin-bottom:64px;scroll-margin-top:24px;}
+section h2{
+  font-size:1.7rem;
+  font-weight:800;
+  letter-spacing:-0.02em;
+  margin:0 0 6px;
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  flex-wrap:wrap;
+}
+section h2 .tag{
+  font-family:var(--font-mono);
+  font-size:0.7rem;
+  color:#fff;
+  background:var(--accent);
+  padding:3px 8px;
+  border-radius:5px;
+  font-weight:700;
+  letter-spacing:0.04em;
+}
+section > .desc{color:var(--muted);margin-bottom:22px;max-width:720px;}
+h3{font-size:1.15rem;font-weight:700;margin:28px 0 10px;letter-spacing:-0.01em;}
+p{margin:0 0 12px;}
+a{color:var(--accent-3);}
+
+/* ---------- Cards / grid ---------- */
+.grid{display:grid;gap:14px;}
+.grid.cols-2{grid-template-columns:1fr 1fr;}
+.grid.cols-4{grid-template-columns:repeat(4,1fr);}
+@media (max-width:760px){.grid.cols-2,.grid.cols-4{grid-template-columns:1fr;}}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px 18px;
+}
+
+/* ---------- OSI / TCP-IP stack ---------- */
+.stack{display:flex;flex-direction:column;gap:6px;margin:18px 0;}
+.stack .layer{
+  border:1px solid var(--border);
+  border-left:6px solid var(--l-color,var(--accent));
+  border-radius:8px;
+  padding:12px 16px;
+  background:var(--card);
+  display:grid;
+  grid-template-columns:32px 150px 1fr;
+  gap:14px;
+  align-items:start;
+}
+.stack .layer .num{
+  font-family:var(--font-mono);
+  font-weight:700;
+  color:var(--l-color,var(--accent));
+  font-size:1.1rem;
+}
+.stack .layer .name{font-weight:700;font-size:0.98rem;}
+.stack .layer .name small{display:block;font-weight:500;color:var(--muted);font-size:0.78rem;margin-top:2px;}
+.stack .layer .info{font-size:0.88rem;color:var(--fg);}
+.stack .layer .info .ex{font-family:var(--font-mono);font-size:0.78rem;color:var(--muted);margin-top:4px;display:block;}
+@media (max-width:700px){.stack .layer{grid-template-columns:24px 1fr;}
+  .stack .layer .info{grid-column:1 / -1;}}
+
+/* map colors per layer */
+.l7{--l-color:#b5541a;} .l6{--l-color:#c26a2e;} .l5{--l-color:#cc7f45;}
+.l4{--l-color:#0f6e5e;} .l3{--l-color:#1d5c9e;} .l2{--l-color:#5b3fa0;} .l1{--l-color:#8a2f5c;}
+
+/* TCP/IP mapping bracket */
+.mapbox{
+  display:flex;
+  gap:8px;
+  margin:20px 0;
+  font-family:var(--font-mono);
+  font-size:0.78rem;
+}
+.mapcol{flex:1;display:flex;flex-direction:column;gap:6px;}
+.mapcol .hd{font-weight:700;text-align:center;padding:6px;border-radius:6px;background:var(--bg-alt);}
+.maprow{
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:8px;
+  text-align:center;
+  background:var(--card);
+}
+
+/* ---------- Cable diagrams ---------- */
+.cable-diagram{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  margin:14px 0;
+}
+.pin-row{display:flex;gap:3px;font-family:var(--font-mono);font-size:0.72rem;margin:4px 0;}
+.pin{
+  flex:1;
+  text-align:center;
+  padding:5px 2px;
+  border-radius:4px;
+  color:#fff;
+  font-weight:600;
+}
+.pin-label{display:flex;gap:3px;font-family:var(--font-mono);font-size:0.65rem;color:var(--muted);margin-bottom:2px;}
+.pin-label span{flex:1;text-align:center;}
+.pO{background:#e8974d;} .pOw{background:#f2c088;color:#4a2c05;}
+.pG{background:#2e9e6b;} .pGw{background:#a6e0c4;color:#0a3d26;}
+.pBl{background:#3f6fc9;} .pBlw{background:#a9c4ef;color:#0a2c5c;}
+.pBr{background:#8a5a2e;} .pBrw{background:#d9b98c;color:#3d2607;}
+
+/* ---------- Console/direct/cross visual cable icon ---------- */
+.cable-visual{display:flex;align-items:center;gap:10px;margin:10px 0;}
+.rj45{
+  width:46px;height:32px;
+  background:linear-gradient(180deg,#d4cdbb,#b7ae97);
+  border:1px solid #8f8770;
+  border-radius:3px 3px 6px 6px;
+  position:relative;
+}
+.rj45::after{
+  content:"";
+  position:absolute;left:6px;right:6px;bottom:-4px;height:4px;
+  background:repeating-linear-gradient(90deg,#5b5540 0 2px,transparent 2px 5px);
+}
+.wire{flex:1;height:3px;background:repeating-linear-gradient(90deg,var(--accent) 0 8px,transparent 8px 14px);}
+
+/* ---------- Command tables ---------- */
+table.cmdtable{
+  width:100%;
+  border-collapse:collapse;
+  font-size:0.85rem;
+  margin:14px 0 26px;
+}
+table.cmdtable th{
+  text-align:left;
+  font-family:var(--font-mono);
+  font-size:0.72rem;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+  color:var(--muted);
+  border-bottom:2px solid var(--border);
+  padding:8px 10px;
+  position:sticky;top:0;background:var(--bg);
+}
+table.cmdtable td{
+  padding:9px 10px;
+  border-bottom:1px solid var(--border);
+  vertical-align:top;
+}
+table.cmdtable tr:nth-child(even) td{background:#f6f1e8;}
+table.cmdtable code{
+  font-family:var(--font-mono);
+  font-size:0.8rem;
+  background:var(--bg-alt);
+  padding:2px 6px;
+  border-radius:4px;
+  color:var(--accent);
+  white-space:nowrap;
+}
+table.cmdtable td.desc{color:var(--fg);}
+
+/* ---------- Collapsible course blocks ---------- */
+details.course{
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  margin-bottom:14px;
+  background:var(--card);
+  overflow:hidden;
+}
+details.course > summary{
+  cursor:pointer;
+  padding:14px 18px;
+  font-weight:700;
+  font-size:1rem;
+  list-style:none;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  background:var(--bg-alt);
+}
+details.course > summary::-webkit-details-marker{display:none;}
+details.course > summary .titlewrap{display:flex;flex-direction:column;gap:2px;}
+details.course > summary .titlewrap .kicker{
+  font-family:var(--font-mono);font-size:0.66rem;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.06em;font-weight:600;
+}
+details.course > summary::after{
+  content:"+";
+  font-family:var(--font-mono);
+  font-size:1.2rem;
+  color:var(--accent);
+  transition:transform .2s;
+  flex-shrink:0;
+}
+details.course[open] > summary::after{transform:rotate(45deg);}
+details.course > summary .badge{
+  font-family:var(--font-mono);
+  font-size:0.68rem;
+  color:var(--muted);
+  font-weight:500;
+}
+.course-body{padding:6px 18px 18px;}
+
+/* ---------- Concept cards ---------- */
+.concept{
+  border:1px solid var(--border);
+  border-left:5px solid var(--c-color,var(--accent-3));
+  border-radius:8px;
+  padding:16px 18px;
+  background:var(--card);
+  margin-bottom:14px;
+}
+.concept h4{margin:0 0 6px;font-size:1.02rem;font-weight:700;}
+.concept .acr{font-family:var(--font-mono);font-size:0.72rem;color:var(--c-color,var(--accent-3));font-weight:700;letter-spacing:0.05em;}
+.concept p{font-size:0.9rem;margin-bottom:6px;}
+.concept .ex{font-family:var(--font-mono);font-size:0.78rem;background:var(--bg-alt);padding:8px 10px;border-radius:6px;color:var(--muted);margin-top:8px;}
+
+/* ---------- Switch illustration ---------- */
+.switch-wrap{display:flex;justify-content:center;margin:24px 0;}
+.switch-svg{max-width:100%;height:auto;}
+
+/* ---------- Routing protocol comparison ---------- */
+.proto-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0;}
+@media (max-width:760px){.proto-grid{grid-template-columns:1fr 1fr;}}
+.proto-card{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px;
+  background:var(--card);
+  text-align:center;
+}
+.proto-card .pname{font-weight:800;font-size:1.1rem;color:var(--accent);}
+.proto-card .ptype{font-family:var(--font-mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;margin:4px 0 8px;}
+.proto-card .pmetric{font-size:0.78rem;color:var(--fg);}
+
+/* ---------- callouts ---------- */
+.callout{
+  border:1px solid var(--border);
+  border-left:5px solid var(--accent-2);
+  background:#eef7f3;
+  padding:14px 18px;
+  border-radius:8px;
+  font-size:0.9rem;
+  margin:16px 0;
+}
+.callout.warn{border-left-color:var(--accent);background:#faf0e7;}
+.callout b{font-weight:700;}
+
+/* ---------- Subnetting mask table ---------- */
+.cidr-scroll{overflow-x:auto;margin:14px 0 26px;}
+table.cidrtable{border-collapse:collapse;width:100%;font-size:0.8rem;min-width:640px;}
+table.cidrtable th{
+  text-align:left;font-family:var(--font-mono);font-size:0.68rem;text-transform:uppercase;
+  letter-spacing:0.04em;color:var(--muted);border-bottom:2px solid var(--border);padding:7px 9px;
+}
+table.cidrtable td{padding:7px 9px;border-bottom:1px solid var(--border);font-family:var(--font-mono);}
+table.cidrtable tr:nth-child(even) td{background:#f6f1e8;}
+table.cidrtable td.hi{color:var(--accent);font-weight:700;}
+
+/* ---------- Binary octet visualizer ---------- */
+.octet-viz{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;font-family:var(--font-mono);}
+.octet{
+  border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--card);
+  display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:130px;
+}
+.octet .bits{display:flex;gap:2px;}
+.octet .bit{width:16px;height:20px;display:flex;align-items:center;justify-content:center;font-size:0.68rem;border-radius:3px;font-weight:700;}
+.bit.on{background:var(--accent-3);color:#fff;}
+.bit.off{background:var(--bg-alt);color:var(--muted);}
+.octet .val{font-size:0.75rem;color:var(--muted);}
+
+/* ---------- Exercise cards ---------- */
+.exercise{
+  border:1px solid var(--border);border-radius:10px;background:var(--card);
+  padding:16px 18px;margin-bottom:14px;
+}
+.exercise .q{font-weight:700;font-size:0.92rem;margin-bottom:8px;}
+.exercise .given{font-family:var(--font-mono);font-size:0.82rem;background:var(--bg-alt);padding:8px 12px;border-radius:6px;display:inline-block;margin-bottom:10px;}
+.exercise summary{cursor:pointer;color:var(--accent-3);font-size:0.85rem;font-weight:600;}
+.exercise .answer{margin-top:10px;font-size:0.85rem;background:#eef7f3;border:1px solid var(--border);border-radius:8px;padding:10px 14px;}
+.exercise .answer table{width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:0.8rem;margin-top:6px;}
+.exercise .answer td{padding:3px 6px;}
+.exercise .answer td:first-child{color:var(--muted);white-space:nowrap;}
+
+/* ---------- VLSM simulator ---------- */
+.vlsm-box{
+  border:1px solid var(--border);border-radius:12px;background:var(--card);padding:22px;margin:18px 0;
+}
+.vlsm-inputs{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px;}
+.vlsm-field{display:flex;flex-direction:column;gap:4px;}
+.vlsm-field label{font-size:0.7rem;font-family:var(--font-mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;}
+.vlsm-field input{
+  font-family:var(--font-mono);font-size:0.9rem;padding:8px 10px;border:1px solid var(--border);
+  border-radius:6px;background:var(--bg);color:var(--fg);width:170px;
+}
+.vlsm-btn{
+  font-family:var(--font-head);font-weight:700;font-size:0.85rem;background:var(--accent);color:#fff;
+  border:none;padding:10px 18px;border-radius:7px;cursor:pointer;height:38px;
+}
+.vlsm-btn:hover{background:#9a4515;}
+.vlsm-btn.ghost{background:transparent;color:var(--accent-3);border:1px solid var(--border);}
+.vlsm-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.vlsm-row{
+  display:grid;grid-template-columns:1fr 110px 32px;gap:8px;align-items:center;
+}
+.vlsm-row input{font-family:var(--font-mono);font-size:0.85rem;padding:7px 10px;border:1px solid var(--border);border-radius:6px;}
+.vlsm-row .rm{
+  background:none;border:1px solid var(--border);border-radius:6px;color:var(--accent);cursor:pointer;
+  height:32px;font-weight:700;
+}
+#vlsmError{color:#a83232;font-size:0.82rem;font-family:var(--font-mono);margin:6px 0;min-height:1.2em;}
+.vlsm-results{overflow-x:auto;}
+table.vlsmtable{border-collapse:collapse;width:100%;font-size:0.78rem;min-width:760px;}
+table.vlsmtable th{
+  text-align:left;font-family:var(--font-mono);font-size:0.66rem;text-transform:uppercase;color:var(--muted);
+  border-bottom:2px solid var(--border);padding:7px 8px;
+}
+table.vlsmtable td{padding:7px 8px;border-bottom:1px solid var(--border);font-family:var(--font-mono);}
+table.vlsmtable tr:nth-child(even) td{background:#f6f1e8;}
+table.vlsmtable td.name{font-family:var(--font-head);font-weight:600;}
+
+/* ---------- IPv6 blocks ---------- */
+.v6-box{
+  font-family:var(--font-mono);font-size:0.95rem;background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:16px 18px;margin:14px 0;letter-spacing:0.02em;overflow-x:auto;white-space:nowrap;
+}
+.v6-box .grp{padding:2px 3px;border-radius:3px;}
+.v6-box .grp.prefix{background:#e3edf7;color:#1d5c9e;}
+.v6-box .grp.subnet{background:#fbeee0;color:#b5541a;}
+.v6-box .grp.iface{background:#e2f2ec;color:#0f6e5e;}
+.v6-legend{display:flex;gap:16px;font-size:0.75rem;color:var(--muted);margin-top:6px;flex-wrap:wrap;}
+.v6-legend span::before{content:"■ ";}
+.v6-legend .lp::before{color:#1d5c9e;}
+.v6-legend .ls::before{color:#b5541a;}
+.v6-legend .li::before{color:#0f6e5e;}
+
+/* ---------- CTA cards (labs/PT) ---------- */
+.cta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0;}
+@media (max-width:820px){.cta-grid{grid-template-columns:1fr;}}
+.cta-card{
+  border:1px solid var(--border);border-radius:12px;padding:18px;background:var(--card);
+  display:flex;flex-direction:column;gap:8px;
+}
+.cta-card .icon{font-size:1.6rem;}
+.cta-card h4{margin:0;font-size:1rem;font-weight:800;}
+.cta-card p{font-size:0.84rem;color:var(--muted);margin:0;flex:1;}
+.cta-card .go{font-family:var(--font-mono);font-size:0.72rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;}
+
+
+/* ---------- Steps (NetAcad signup) ---------- */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 18px 0;
+}
+
+.step {
+  /* CAMBIO: Quitamos display: grid y grid-template-columns */
+  display: block; 
+  padding: 14px 0;
+  border-left: 2px solid var(--border);
+  margin-left: 19px;
+  padding-left: 22px;
+  position: relative;
+}
+
+.step:last-child {
+  border-left: 2px solid transparent;
+}
+
+.step .num {
+  position: absolute;
+  left: -20px; /* Ajustado sutilmente para centrar perfecto sobre la línea de 2px */
+  top: 14px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.step .body {
+  padding-top: 6px;
+  /* Asegura que ocupe todo el ancho disponible ahora que no está en un Grid */
+  width: 100%; 
+}
+
+/* Hacemos que el título h4 y el párrafo p se muestren continuos */
+.step .body h4,
+.step .body p {
+  display: inline;
+  margin: 0;
+}
+
+/* Agrega un guion largo o separador estético entre el título y el texto */
+.step .body h4::after {
+  content: " — ";
+  font-weight: 700;
+}
+
+
+/* ---------- PT interface mock ---------- */
+.pt-mock{
+  border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--card);margin:16px 0;
+}
+.pt-mock .bar{background:#2b2b2e;color:#e8e2d3;font-family:var(--font-mono);font-size:0.72rem;padding:8px 14px;}
+.pt-mock .body{display:flex;min-height:140px;}
+.pt-mock .tools{width:54px;background:var(--bg-alt);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:10px;font-size:1.1rem;}
+.pt-mock .canvas{flex:1;padding:16px;font-size:0.8rem;color:var(--muted);display:flex;align-items:center;justify-content:center;text-align:center;background:
+  repeating-linear-gradient(0deg, transparent, transparent 19px, var(--border) 19px, var(--border) 20px),
+  repeating-linear-gradient(90deg, transparent, transparent 19px, var(--border) 19px, var(--border) 20px);
+}
+
+/* ---------- footer ---------- */
+footer{
+  border-top:1px solid var(--border);
+  margin-top:60px;
+  padding-top:20px;
+  color:var(--muted);
+  font-size:0.8rem;
+  font-family:var(--font-mono);
+}
+
+/* subtle stagger for sections coming into view via load animation */
+section{animation:rise .5s ease both;}
+section:nth-of-type(2){animation-delay:.03s;}
+section:nth-of-type(3){animation-delay:.06s;}
+</style>
 </head>
 <body>
+<div class="shell">
 
-<div class="container">
-    <h1>Guía de Iniciación: Cisco Packet Tracer y Comandos Base Telecomunicaciones B</h1>
-    <p>Este módulo interactivo cubre los pasos iniciales obligatorios para adentrarse en el ecosistema de redes Cisco. Aprenderás a gestionar tu entorno de simulación, construir topologías físicas básicas de Capa 2 y Capa 3, e interactuar con la consola de comandos de Cisco IOS.</p>
+<nav class="side">
+  <div class="brand">📡 Guía de Redes</div>
+  <div class="sub">Fundamentos → Comandos IOS</div>
 
-    <div class="ccna-box">
-        <strong>📌 Tip de Navegación de Consola:</strong> Dentro de Cisco IOS, podés usar el signo de pregunta <code>?</code> en cualquier momento para ver los comandos disponibles en tu modo actual o para completar los argumentos de un comando parcial (ej: <code>show ip ?</code>).
+  <a href="#osi">Modelo OSI</a>
+  <a href="#tcpip">Modelo TCP/IP</a>
+  <a href="#cableado">Cableado</a>
+  <a href="#switch">Switch Cisco</a>
+
+  <div class="grp">Direccionamiento</div>
+  <a href="#mascaras">Máscaras &amp; CIDR</a>
+  <a href="#subnetting4">Subnetting IPv4</a>
+  <a href="#ejercicios">Ejercicios prácticos</a>
+  <a href="#vlsm-sim">Simulador VLSM</a>
+  <a href="#ipv6">IPv6</a>
+
+  <div class="grp">Conceptos clave</div>
+  <a href="#vlan">VLAN</a>
+  <a href="#arp-icmp">ARP · ICMP</a>
+  <a href="#enrutamiento">Enrutamiento</a>
+  <a href="#dns-dhcp-nat">DNS · DHCP · NAT</a>
+  <a href="#otros">STP · EtherChannel · ACL...</a>
+
+  <div class="grp">Comandos por bloque</div>
+  <a href="#fundamentos-red">Fundamentos de red</a>
+  <a href="#switching-vlan">Switching &amp; VLAN</a>
+  <a href="#enrutamiento-empresarial">Enrutamiento empresarial</a>
+  <a href="#wan-seguridad">WAN &amp; seguridad</a>
+
+  <div class="grp">Comandos avanzados</div>
+  <a href="#switching-avanzado">Switching avanzado</a>
+  <a href="#enrutamiento-avanzado">Enrutamiento avanzado</a>
+  <a href="#diagnostico-red">Diagnóstico de red</a>
+
+  <div class="grp">Packet Tracer</div>
+  <a href="#packet-tracer">Qué es y cómo se usa</a>
+  <a href="#netacad-cuenta">Crear cuenta NetAcad</a>
+
+</nav>
+
+<main>
+
+  <div class="hero">
+    <div class="eyebrow">Fundamentos de Networking · Referencia rápida</div>
+    <h1>De OSI a los comandos que usás en el CLI</h1>
+    <p>Modelos de referencia, cableado físico, subnetting IPv4/IPv6 con ejercicios y simulador VLSM, conceptos clave, comandos IOS organizados por bloque temático, y cómo empezar a practicar en Packet Tracer.</p>
+  </div>
+
+  <!-- ============ OSI ============ -->
+  <section id="osi">
+    <h2>Modelo OSI <span class="tag">7 capas</span></h2>
+    <p class="desc">Modelo de referencia teórico que divide la comunicación de red en 7 capas independientes. Cada capa se comunica solo con la capa inmediatamente superior e inferior, y con su capa equivalente en el destino (comunicación entre pares).</p>
+
+    <div class="stack">
+      <div class="layer l7"><div class="num">7</div><div class="name">Aplicación<small>Application</small></div><div class="info">Interfaz entre la red y las apps del usuario. Provee servicios de red directamente usables.<span class="ex">HTTP, HTTPS, FTP, SMTP, DNS, Telnet, SSH</span></div></div>
+      <div class="layer l6"><div class="num">6</div><div class="name">Presentación<small>Presentation</small></div><div class="info">Traduce, cifra y comprime los datos para que la capa de aplicación los entienda (formato común).<span class="ex">SSL/TLS, JPEG, ASCII, EBCDIC, MPEG</span></div></div>
+      <div class="layer l5"><div class="num">5</div><div class="name">Sesión<small>Session</small></div><div class="info">Establece, administra y termina sesiones de comunicación entre dos hosts (diálogo).<span class="ex">NetBIOS, RPC, PPTP, sockets</span></div></div>
+      <div class="layer l4"><div class="num">4</div><div class="name">Transporte<small>Transport</small></div><div class="info">Entrega extremo a extremo, control de flujo y errores. Segmenta los datos y usa puertos.<span class="ex">TCP (confiable), UDP (best-effort)</span></div></div>
+      <div class="layer l3"><div class="num">3</div><div class="name">Red<small>Network</small></div><div class="info">Direccionamiento lógico (IP) y enrutamiento entre redes distintas. Determina la mejor ruta.<span class="ex">IP, ICMP, OSPF, EIGRP, BGP, routers</span></div></div>
+      <div class="layer l2"><div class="num">2</div><div class="name">Enlace de datos<small>Data Link</small></div><div class="info">Direccionamiento físico (MAC), tramas, detección de errores y control de acceso al medio.<span class="ex">Ethernet, PPP, VLAN, switches, ARP</span></div></div>
+      <div class="layer l1"><div class="num">1</div><div class="name">Física<small>Physical</small></div><div class="info">Transmisión de bits en el medio físico: voltajes, luz, radio. Cables, conectores, hubs.<span class="ex">UTP, fibra óptica, radiofrecuencia</span></div></div>
     </div>
 
-    <h2>Paso 1: Alta de Cuenta y Acceso a la Plataforma</h2>
-    <p>Cisco centraliza el acceso a sus simuladores mediante sus plataformas de aprendizaje oficiales. Es necesario contar con un perfil activo para evitar el modo restringido de guardado.</p>
-    
+    <div class="callout">
+      <b>Mnemotecnia (de arriba abajo):</b> "A Presidente Se le Torció el Retorcido Enredado" → Aplicación, Presentación, Sesión, Transporte, Red, Enlace, Física.
+    </div>
+  </section>
+
+  <!-- ============ TCP/IP ============ -->
+  <section id="tcpip">
+    <h2>Modelo TCP/IP <span class="tag">4 capas</span></h2>
+    <p class="desc">Modelo práctico usado realmente en Internet (RFC 1122). Es el que se enseña como base operativa; agrupa las 7 capas OSI en 4.</p>
+
+    <div class="mapbox">
+      <div class="mapcol">
+        <div class="hd">OSI</div>
+        <div class="maprow">7 · Aplicación</div>
+        <div class="maprow">6 · Presentación</div>
+        <div class="maprow">5 · Sesión</div>
+        <div class="maprow">4 · Transporte</div>
+        <div class="maprow">3 · Red</div>
+        <div class="maprow">2 · Enlace de datos</div>
+        <div class="maprow">1 · Física</div>
+      </div>
+      <div class="mapcol">
+        <div class="hd">TCP/IP</div>
+        <div class="maprow" style="grid-row:span 3;background:#fbeee0;">Aplicación</div>
+        <div class="maprow" style="background:#e2f2ec;">Transporte</div>
+        <div class="maprow" style="background:#e3edf7;">Internet</div>
+        <div class="maprow" style="grid-row:span 2;background:#efe8f8;">Acceso a la red</div>
+      </div>
+    </div>
+
+    <table class="cmdtable">
+      <tr><th>Capa TCP/IP</th><th>Función</th><th>Protocolos</th></tr>
+      <tr><td><b>Aplicación</b></td><td class="desc">Combina App+Presentación+Sesión de OSI. Protocolos que usan directamente las aplicaciones.</td><td><code>HTTP</code> <code>DNS</code> <code>DHCP</code> <code>SMTP</code> <code>FTP</code></td></tr>
+      <tr><td><b>Transporte</b></td><td class="desc">Comunicación extremo a extremo entre procesos, usando puertos.</td><td><code>TCP</code> <code>UDP</code></td></tr>
+      <tr><td><b>Internet</b></td><td class="desc">Direccionamiento lógico y enrutamiento entre redes (equivale a Capa 3 OSI).</td><td><code>IPv4</code> <code>IPv6</code> <code>ICMP</code> <code>ARP</code></td></tr>
+      <tr><td><b>Acceso a la red</b></td><td class="desc">Combina Enlace+Física de OSI. Entrega de tramas en el medio físico local.</td><td><code>Ethernet</code> <code>Wi-Fi</code> <code>PPP</code></td></tr>
+    </table>
+  </section>
+
+  <!-- ============ CABLEADO ============ -->
+  <section id="cableado">
+    <h2>Cableado y conexiones físicas</h2>
+    <p class="desc">El estándar de cableado UTP usa el conector RJ-45 con 8 hilos organizados en 4 pares trenzados, siguiendo las normas <b>TIA/EIA-568A</b> y <b>568B</b>.</p>
+
+    <h3>Estándares de pines (568A vs 568B)</h3>
+    <div class="cable-diagram">
+      <div class="pin-label"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+      <div class="pin-row">
+        <div class="pin pGw">Bl/Vd</div><div class="pin pG">Verde</div><div class="pin pOw">Bl/Nj</div><div class="pin pBl">Azul</div>
+        <div class="pin pBlw">Bl/Az</div><div class="pin pO">Naranja</div><div class="pin pBrw">Bl/Mr</div><div class="pin pBr">Marrón</div>
+      </div>
+      <p style="font-size:0.75rem;color:var(--muted);margin:6px 0 14px;">↑ T568A</p>
+      <div class="pin-row">
+        <div class="pin pOw">Bl/Nj</div><div class="pin pO">Naranja</div><div class="pin pGw">Bl/Vd</div><div class="pin pBl">Azul</div>
+        <div class="pin pBlw">Bl/Az</div><div class="pin pG">Verde</div><div class="pin pBrw">Bl/Mr</div><div class="pin pBr">Marrón</div>
+      </div>
+      <p style="font-size:0.75rem;color:var(--muted);margin:6px 0 0;">↑ T568B (más usado en LAN comerciales)</p>
+    </div>
+
+    <div class="grid cols-2">
+      <div class="card">
+        <h4 style="margin-top:0;">🔗 Cable Directo (Straight-through)</h4>
+        <p style="font-size:0.87rem;">Mismo estándar en ambos extremos (568B–568B). Conecta dispositivos de <b>distinta capa/tipo</b>.</p>
+        <p class="ex" style="font-family:var(--font-mono);font-size:0.78rem;background:var(--bg-alt);padding:8px 10px;border-radius:6px;">PC ↔ Switch<br>Switch ↔ Router<br>Router ↔ Hub</p>
+      </div>
+      <div class="card">
+        <h4 style="margin-top:0;">🔀 Cable Cruzado (Crossover)</h4>
+        <p style="font-size:0.87rem;">Un extremo 568A y el otro 568B (cruza Tx/Rx). Conecta dispositivos del <b>mismo tipo</b>.</p>
+        <p class="ex" style="font-family:var(--font-mono);font-size:0.78rem;background:var(--bg-alt);padding:8px 10px;border-radius:6px;">PC ↔ PC<br>Switch ↔ Switch<br>Router ↔ Router<br>PC ↔ Router (directo)</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>Auto-MDIX:</b> los switches y routers modernos detectan automáticamente el tipo de cable y ajustan los pines internamente, por lo que hoy en día casi nunca importa usar directo o cruzado. Aun así, sigue siendo pregunta obligada en cualquier certificación básica.
+    </div>
+
+    <h3>Cable de consola (rollover)</h3>
+    <div class="cable-visual">
+      <div class="rj45"></div>
+      <div class="wire"></div>
+      <div style="font-family:var(--font-mono);font-size:0.75rem;background:var(--bg-alt);padding:6px 10px;border-radius:6px;">DB9 / USB-A</div>
+    </div>
+    <p>Cable plano (rollover, pin 1↔8, 2↔7...) que conecta el puerto <b>Console</b> de un switch/router al puerto serie o USB de una PC. Se usa con un emulador de terminal (PuTTY, TeraTerm, SecureCRT) para acceso CLI local, fuera de banda (no depende de la red IP).</p>
+    <table class="cmdtable">
+      <tr><th>Parámetro</th><th>Valor típico</th></tr>
+      <tr><td>Bits por segundo</td><td><code>9600</code></td></tr>
+      <tr><td>Bits de datos</td><td><code>8</code></td></tr>
+      <tr><td>Paridad</td><td><code>Ninguna</code></td></tr>
+      <tr><td>Bits de parada</td><td><code>1</code></td></tr>
+      <tr><td>Control de flujo</td><td><code>Ninguno</code></td></tr>
+    </table>
+
+    <h3>Otros tipos de medios</h3>
+    <div class="grid cols-4">
+      <div class="card"><b>UTP</b><p style="font-size:0.82rem;margin:6px 0 0;">Par trenzado sin blindaje. Cat5e/6/6a. Hasta 100 m. LAN de acceso.</p></div>
+      <div class="card"><b>STP</b><p style="font-size:0.82rem;margin:6px 0 0;">Par trenzado blindado. Mayor inmunidad a EMI. Entornos industriales.</p></div>
+      <div class="card"><b>Fibra Monomodo</b><p style="font-size:0.82rem;margin:6px 0 0;">Un solo haz láser. Larga distancia (WAN, backbone), decenas de km.</p></div>
+      <div class="card"><b>Fibra Multimodo</b><p style="font-size:0.82rem;margin:6px 0 0;">LED/varios haces. Distancias cortas (data center, campus), hasta ~2 km.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ SWITCH IMAGE ============ -->
+  <section id="switch">
+    <h2>Switch Cisco básico</h2>
+    <p class="desc">Representación de un Catalyst de acceso genérico (24 puertos + 2 uplinks), similar al usado en labs de switching y en Packet Tracer.</p>
+    <div class="switch-wrap">
+      <svg class="switch-svg" width="640" height="180" viewBox="0 0 640 180" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="4" width="632" height="172" rx="10" fill="#2b2b2e" stroke="#111" stroke-width="2"/>
+        <rect x="4" y="4" width="632" height="26" rx="10" fill="#3a3a3f"/>
+        <text x="18" y="22" fill="#e8e2d3" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700">Cisco Catalyst 2960-24TT</text>
+        <circle cx="600" cy="17" r="5" fill="#2e9e6b"/>
+        <text x="596" y="20" fill="#e8e2d3" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="end" dx="-10">SYST</text>
+
+        <!-- Top row ports 1-12 -->
+        <g>
+          <rect x="20" y="46" width="26" height="20" rx="2" fill="#c9a227" stroke="#000"/>
+          <rect x="50" y="46" width="26" height="20" rx="2" fill="#7a7a7a" stroke="#000"/>
+          <rect x="80" y="46" width="26" height="20" rx="2" fill="#c9a227" stroke="#000"/>
+          <rect x="110" y="46" width="26" height="20" rx="2" fill="#7a7a7a" stroke="#000"/>
+          <rect x="140" y="46" width="26" height="20" rx="2" fill="#c9a227" stroke="#000"/>
+          <rect x="170" y="46" width="26" height="20" rx="2" fill="#7a7a7a" stroke="#000"/>
+          <rect x="200" y="46" width="26" height="20" rx="2" fill="#c9a227" stroke="#000"/>
+          <rect x="230" y="46" width="26" height="20" rx="2" fill="#7a7a7a" stroke="#000"/>
+          <rect x="260" y="46" width="26" height="20" rx="2" fill="#c9a227" stroke="#000"/>
+          <rect x="290" y="46" width="26" height="20" rx="2" fill="#7a7a7a" stroke="#000"/>
+          <rect x="320" y="46" width="26" height="20" rx="2" fill="#c9a227" stroke="#000"/>
+          <rect x="350" y="46" width="26" height="20" rx="2" fill="#7a7a7a" stroke="#000"/>
+        </g>
+        <!-- Bottom row ports 13-24 -->
+        <g>
+          <rect x="20" y="76" width="26" height="20" rx="2" fill="#7a7a7a" stroke="#000"/>
+          <rect x="50" y="76" width="26" height="20" rx="2" fill="#c9a227" stroke="#000"/>
+          <rect x="80" y="76" width="26" height="20" rx="2" fill="#7a7a7a" stroke="#000"/>
+          <rect x="110" y="76" width="26" height="20" rx="2" fill="#c9a227" stroke="#000"/>
+          <rect x="140" y="76" width="26" height="20" rx="2" fill="#7a7a7a" stroke="#000"/>
+          <rect x="170" y="76" width="26" height="20" rx="2" fill="#c9a227" stroke="#000"/>
+          <rect x="200" y="76" width="26" height="20" rx="2" fill="#7a7a7a" stroke="#000"/>
+          <rect x="230" y="76" width="26" height="20" rx="2" fill="#c9a227" stroke="#000"/>
+          <rect x="260" y="76" width="26" height="20" rx="2" fill="#7a7a7a" stroke="#000"/>
+          <rect x="290" y="76" width="26" height="20" rx="2" fill="#c9a227" stroke="#000"/>
+          <rect x="320" y="76" width="26" height="20" rx="2" fill="#7a7a7a" stroke="#000"/>
+          <rect x="350" y="76" width="26" height="20" rx="2" fill="#c9a227" stroke="#000"/>
+        </g>
+        <text x="20" y="112" fill="#a8a29a" font-family="JetBrains Mono, monospace" font-size="9">1  2  3  4  5  6  7  8  9  10 11 12</text>
+        <text x="20" y="122" fill="#a8a29a" font-family="JetBrains Mono, monospace" font-size="9">FastEthernet 0/1 – 0/24</text>
+
+        <!-- Uplinks -->
+        <rect x="420" y="46" width="34" height="24" rx="2" fill="#3f6fc9" stroke="#000"/>
+        <rect x="462" y="46" width="34" height="24" rx="2" fill="#3f6fc9" stroke="#000"/>
+        <text x="420" y="86" fill="#a8a29a" font-family="JetBrains Mono, monospace" font-size="9">GigabitEthernet 0/1-2 (uplink)</text>
+
+        <!-- Console + USB -->
+        <rect x="540" y="46" width="30" height="18" rx="2" fill="#1d5c9e" stroke="#000"/>
+        <text x="540" y="80" fill="#a8a29a" font-family="JetBrains Mono, monospace" font-size="9">Console</text>
+        <rect x="580" y="46" width="18" height="18" rx="2" fill="#111" stroke="#333"/>
+        <text x="575" y="80" fill="#a8a29a" font-family="JetBrains Mono, monospace" font-size="9">USB</text>
+
+        <text x="20" y="150" fill="#6b6255" font-family="JetBrains Mono, monospace" font-size="9">■ Naranja = puerto activo/PoE &#160;&#160; ■ Gris = inactivo &#160;&#160; ■ Azul = uplink Gigabit</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============ MASCARAS / CIDR ============ -->
+  <section id="mascaras">
+    <h2>Máscaras de subred &amp; notación CIDR</h2>
+    <p class="desc">La máscara de subred determina qué parte de una dirección IP identifica la <b>red</b> y qué parte identifica al <b>host</b>. Es un valor de 32 bits (igual que la IP) donde los bits en 1 marcan la porción de red.</p>
+
+    <h3>Cómo se forma una máscara (ejemplo /26)</h3>
+    <div class="octet-viz">
+      <div class="octet">
+        <div class="bits">
+          <div class="bit on">1</div><div class="bit on">1</div><div class="bit on">1</div><div class="bit on">1</div>
+          <div class="bit on">1</div><div class="bit on">1</div><div class="bit on">1</div><div class="bit on">1</div>
+        </div>
+        <div class="val">255</div>
+      </div>
+      <div class="octet">
+        <div class="bits">
+          <div class="bit on">1</div><div class="bit on">1</div><div class="bit on">1</div><div class="bit on">1</div>
+          <div class="bit on">1</div><div class="bit on">1</div><div class="bit on">1</div><div class="bit on">1</div>
+        </div>
+        <div class="val">255</div>
+      </div>
+      <div class="octet">
+        <div class="bits">
+          <div class="bit on">1</div><div class="bit on">1</div><div class="bit on">1</div><div class="bit on">1</div>
+          <div class="bit on">1</div><div class="bit on">1</div><div class="bit on">1</div><div class="bit on">1</div>
+        </div>
+        <div class="val">255</div>
+      </div>
+      <div class="octet">
+        <div class="bits">
+          <div class="bit on">1</div><div class="bit on">1</div>
+          <div class="bit off">0</div><div class="bit off">0</div><div class="bit off">0</div><div class="bit off">0</div><div class="bit off">0</div><div class="bit off">0</div>
+        </div>
+        <div class="val">192</div>
+      </div>
+    </div>
+    <p style="font-size:0.85rem;color:var(--muted);">255.255.255.<b style="color:var(--accent);">192</b> = /26 → 26 bits de red (los primeros 3 octetos completos + 2 bits del cuarto) y 6 bits de host → 2⁶ = 64 direcciones por subred.</p>
+
+    <h3>Tabla completa de máscaras (octeto variable)</h3>
+    <div class="cidr-scroll">
+      <table class="cidrtable">
+        <tr><th>CIDR</th><th>Máscara</th><th>Bits host</th><th>Hosts útiles</th><th>Incremento</th></tr>
+        <tr><td class="hi">/24</td><td>255.255.255.0</td><td>8</td><td>254</td><td>1.0</td></tr>
+        <tr><td class="hi">/25</td><td>255.255.255.128</td><td>7</td><td>126</td><td>128</td></tr>
+        <tr><td class="hi">/26</td><td>255.255.255.192</td><td>6</td><td>62</td><td>64</td></tr>
+        <tr><td class="hi">/27</td><td>255.255.255.224</td><td>5</td><td>30</td><td>32</td></tr>
+        <tr><td class="hi">/28</td><td>255.255.255.240</td><td>4</td><td>14</td><td>16</td></tr>
+        <tr><td class="hi">/29</td><td>255.255.255.248</td><td>3</td><td>6</td><td>8</td></tr>
+        <tr><td class="hi">/30</td><td>255.255.255.252</td><td>2</td><td>2 (enlaces punto a punto)</td><td>4</td></tr>
+        <tr><td class="hi">/31</td><td>255.255.255.254</td><td>1</td><td>2 (RFC 3021, sin red/broadcast)</td><td>2</td></tr>
+        <tr><td class="hi">/32</td><td>255.255.255.255</td><td>0</td><td>1 (host único / loopback)</td><td>1</td></tr>
+      </table>
+    </div>
+
+    <div class="grid cols-2">
+      <div class="card">
+        <b>Clases históricas (referencia)</b>
+        <table class="cmdtable" style="margin-top:8px;">
+          <tr><td><code>Clase A</code></td><td class="desc">1–126, /8 por defecto, 16.7M hosts</td></tr>
+          <tr><td><code>Clase B</code></td><td class="desc">128–191, /16 por defecto, 65 534 hosts</td></tr>
+          <tr><td><code>Clase C</code></td><td class="desc">192–223, /24 por defecto, 254 hosts</td></tr>
+          <tr><td><code>Clase D</code></td><td class="desc">224–239, multicast</td></tr>
+          <tr><td><code>Clase E</code></td><td class="desc">240–255, experimental</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <b>Rangos privados (RFC 1918)</b>
+        <table class="cmdtable" style="margin-top:8px;">
+          <tr><td><code>10.0.0.0/8</code></td><td class="desc">10.0.0.0 – 10.255.255.255</td></tr>
+          <tr><td><code>172.16.0.0/12</code></td><td class="desc">172.16.0.0 – 172.31.255.255</td></tr>
+          <tr><td><code>192.168.0.0/16</code></td><td class="desc">192.168.0.0 – 192.168.255.255</td></tr>
+          <tr><td><code>169.254.0.0/16</code></td><td class="desc">APIPA (autoasignada, sin DHCP)</td></tr>
+          <tr><td><code>127.0.0.0/8</code></td><td class="desc">Loopback (127.0.0.1 = localhost)</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout warn"><b>CIDR (Classless Inter-Domain Routing):</b> desde 1993 reemplazó el direccionamiento por clases. Permite cualquier longitud de prefijo (/1 a /32) y es la base de VLSM y la sumarización de rutas (route summarization / supernetting).</div>
+  </section>
+
+  <!-- ============ SUBNETTING IPv4 ============ -->
+  <section id="subnetting4">
+    <h2>Subnetting IPv4 paso a paso</h2>
+    <p class="desc">Subnetear es "tomar prestados" bits de la porción de host para crear varias subredes más pequeñas dentro de una red mayor.</p>
+
+    <h3>Método rápido (fórmulas)</h3>
+    <div class="grid cols-2">
+      <div class="card">
+        <b>Subredes creadas</b>
+        <p style="font-size:0.88rem;margin-top:6px;">2<sup>n</sup> donde <b>n</b> = bits prestados al host.</p>
+      </div>
+      <div class="card">
+        <b>Hosts útiles por subred</b>
+        <p style="font-size:0.88rem;margin-top:6px;">2<sup>h</sup> − 2 donde <b>h</b> = bits de host restantes (se restan red y broadcast).</p>
+      </div>
+    </div>
+
+    <h3>Ejemplo resuelto: 192.168.1.0/24 → 4 subredes</h3>
+    <p style="font-size:0.9rem;">Necesito 4 subredes → 2² = 4, tomo prestados <b>2 bits</b> → nueva máscara /26 (255.255.255.192), incremento = 64.</p>
+    <div class="cidr-scroll">
+      <table class="cidrtable">
+        <tr><th>Subred</th><th>Red</th><th>Primer host</th><th>Último host</th><th>Broadcast</th></tr>
+        <tr><td class="hi">0</td><td>192.168.1.0</td><td>192.168.1.1</td><td>192.168.1.62</td><td>192.168.1.63</td></tr>
+        <tr><td class="hi">1</td><td>192.168.1.64</td><td>192.168.1.65</td><td>192.168.1.126</td><td>192.168.1.127</td></tr>
+        <tr><td class="hi">2</td><td>192.168.1.128</td><td>192.168.1.129</td><td>192.168.1.190</td><td>192.168.1.191</td></tr>
+        <tr><td class="hi">3</td><td>192.168.1.192</td><td>192.168.1.193</td><td>192.168.1.254</td><td>192.168.1.255</td></tr>
+      </table>
+    </div>
+
+    <div class="callout">
+      <b>Truco del "incremento" (método de resta 256):</b> 256 − (valor de máscara en el octeto interesante) = salto entre redes. Ej: máscara .192 → 256−192=64 → las redes van de 64 en 64 (0, 64, 128, 192…).
+    </div>
+
+    <h3>VLSM — Variable Length Subnet Mask</h3>
+    <p>En lugar de dar a todas las subredes el mismo tamaño, VLSM asigna a cada una <b>solo los hosts que necesita</b>, evitando desperdicio de direcciones. Regla de oro: <b>siempre asignar primero el requerimiento más grande</b>, para que los bloques encajen sin solaparse. Es la base de todo diseño IP profesional.</p>
+  </section>
+
+  <!-- ============ EJERCICIOS ============ -->
+  <section id="ejercicios">
+    <h2>Ejercicios prácticos de subnetting</h2>
+    <p class="desc">Resolvé mentalmente o en papel y después despliega la respuesta para verificar.</p>
+
     <div class="exercise">
-        <div class="exercise-title"><span class="badge setup">Plataforma</span> Registro y Desbloqueo del Software</div>
-        <ol>
-            <li>Ingresá al sitio web oficial de <b>Skills for All</b> (<code>skillsforall.com</code>) o <b>Cisco Networking Academy</b> (<code>netacad.com</code>).</li>
-            <li>Inscribite de forma gratuita en el curso introductorio <i>"Getting Started with Cisco Packet Tracer"</i>. Esto habilitará la sección de descargas oficiales en tu perfil.</li>
-            <li>Descargá e instalá la versión correspondiente a tu sistema operativo (Windows, Linux o macOS).</li>
-            <li>Al iniciar el programa por primera vez, seleccioná la opción de inicio de sesión con tus credenciales de <b>Skills for All</b> o <b>NetAcad</b> para desbloquear el entorno de forma permanente.</li>
-        </ol>
+      <div class="q">1. ¿Cuántas subredes y hosts útiles obtenés al aplicar /28 sobre una red clase C?</div>
+      <div class="given">192.168.10.0/24 → /28</div>
+      <details>
+        <summary>Ver solución</summary>
+        <div class="answer">
+          Bits prestados = 28−24 = 4 → 2⁴ = <b>16 subredes</b>. Bits de host restantes = 32−28 = 4 → 2⁴−2 = <b>14 hosts útiles</b> por subred. Incremento = 256−240 = 16.
+          <table>
+            <tr><td>Subred 0</td><td>192.168.10.0 – .15</td></tr>
+            <tr><td>Subred 1</td><td>192.168.10.16 – .31</td></tr>
+            <tr><td>Subred 2</td><td>192.168.10.32 – .47</td></tr>
+            <tr><td>...</td><td>...hasta subred 15 (192.168.10.240–.255)</td></tr>
+          </table>
+        </div>
+      </details>
     </div>
-
-    <h2>Paso 2: Construcción de la Topología Física</h2>
-    <p>El primer laboratorio consta de una estructura clásica de red de área local (LAN) conectada a un dispositivo de distribución y pasarela.</p>
 
     <div class="exercise">
-        <div class="exercise-title"><span class="badge topo">Lienzo</span> Dispositivos y Esquema de Conexiones</div>
-        <p>Arrastrá y posicioná los siguientes elementos desde la barra de herramientas inferior de Packet Tracer hacia el espacio de trabajo:</p>
-        
-        <ul>
-            <li><b>Router (R1):</b> Modelo ISR 4331 (Ubicado en <i>Network Devices > Routers</i>).</li>
-            <li><b>Switch (S1):</b> Modelo clásico 2960 de 24 puertos (Ubicado en <i>Network Devices > Switches</i>).</li>
-            <li><b>Dispositivos Finales:</b> Dos PCs genéricas (PC 1 y PC 2) y un Servidor (Server 1) (Ubicados en <i>End Devices</i>).</li>
-        </ul>
-
-        <h3>Esquema de Cableado (Cable Directo de Cobre / Copper Straight-Through)</h3>
-        <pre>PC 1 (FastEthernet 0)        ───────────────>  Switch S1 (FastEthernet 0/1)
-PC 2 (FastEthernet 0)        ───────────────>  Switch S1 (FastEthernet 0/2)
-Server 1 (FastEthernet 0)    ───────────────>  Switch S1 (FastEthernet 0/3)
-Router R1 (GigabitEthernet 0/0/0) ──────────>  Switch S1 (GigabitEthernet 0/1)</pre>
-
-        <h3>Configuración IP Estática en Servidor 1</h3>
-        <p>Hacé clic sobre <b>Server 1</b>, ingresá a la solapa <i>Desktop > IP Configuration</i>, tildá <b>Static</b> y completá los parámetros de red:</p>
-        <ul>
-            <li><b>IP Address:</b> <code>192.168.30.10</code></li>
-            <li><b>Subnet Mask:</b> <code>255.255.255.0</code></li>
-            <li><b>Default Gateway:</b> <code>192.168.30.1</code></li>
-        </ul>
-        <p><i>Nota: Las interfaces de PC 1 y PC 2 deben quedar configuradas en modo <b>DHCP</b> de manera predeterminada.</i></p>
+      <div class="q">2. Dada una IP y máscara, identificá red, broadcast y rango de host.</div>
+      <div class="given">172.16.77.130 /27</div>
+      <details>
+        <summary>Ver solución</summary>
+        <div class="answer">
+          Incremento = 256−224 = 32 → múltiplos de 32 en el 4to octeto: 0,32,64,96,<b>128</b>,160... → 130 cae entre 128 y 159.
+          <table>
+            <tr><td>Red</td><td>172.16.77.128</td></tr>
+            <tr><td>Primer host</td><td>172.16.77.129</td></tr>
+            <tr><td>Último host</td><td>172.16.77.158</td></tr>
+            <tr><td>Broadcast</td><td>172.16.77.159</td></tr>
+          </table>
+        </div>
+      </details>
     </div>
-
-    <h2>Paso 3: Modos de Ejecución y Comandos de Usuario en Cisco IOS</h2>
-    <p>Hacé clic sobre el <b>Router R1</b> e ingresá a la solapa <b>CLI</b>. Si se despliega el asistente inicial de configuración, escribí <code>no</code> y presioná <code>Enter</code> para acceder a la terminal limpia.</p>
 
     <div class="exercise">
-        <div class="exercise-title"><span class="badge cli">Cisco IOS</span> Flujo Secuencial de Consola</div>
-        
-        <h3>1. Modo Usuario (User EXEC Mode)</h3>
-        <p>Modo de lectura restringido. Representado por el prompt con el signo mayor que (<code>&gt;</code>).</p>
-        <pre>Router>
-Router> ?   # Despliega la lista reducida de comandos permitidos en este nivel</pre>
+      <div class="q">3. Diseño VLSM: una red 10.0.0.0/24 debe repartirse entre 3 departamentos y 1 enlace WAN.</div>
+      <div class="given">Ventas=50 hosts · IT=20 hosts · Depósito=10 hosts · Enlace WAN=2 hosts</div>
+      <details>
+        <summary>Ver solución</summary>
+        <div class="answer">
+          Se ordena de mayor a menor y se asigna el bloque más chico que alcance:
+          <table>
+            <tr><td>Ventas (50)</td><td>10.0.0.0/26 → 62 hosts (10.0.0.1–.62)</td></tr>
+            <tr><td>IT (20)</td><td>10.0.0.64/27 → 30 hosts (10.0.0.65–.94)</td></tr>
+            <tr><td>Depósito (10)</td><td>10.0.0.96/28 → 14 hosts (10.0.0.97–.110)</td></tr>
+            <tr><td>WAN (2)</td><td>10.0.0.112/30 → 2 hosts (10.0.0.113–.114)</td></tr>
+          </table>
+          Prueba esto mismo (u otros requerimientos) en el <a href="#vlsm-sim">simulador VLSM</a> más abajo.
+        </div>
+      </details>
+    </div>
+  </section>
 
-        <h3>2. Modo Privilegiado (Privileged EXEC Mode)</h3>
-        <p>Permite ver estadísticas de rendimiento, configuraciones guardadas y realizar diagnósticos detallados. Representado por el signo numeral (<code>#</code>).</p>
-        <pre>Router> enable
-Router#</pre>
+  <!-- ============ VLSM SIMULATOR ============ -->
+  <section id="vlsm-sim">
+    <h2>Simulador visual de VLSM</h2>
+    <p class="desc">Ingresá una red base y la lista de subredes que necesitás (con la cantidad de hosts requeridos). El simulador ordena de mayor a menor y calcula automáticamente el bloque óptimo para cada una — 100% en tu navegador, sin enviar datos a ningún servidor.</p>
 
-        <h3>3. Modo de Configuración Global</h3>
-        <p>Requerido para modificar parámetros operativos que impacten en el comportamiento general del chasis. Entorno delimitado por <code>(config)#</code>.</p>
-        <pre>Router# configure terminal
-Router(config)# 
-Router(config)# hostname R1       # Cambia el nombre identificatorio del dispositivo</pre>
+    <div class="vlsm-box">
+      <div class="vlsm-inputs">
+        <div class="vlsm-field">
+          <label>Red base</label>
+          <input type="text" id="vlsmBase" value="192.168.1.0">
+        </div>
+        <div class="vlsm-field">
+          <label>Prefijo base (CIDR)</label>
+          <input type="text" id="vlsmPrefix" value="24">
+        </div>
+        <button class="vlsm-btn" onclick="vlsmCalculate()">Calcular VLSM</button>
+        <button class="vlsm-btn ghost" onclick="vlsmAddRow()">+ Agregar subred</button>
+      </div>
 
-        <h3>4. Modo de Configuración de Interfaz</h3>
-        <p>Submodo destinado a aplicar directivas específicas sobre un puerto físico o lógico seleccionado.</p>
-        <pre>R1(config)# interface gigabitEthernet 0/0/0
-R1(config-if)# no shutdown       # Enciende eléctricamente la interfaz física seleccionada
-R1(config-if)# exit
-R1(config)# exit
-R1#</pre>
+      <div class="vlsm-list" id="vlsmList">
+        <div class="vlsm-row"><input placeholder="Nombre (ej. Ventas)" value="Ventas"><input type="number" placeholder="Hosts" value="50"><button class="rm" onclick="vlsmRemoveRow(this)">✕</button></div>
+        <div class="vlsm-row"><input placeholder="Nombre (ej. IT)" value="IT"><input type="number" placeholder="Hosts" value="20"><button class="rm" onclick="vlsmRemoveRow(this)">✕</button></div>
+        <div class="vlsm-row"><input placeholder="Nombre (ej. Depósito)" value="Deposito"><input type="number" placeholder="Hosts" value="10"><button class="rm" onclick="vlsmRemoveRow(this)">✕</button></div>
+        <div class="vlsm-row"><input placeholder="Nombre (ej. Enlace WAN)" value="Enlace-WAN"><input type="number" placeholder="Hosts" value="2"><button class="rm" onclick="vlsmRemoveRow(this)">✕</button></div>
+      </div>
+
+      <div id="vlsmError"></div>
+
+      <div class="vlsm-results">
+        <table class="vlsmtable" id="vlsmResultTable" style="display:none;">
+          <thead>
+            <tr><th>Subred</th><th>Hosts pedidos</th><th>CIDR</th><th>Red</th><th>Rango de host</th><th>Broadcast</th></tr>
+          </thead>
+          <tbody id="vlsmResultBody"></tbody>
+        </table>
+      </div>
     </div>
 
-    <h2>Paso 4: Verificación y Persistencia de la Configuración</h2>
-    <p>Todo cambio realizado en la CLI impacta de manera inmediata en la memoria volátil del equipo, pero se perderá ante un corte de energía si no se consolida en el almacenamiento persistente.</p>
+    <script>
+    function vlsmAddRow(){
+      const list = document.getElementById('vlsmList');
+      const row = document.createElement('div');
+      row.className = 'vlsm-row';
+      row.innerHTML = '<input placeholder="Nombre"><input type="number" placeholder="Hosts"><button class="rm" onclick="vlsmRemoveRow(this)">✕</button>';
+      list.appendChild(row);
+    }
+    function vlsmRemoveRow(btn){
+      btn.parentElement.remove();
+    }
+    function ipToInt(ip){
+      const parts = ip.trim().split('.').map(Number);
+      if(parts.length !== 4 || parts.some(p=>isNaN(p)||p<0||p>255)) return null;
+      return ((parts[0]<<24) | (parts[1]<<16) | (parts[2]<<8) | parts[3]) >>> 0;
+    }
+    function intToIp(int){
+      return [(int>>>24)&255,(int>>>16)&255,(int>>>8)&255,int&255].join('.');
+    }
+    function hostsToPrefix(hostsNeeded){
+      for(let h=0; h<=30; h++){
+        const usable = (h===0) ? 1 : Math.pow(2,h) - 2;
+        if(hostsNeeded <= usable) return 32 - h;
+      }
+      return null;
+    }
+    function vlsmCalculate(){
+      const errEl = document.getElementById('vlsmError');
+      errEl.textContent = '';
+      const baseIpStr = document.getElementById('vlsmBase').value;
+      const basePrefix = parseInt(document.getElementById('vlsmPrefix').value, 10);
+      const baseInt = ipToInt(baseIpStr);
 
-    <div class="exercise">
-        <div class="exercise-title"><span class="badge save">Almacenamiento</span> RAM vs. NVRAM y Auditoría</div>
-        
-        <h3>Comandos Esenciales de Verificación (Modo Privilegiado <code>#</code>)</h3>
-        <p>Antes de guardar, es mandatorio auditar que los cambios aplicados en caliente sean los correctos:</p>
-        <pre># 1. Ver la configuración activa operando en la memoria RAM
-R1# show running-config
+      if(baseInt === null){ errEl.textContent = 'Error: la red base no es una IPv4 válida (ej. 192.168.1.0).'; return; }
+      if(isNaN(basePrefix) || basePrefix < 1 || basePrefix > 30){ errEl.textContent = 'Error: el prefijo base debe estar entre /1 y /30.'; return; }
 
-# 2. Ver el estado simplificado y direccionamiento de todas las interfaces
-R1# show ip interface brief
+      const rows = document.querySelectorAll('#vlsmList .vlsm-row');
+      let reqs = [];
+      rows.forEach(r=>{
+        const inputs = r.querySelectorAll('input');
+        const name = inputs[0].value.trim() || '(sin nombre)';
+        const hosts = parseInt(inputs[1].value, 10);
+        if(!isNaN(hosts) && hosts > 0){ reqs.push({name, hosts}); }
+      });
 
-# 3. Ver la configuración de respaldo almacenada en la memoria NVRAM (No volátil)
-R1# show startup-config</pre>
+      if(reqs.length === 0){ errEl.textContent = 'Agregá al menos una subred con una cantidad de hosts válida.'; return; }
 
-        <h3>Cómo Guardar la Configuración de Forma Permanente</h3>
-        <p>Para transferir el contenido de la memoria volátil activa (RAM) hacia la persistente de arranque (NVRAM), disponés de dos comandos alternativos:</p>
-        
-        <pre># Método Estándar y Oficial (Recomendado para exámenes de certificación)
-R1# copy running-config startup-config
-Destination filename [startup-config]?   # Presioná ENTER para confirmar
+      reqs.sort((a,b)=> b.hosts - a.hosts);
 
-# Método Corto Tradicional (Ampliamente usado en la industria)
-R1# write memory   # (o simplemente: wr)</pre>
+      const baseSize = Math.pow(2, 32-basePrefix);
+      const baseNet = baseInt - (baseInt % baseSize);
+      const baseBroadcast = baseNet + baseSize - 1;
+
+      let cursor = baseNet;
+      let results = [];
+      let overflow = false;
+
+      for(const req of reqs){
+        const prefix = hostsToPrefix(req.hosts);
+        if(prefix === null || prefix < basePrefix){
+          results.push({...req, error:'Requerimiento demasiado grande para la red base'});
+          overflow = true;
+          continue;
+        }
+        const blockSize = Math.pow(2, 32-prefix);
+        if(cursor % blockSize !== 0){
+          cursor = cursor + (blockSize - (cursor % blockSize));
+        }
+        const netAddr = cursor;
+        const bcast = netAddr + blockSize - 1;
+
+        if(bcast > baseBroadcast){
+          results.push({...req, error:'No entra en el espacio disponible de la red base'});
+          overflow = true;
+          continue;
+        }
+
+        const usable = blockSize - 2;
+        const firstHost = usable > 0 ? netAddr + 1 : netAddr;
+        const lastHost = usable > 0 ? bcast - 1 : bcast;
+
+        results.push({
+          name: req.name,
+          hosts: req.hosts,
+          prefix: prefix,
+          network: intToIp(netAddr),
+          firstHost: intToIp(firstHost),
+          lastHost: intToIp(lastHost),
+          broadcast: intToIp(bcast)
+        });
+
+        cursor = netAddr + blockSize;
+      }
+
+      const tbody = document.getElementById('vlsmResultBody');
+      tbody.innerHTML = '';
+      results.forEach(r=>{
+        const tr = document.createElement('tr');
+        if(r.error){
+          tr.innerHTML = '<td class="name">'+r.name+'</td><td>'+r.hosts+'</td><td colspan="4" style="color:#a83232;">'+r.error+'</td>';
+        } else {
+          tr.innerHTML = '<td class="name">'+r.name+'</td><td>'+r.hosts+'</td><td>/'+r.prefix+'</td><td>'+r.network+'</td><td>'+r.firstHost+' – '+r.lastHost+'</td><td>'+r.broadcast+'</td>';
+        }
+        tbody.appendChild(tr);
+      });
+      document.getElementById('vlsmResultTable').style.display = 'table';
+
+      if(overflow){
+        errEl.textContent = 'Atención: alguno de los requerimientos no entró en el espacio disponible de la red base (ver filas en rojo). Probá una red base más grande.';
+      }
+    }
+    vlsmCalculate();
+    </script>
+  </section>
+
+  <!-- ============ IPv6 ============ -->
+  <section id="ipv6">
+    <h2>IPv6</h2>
+    <p class="desc">Direcciones de 128 bits (vs. 32 bits de IPv4), escritas en 8 grupos hexadecimales de 16 bits separados por dos puntos. Diseñado para resolver el agotamiento de IPv4 y simplificar el enrutamiento.</p>
+
+    <h3>Anatomía de una dirección</h3>
+    <div class="v6-box">
+      <span class="grp prefix">2001:0db8:acad</span>:<span class="grp subnet">0001</span>:<span class="grp iface">0000:0000:0000:0001</span>
+    </div>
+    <div class="v6-legend">
+      <span class="lp">Prefijo de sitio /48 (asignado por el ISP)</span>
+      <span class="ls">ID de subred (16 bits, hasta /64)</span>
+      <span class="li">ID de interfaz (64 bits, host)</span>
     </div>
 
-    <div class="ccna-box tip">
-        <strong>💡 Tips Críticos de Operación sobre Guardado y Verificación:</strong>
-        <ul>
-            <li><b>El peligro de un reinicio accidental:</b> Si modificás configuraciones críticas (como cambiar contraseñas o apagar un puerto) y el equipo se apaga o se ejecuta el comando <code>reload</code> antes de guardar, el dispositivo arrancará con el estado anterior guardado en la NVRAM.</li>
-            <li><b>El atajo de ejecución (Do):</b> Si estás metido muy adentro en los modos de configuración (ej: <code>R1(config-if)#</code>) y querés tirar un comando de verificación o guardar sin salir a la raíz, anteponé la palabra clave <code>do</code> (ej: <code>do show ip interface brief</code> o <code>do wr</code>).</li>
-            <li><b>Validar la NVRAM vacía:</b> Si un equipo es nuevo o se le borró la configuración con el comando <code>erase startup-config</code>, al ejecutar <code>show startup-config</code> la consola devolverá el mensaje: <i>"startup-config is not present"</i>. Es completamente normal hasta que guardes por primera vez.</li>
-        </ul>
+    <h3>Reglas de compresión</h3>
+    <div class="grid cols-2">
+      <div class="card">
+        <b>1. Omitir ceros a la izquierda</b>
+        <p style="font-size:0.85rem;margin-top:6px;font-family:var(--font-mono);">0db8 → db8<br>0000 → 0</p>
+      </div>
+      <div class="card">
+        <b>2. Doble dos puntos (::) — solo una vez</b>
+        <p style="font-size:0.85rem;margin-top:6px;font-family:var(--font-mono);">2001:0db8:acad:0001:0000:0000:0000:0001<br>→ 2001:db8:acad:1::1</p>
+      </div>
     </div>
+
+    <h3>Tipos de direcciones IPv6</h3>
+    <table class="cmdtable">
+      <tr><th>Tipo</th><th>Rango / prefijo</th><th>Uso</th></tr>
+      <tr><td><b>Unicast global</b></td><td class="desc"><code>2000::/3</code></td><td class="desc">Equivalente a las IP públicas de IPv4, enrutable en Internet.</td></tr>
+      <tr><td><b>Link-local</b></td><td class="desc"><code>FE80::/10</code></td><td class="desc">Automática en cada interfaz, solo válida en el segmento local (usada por NDP/vecinos, no se enruta).</td></tr>
+      <tr><td><b>Unique Local (ULA)</b></td><td class="desc"><code>FC00::/7</code></td><td class="desc">Equivalente a las IP privadas RFC 1918 de IPv4, uso interno.</td></tr>
+      <tr><td><b>Multicast</b></td><td class="desc"><code>FF00::/8</code></td><td class="desc">Un emisor, varios receptores. <b>IPv6 no tiene broadcast</b>, lo reemplaza por multicast.</td></tr>
+      <tr><td><b>Loopback</b></td><td class="desc"><code>::1/128</code></td><td class="desc">Equivalente a 127.0.0.1.</td></tr>
+      <tr><td><b>Sin especificar</b></td><td class="desc"><code>::/128</code></td><td class="desc">Ausencia de dirección (usada antes de obtener una).</td></tr>
+    </table>
+
+    <h3>Subnetting en IPv6</h3>
+    <p>No hay escasez de direcciones, así que el enfoque cambia: normalmente el ISP asigna un <b>/48</b> o <b>/56</b> por sitio, y cada subred/VLAN usa un <b>/64</b> (el estándar para que SLAAC funcione correctamente, ya que reserva 64 bits para el ID de interfaz). Subnetear IPv6 significa jugar con los bits <i>entre</i> el prefijo de sitio y el /64, no reducir el host como en IPv4.</p>
+    <div class="callout">
+      <b>Ejemplo:</b> con un sitio 2001:db8:acad::/48, se pueden crear 2<sup>16</sup> = 65 536 subredes /64 distintas simplemente variando los 16 bits de "ID de subred" (2001:db8:acad:<b>0001</b>::/64, 2001:db8:acad:<b>0002</b>::/64, etc.) — sin necesidad de VLSM complejo.
+    </div>
+
+    <h3>Autoconfiguración y coexistencia con IPv4</h3>
+    <table class="cmdtable">
+      <tr><th>Concepto</th><th>Descripción</th></tr>
+      <tr><td><b>SLAAC</b></td><td class="desc">Stateless Address Autoconfiguration: el host genera su propia IPv6 combinando el prefijo anunciado por el router (RA) con su ID de interfaz (a partir de la MAC, EUI-64, o aleatorio por privacidad).</td></tr>
+      <tr><td><b>DHCPv6</b></td><td class="desc">Versión con estado, similar a DHCP en IPv4; puede ser "stateful" (asigna todo) o "stateless" (solo entrega DNS y otros datos, la IP la genera SLAAC).</td></tr>
+      <tr><td><b>NDP</b></td><td class="desc">Neighbor Discovery Protocol: reemplaza a ARP. Usa mensajes ICMPv6 (Neighbor Solicitation/Advertisement, Router Solicitation/Advertisement).</td></tr>
+      <tr><td><b>Dual-stack</b></td><td class="desc">Ejecutar IPv4 e IPv6 simultáneamente en el mismo dispositivo/interfaz — la estrategia de transición más usada.</td></tr>
+      <tr><td><b>NAT64 / 6to4 / Teredo</b></td><td class="desc">Mecanismos de traducción o túneles para interconectar redes IPv4-only con IPv6-only durante la transición.</td></tr>
+    </table>
+
+    <h3>Comandos IOS básicos de IPv6</h3>
+    <table class="cmdtable">
+      <tr><th>Comando</th><th>Significado</th></tr>
+      <tr><td><code>ipv6 unicast-routing</code></td><td class="desc">Habilita el enrutamiento IPv6 en el router (obligatorio, viene deshabilitado por defecto).</td></tr>
+      <tr><td><code>interface g0/0</code> / <code>ipv6 address 2001:db8:acad:1::1/64</code></td><td class="desc">Asigna una dirección IPv6 unicast global a la interfaz.</td></tr>
+      <tr><td><code>ipv6 address autoconfig</code></td><td class="desc">La interfaz genera su dirección automáticamente vía SLAAC.</td></tr>
+      <tr><td><code>ipv6 route ::/0 &lt;next-hop&gt;</code></td><td class="desc">Configura una ruta estática predeterminada IPv6.</td></tr>
+      <tr><td><code>show ipv6 interface brief</code></td><td class="desc">Resumen de direcciones IPv6 y estado de interfaces.</td></tr>
+      <tr><td><code>show ipv6 route</code></td><td class="desc">Muestra la tabla de enrutamiento IPv6.</td></tr>
+      <tr><td><code>ping ipv6 &lt;dirección&gt;</code></td><td class="desc">Prueba de conectividad usando ICMPv6.</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ VLAN ============ -->
+  <section id="vlan">
+    <h2>Conceptos clave</h2>
+    <p class="desc">Los fundamentos que sostienen todo lo demás: segmentación lógica, resolución de direcciones, diagnóstico y enrutamiento.</p>
+
+    <div class="concept" style="--c-color:#5b3fa0;">
+      <div class="acr">VLAN — Virtual LAN</div>
+      <h4>Segmentación lógica de una LAN</h4>
+      <p>Divide un dominio de broadcast físico en varios dominios de broadcast lógicos, independientemente de la ubicación física de los puertos. Mejora seguridad, rendimiento y organización (por departamento, ej. VLAN 10=Ventas, VLAN 20=IT).</p>
+      <p><b>Trunk (802.1Q):</b> enlace entre switches que transporta múltiples VLANs etiquetando cada trama con el ID de VLAN. <b>Access port:</b> pertenece a una sola VLAN, para hosts finales. <b>VLAN nativa:</b> la única que viaja sin etiqueta por un trunk 802.1Q.</p>
+      <p class="ex">Router-on-a-stick / SVI (Switch Virtual Interface) permiten enrutar entre VLANs (inter-VLAN routing).</p>
+    </div>
+
+    <div id="arp-icmp"></div>
+    <div class="concept" style="--c-color:#1d5c9e;">
+      <div class="acr">ARP — Address Resolution Protocol</div>
+      <h4>Resuelve IP → MAC</h4>
+      <p>Cuando un host conoce la IP destino pero no la MAC, envía un <b>broadcast ARP Request</b> ("¿quién tiene esta IP?"); el dueño responde con <b>ARP Reply</b> (unicast) indicando su MAC. El resultado se guarda en la tabla ARP (caché) para evitar repetir el proceso.</p>
+      <p class="ex">show arp / arp -a &nbsp;·&nbsp; Gratuitous ARP: un host anuncia su propia IP/MAC sin que se lo pidan (detecta duplicados de IP). En IPv6, ARP se reemplaza por NDP.</p>
+    </div>
+
+    <div class="concept" style="--c-color:#0f6e5e;">
+      <div class="acr">ICMP — Internet Control Message Protocol</div>
+      <h4>Mensajes de control y diagnóstico de Capa 3</h4>
+      <p>No transporta datos de usuario; informa errores y condiciones de red. Base de <code>ping</code> (Echo Request/Reply) y <code>traceroute</code> (Time Exceeded + Destination Unreachable). No usa puertos TCP/UDP.</p>
+      <p class="ex">Tipos comunes: 0=Echo Reply, 8=Echo Request, 3=Destination Unreachable, 11=Time Exceeded, 5=Redirect. ICMPv6 además transporta NDP.</p>
+    </div>
+  </section>
+
+  <!-- ============ ENRUTAMIENTO ============ -->
+  <section id="enrutamiento">
+    <h2>Protocolos de enrutamiento</h2>
+    <p class="desc">Permiten que los routers construyan y compartan dinámicamente sus tablas de enrutamiento, en vez de configurar rutas estáticas manualmente.</p>
+
+    <div class="proto-grid">
+      <div class="proto-card"><div class="pname">RIP</div><div class="ptype">Distance Vector · IGP</div><div class="pmetric">Métrica: saltos (máx 15). Simple, obsoleto, lento en converger (v1 sin VLSM, v2 sí).</div></div>
+      <div class="proto-card"><div class="pname">IGRP / EIGRP</div><div class="ptype">Distance Vector avanzado (híbrido) · IGP · Cisco propietario</div><div class="pmetric">Métrica compuesta (ancho de banda+delay). EIGRP usa DUAL, converge rápido, sucesor factible.</div></div>
+      <div class="proto-card"><div class="pname">OSPF</div><div class="ptype">Link State · IGP · Estándar abierto</div><div class="pmetric">Métrica: costo (basado en ancho de banda). Usa áreas (Area 0 backbone), algoritmo SPF (Dijkstra).</div></div>
+      <div class="proto-card"><div class="pname">BGP</div><div class="ptype">Path Vector · EGP</div><div class="pmetric">Protocolo de Internet entre Sistemas Autónomos (AS). Basado en políticas y atributos de ruta, no en métrica pura.</div></div>
+    </div>
+
+    <table class="cmdtable">
+      <tr><th>Protocolo</th><th>Tipo</th><th>Convergencia</th><th>Uso típico</th></tr>
+      <tr><td>RIPv2</td><td class="desc">Distance Vector</td><td class="desc">Lenta</td><td class="desc">Redes pequeñas/laboratorio, ya casi no se usa en producción</td></tr>
+      <tr><td>EIGRP</td><td class="desc">Híbrido (Cisco)</td><td class="desc">Rápida</td><td class="desc">Redes empresariales con equipos Cisco</td></tr>
+      <tr><td>OSPF</td><td class="desc">Link State</td><td class="desc">Rápida</td><td class="desc">Redes empresariales multivendor, estándar de facto</td></tr>
+      <tr><td>BGP</td><td class="desc">Path Vector</td><td class="desc">Lenta pero estable</td><td class="desc">Internet, ISPs, conexión entre AS</td></tr>
+    </table>
+
+    <div class="callout warn"><b>IGP vs EGP:</b> los IGP (RIP, EIGRP, OSPF) enrutan <i>dentro</i> de un Sistema Autónomo. BGP es el único EGP relevante hoy, y enruta <i>entre</i> Sistemas Autónomos (por eso es el protocolo que sostiene Internet).</div>
+  </section>
+
+  <!-- ============ DNS DHCP NAT ============ -->
+  <section id="dns-dhcp-nat">
+    <h2>DNS · DHCP · NAT</h2>
+
+    <div class="concept" style="--c-color:#b5541a;">
+      <div class="acr">DNS — Domain Name System</div>
+      <h4>Traduce nombres de dominio a direcciones IP</h4>
+      <p>Sistema jerárquico y distribuido (root → TLD → dominio autoritativo). Usa UDP/53 para consultas normales y TCP/53 para transferencias de zona o respuestas grandes.</p>
+      <p class="ex">Registros: A (IPv4), AAAA (IPv6), CNAME (alias), MX (correo), PTR (resolución inversa), NS (servidor de nombres).</p>
+    </div>
+
+    <div class="concept" style="--c-color:#0f6e5e;">
+      <div class="acr">DHCP — Dynamic Host Configuration Protocol</div>
+      <h4>Asigna configuración IP automáticamente</h4>
+      <p>Proceso <b>DORA</b>: Discover (broadcast del cliente) → Offer (oferta del servidor) → Request (el cliente pide esa oferta) → Acknowledge (confirmación). Entrega IP, máscara, gateway, DNS y tiempo de concesión (lease).</p>
+      <p class="ex">IP Helper-address / DHCP Relay: reenvía broadcasts DHCP a un servidor en otra subred.</p>
+    </div>
+
+    <div class="concept" style="--c-color:#1d5c9e;">
+      <div class="acr">NAT — Network Address Translation</div>
+      <h4>Traduce direcciones IP privadas ↔ públicas</h4>
+      <p><b>NAT estático:</b> mapeo 1 a 1 fijo. <b>NAT dinámico:</b> pool de IPs públicas asignadas bajo demanda. <b>PAT (NAT overload):</b> muchas IPs privadas comparten una sola IP pública usando números de puerto distintos — el más común en redes domésticas/empresariales.</p>
+      <p class="ex">Inside local / Inside global / Outside local / Outside global — la terminología clásica para NAT.</p>
+    </div>
+
+    <h3 id="otros">Otros conceptos que conviene dominar</h3>
+    <div class="grid cols-2">
+      <div class="card"><b>STP (Spanning Tree Protocol)</b><p style="font-size:0.85rem;">Evita bucles de Capa 2 bloqueando enlaces redundantes. Elige un Root Bridge y calcula puertos root/designados/bloqueados. Variantes: PVST+, RSTP (802.1w), MST.</p></div>
+      <div class="card"><b>EtherChannel</b><p style="font-size:0.85rem;">Agrupa varios enlaces físicos en uno lógico para más ancho de banda y redundancia. Protocolos de negociación: PAgP (Cisco) y LACP (estándar).</p></div>
+      <div class="card"><b>ACL (Access Control List)</b><p style="font-size:0.85rem;">Filtra tráfico por IP/puerto/protocolo. Estándar (solo IP origen) vs Extendida (origen, destino, puerto, protocolo). Se procesan en orden, primera coincidencia gana.</p></div>
+      <div class="card"><b>HSRP / VRRP / GLBP</b><p style="font-size:0.85rem;">Protocolos de gateway redundante (First Hop Redundancy). Varios routers comparten una IP virtual; si el activo falla, el standby toma el control.</p></div>
+      <div class="card"><b>Subnetting / VLSM</b><p style="font-size:0.85rem;">División de una red en subredes de distinto tamaño para aprovechar el espacio de direcciones. Base de todo el diseño IP.</p></div>
+      <div class="card"><b>QoS</b><p style="font-size:0.85rem;">Prioriza cierto tráfico (voz, video) sobre otro mediante clasificación, marcado (DSCP/CoS), colas y policing/shaping.</p></div>
+      <div class="card"><b>PPP / Frame Relay / MPLS</b><p style="font-size:0.85rem;">Tecnologías WAN clásicas. PPP para enlaces punto a punto con autenticación (PAP/CHAP); MPLS en redes de proveedor moderno.</p></div>
+      <div class="card"><b>VPN / IPsec / GRE</b><p style="font-size:0.85rem;">GRE crea túneles genéricos; IPsec cifra y autentica el tráfico (AH/ESP). Combinados dan VPN site-to-site seguras.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ COMANDOS - BLOQUE FUNDAMENTOS ============ -->
+  <section id="fundamentos-red">
+    <h2>Comandos: Fundamentos de red</h2>
+    <p class="desc">Configuración inicial de un dispositivo Cisco, acceso al CLI, direccionamiento básico de interfaces y verificación — la base sobre la que se apoya todo lo demás.</p>
+
+    <details class="course" open>
+      <summary>
+        <div class="titlewrap"><span class="kicker">Bloque 1</span>Configuración inicial y verificación de dispositivos</div>
+        <span class="badge">modo IOS, hostnames, interfaces, IP básica</span>
+      </summary>
+      <div class="course-body">
+        <table class="cmdtable">
+          <tr><th>Comando</th><th>Significado</th></tr>
+          <tr><td><code>enable</code></td><td class="desc">Entra al modo EXEC privilegiado (acceso a comandos de configuración/diagnóstico avanzado).</td></tr>
+          <tr><td><code>configure terminal</code></td><td class="desc">Entra al modo de configuración global desde el privilegiado.</td></tr>
+          <tr><td><code>hostname &lt;nombre&gt;</code></td><td class="desc">Asigna el nombre del dispositivo, visible en el prompt.</td></tr>
+          <tr><td><code>enable secret &lt;pass&gt;</code></td><td class="desc">Define la contraseña cifrada (MD5) para entrar a modo privilegiado.</td></tr>
+          <tr><td><code>line console 0</code></td><td class="desc">Entra a la configuración de la línea de consola física.</td></tr>
+          <tr><td><code>line vty 0 4</code></td><td class="desc">Entra a la configuración de las líneas virtuales (Telnet/SSH), típicamente 5 sesiones.</td></tr>
+          <tr><td><code>password &lt;pass&gt;</code> / <code>login</code></td><td class="desc">Define contraseña de línea y habilita el chequeo de login.</td></tr>
+          <tr><td><code>service password-encryption</code></td><td class="desc">Cifra (débilmente, tipo 7) todas las contraseñas en texto plano de la config.</td></tr>
+          <tr><td><code>interface g0/0</code></td><td class="desc">Entra al modo de configuración de una interfaz específica.</td></tr>
+          <tr><td><code>ip address &lt;ip&gt; &lt;máscara&gt;</code></td><td class="desc">Asigna una dirección IPv4 a una interfaz.</td></tr>
+          <tr><td><code>no shutdown</code></td><td class="desc">Activa administrativamente una interfaz (por defecto están apagadas en routers).</td></tr>
+          <tr><td><code>description &lt;texto&gt;</code></td><td class="desc">Añade una nota descriptiva a la interfaz (documentación).</td></tr>
+          <tr><td><code>show running-config</code></td><td class="desc">Muestra la configuración activa en memoria RAM.</td></tr>
+          <tr><td><code>show startup-config</code></td><td class="desc">Muestra la configuración guardada en NVRAM (se carga al reiniciar).</td></tr>
+          <tr><td><code>copy running-config startup-config</code></td><td class="desc">Guarda la configuración activa en NVRAM (persistente).</td></tr>
+          <tr><td><code>show ip interface brief</code></td><td class="desc">Resumen del estado y dirección IP de todas las interfaces.</td></tr>
+          <tr><td><code>show interfaces</code></td><td class="desc">Estadísticas detalladas de todas las interfaces (errores, duplex, velocidad).</td></tr>
+          <tr><td><code>show version</code></td><td class="desc">Versión del IOS, tiempo de actividad, hardware, registro de configuración.</td></tr>
+          <tr><td><code>ping &lt;ip&gt;</code></td><td class="desc">Prueba conectividad de Capa 3 usando ICMP Echo.</td></tr>
+          <tr><td><code>traceroute &lt;ip&gt;</code></td><td class="desc">Muestra la ruta salto a salto hasta el destino.</td></tr>
+          <tr><td><code>show mac address-table</code></td><td class="desc">Muestra la tabla de direcciones MAC aprendidas por un switch.</td></tr>
+          <tr><td><code>show cdp neighbors</code></td><td class="desc">Muestra dispositivos Cisco directamente conectados (protocolo propietario de descubrimiento).</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <details class="course" id="switching-vlan">
+      <summary>
+        <div class="titlewrap"><span class="kicker">Bloque 2</span>Switching, VLAN y enrutamiento esencial</div>
+        <span class="badge">VLAN, trunking, STP básico, rutas estáticas, DHCP, NAT</span>
+      </summary>
+      <div class="course-body">
+        <table class="cmdtable">
+          <tr><th>Comando</th><th>Significado</th></tr>
+          <tr><td><code>vlan 10</code></td><td class="desc">Crea (o entra a) la VLAN 10 en la base de datos del switch.</td></tr>
+          <tr><td><code>name VENTAS</code></td><td class="desc">Asigna un nombre descriptivo a la VLAN actual.</td></tr>
+          <tr><td><code>switchport mode access</code></td><td class="desc">Configura el puerto como puerto de acceso (un solo host/VLAN).</td></tr>
+          <tr><td><code>switchport access vlan 10</code></td><td class="desc">Asigna el puerto de acceso a la VLAN 10.</td></tr>
+          <tr><td><code>switchport mode trunk</code></td><td class="desc">Configura el puerto como enlace troncal (transporta múltiples VLANs).</td></tr>
+          <tr><td><code>switchport trunk native vlan 99</code></td><td class="desc">Define la VLAN nativa (sin etiquetar) del trunk 802.1Q.</td></tr>
+          <tr><td><code>switchport trunk allowed vlan 10,20,30</code></td><td class="desc">Restringe qué VLANs pueden cruzar ese trunk.</td></tr>
+          <tr><td><code>interface vlan 10</code></td><td class="desc">Crea una SVI (interfaz virtual) para enrutar/administrar esa VLAN.</td></tr>
+          <tr><td><code>spanning-tree vlan 1 root primary</code></td><td class="desc">Fuerza a este switch a ser el Root Bridge de STP para la VLAN 1.</td></tr>
+          <tr><td><code>spanning-tree portfast</code></td><td class="desc">Salta los estados de escucha/aprendizaje de STP en puertos de acceso a hosts (conexión instantánea).</td></tr>
+          <tr><td><code>channel-group 1 mode active</code></td><td class="desc">Agrega la interfaz a un EtherChannel usando LACP en modo activo.</td></tr>
+          <tr><td><code>ip route &lt;red&gt; &lt;máscara&gt; &lt;next-hop&gt;</code></td><td class="desc">Configura una ruta estática hacia una red remota.</td></tr>
+          <tr><td><code>ip default-gateway &lt;ip&gt;</code></td><td class="desc">Gateway predeterminado de un switch L2 (para administración remota).</td></tr>
+          <tr><td><code>router rip</code> / <code>network &lt;red&gt;</code></td><td class="desc">Habilita RIP y anuncia la red indicada.</td></tr>
+          <tr><td><code>ip dhcp pool LAN</code></td><td class="desc">Crea un pool DHCP con nombre "LAN" en un router.</td></tr>
+          <tr><td><code>network &lt;red&gt; &lt;máscara&gt;</code> (dentro del pool)</td><td class="desc">Define el rango de red que administrará ese pool DHCP.</td></tr>
+          <tr><td><code>default-router &lt;ip&gt;</code></td><td class="desc">Gateway que el DHCP entregará a los clientes.</td></tr>
+          <tr><td><code>ip dhcp excluded-address &lt;inicio&gt; &lt;fin&gt;</code></td><td class="desc">Excluye IPs (ej. las estáticas de routers/servidores) del pool DHCP.</td></tr>
+          <tr><td><code>ip nat inside</code> / <code>ip nat outside</code></td><td class="desc">Marca una interfaz como interior o exterior para NAT.</td></tr>
+          <tr><td><code>ip nat inside source list 1 interface g0/0 overload</code></td><td class="desc">Configura PAT: todas las IPs internas de la ACL 1 salen por la IP pública de esa interfaz.</td></tr>
+          <tr><td><code>show vlan brief</code></td><td class="desc">Lista las VLANs configuradas y sus puertos asignados.</td></tr>
+          <tr><td><code>show spanning-tree</code></td><td class="desc">Muestra el estado de STP: root bridge, roles y estados de puertos.</td></tr>
+          <tr><td><code>show ip nat translations</code></td><td class="desc">Muestra la tabla activa de traducciones NAT.</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <details class="course" id="enrutamiento-empresarial">
+      <summary>
+        <div class="titlewrap"><span class="kicker">Bloque 3</span>Enrutamiento empresarial, seguridad y automatización</div>
+        <span class="badge">OSPF, ACLs, port security, NTP, syslog, SNMP</span>
+      </summary>
+      <div class="course-body">
+        <table class="cmdtable">
+          <tr><th>Comando</th><th>Significado</th></tr>
+          <tr><td><code>router ospf 1</code></td><td class="desc">Habilita el proceso OSPF con ID de proceso 1 (local, no debe coincidir entre routers).</td></tr>
+          <tr><td><code>network &lt;red&gt; &lt;wildcard&gt; area 0</code></td><td class="desc">Anuncia una red en OSPF dentro del área 0 (backbone).</td></tr>
+          <tr><td><code>router-id &lt;ip&gt;</code></td><td class="desc">Fija manualmente el Router ID usado por OSPF/BGP para identificarse.</td></tr>
+          <tr><td><code>passive-interface g0/0</code></td><td class="desc">Evita enviar actualizaciones de enrutamiento por esa interfaz (pero sigue anunciando su red).</td></tr>
+          <tr><td><code>ip ospf priority 255</code></td><td class="desc">Aumenta la prioridad para ganar la elección de DR (Designated Router) en la red multiacceso.</td></tr>
+          <tr><td><code>show ip ospf neighbor</code></td><td class="desc">Muestra los vecinos OSPF y su estado de adyacencia (Full, 2-Way, etc.).</td></tr>
+          <tr><td><code>show ip protocols</code></td><td class="desc">Resume los protocolos de enrutamiento activos y sus parámetros.</td></tr>
+          <tr><td><code>access-list 101 permit tcp any any eq 80</code></td><td class="desc">ACL extendida: permite tráfico TCP hacia el puerto 80 (HTTP) desde/hacia cualquier IP.</td></tr>
+          <tr><td><code>ip access-group 101 in</code></td><td class="desc">Aplica la ACL 101 al tráfico entrante de una interfaz.</td></tr>
+          <tr><td><code>ip dhcp snooping</code></td><td class="desc">Habilita inspección DHCP para bloquear servidores DHCP no autorizados.</td></tr>
+          <tr><td><code>switchport port-security</code></td><td class="desc">Habilita port security en el puerto (limita/controla MACs permitidas).</td></tr>
+          <tr><td><code>switchport port-security maximum 2</code></td><td class="desc">Limita a 2 el número de MACs permitidas simultáneamente en el puerto.</td></tr>
+          <tr><td><code>switchport port-security violation shutdown</code></td><td class="desc">Define la acción ante violación: apaga el puerto (err-disabled).</td></tr>
+          <tr><td><code>ntp server &lt;ip&gt;</code></td><td class="desc">Sincroniza el reloj del dispositivo con un servidor NTP.</td></tr>
+          <tr><td><code>logging host &lt;ip&gt;</code></td><td class="desc">Envía mensajes de syslog a un servidor externo.</td></tr>
+          <tr><td><code>snmp-server community &lt;cadena&gt; RO</code></td><td class="desc">Configura acceso SNMP de solo lectura con esa cadena de comunidad.</td></tr>
+          <tr><td><code>archive</code> / <code>write memory</code></td><td class="desc">Comandos relacionados a respaldo/versionado de configuraciones.</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <details class="course" id="wan-seguridad">
+      <summary>
+        <div class="titlewrap"><span class="kicker">Bloque 4</span>Conectividad WAN y seguridad de enlaces</div>
+        <span class="badge">PPP, GRE, IPsec, QoS</span>
+      </summary>
+      <div class="course-body">
+        <table class="cmdtable">
+          <tr><th>Comando</th><th>Significado</th></tr>
+          <tr><td><code>encapsulation ppp</code></td><td class="desc">Cambia la encapsulación de la interfaz serial a PPP.</td></tr>
+          <tr><td><code>ppp authentication chap</code></td><td class="desc">Habilita autenticación CHAP (challenge-handshake) en el enlace PPP.</td></tr>
+          <tr><td><code>username &lt;user&gt; password &lt;pass&gt;</code></td><td class="desc">Define credenciales usadas por CHAP/PAP para autenticar al peer PPP.</td></tr>
+          <tr><td><code>interface tunnel 0</code></td><td class="desc">Crea una interfaz de túnel lógica (para GRE, IPsec, etc.).</td></tr>
+          <tr><td><code>tunnel source</code> / <code>tunnel destination</code></td><td class="desc">Define los extremos físicos (IP local/remota) del túnel GRE.</td></tr>
+          <tr><td><code>crypto isakmp policy 10</code></td><td class="desc">Define una política IKE Fase 1 (cifrado, hash, autenticación) para IPsec.</td></tr>
+          <tr><td><code>crypto ipsec transform-set</code></td><td class="desc">Define el conjunto de algoritmos de cifrado/autenticación para IPsec Fase 2.</td></tr>
+          <tr><td><code>class-map</code> / <code>policy-map</code></td><td class="desc">Clasifica tráfico y define políticas de QoS (marcado, priorización).</td></tr>
+          <tr><td><code>service-policy output QOS-POLICY</code></td><td class="desc">Aplica una política de QoS al tráfico saliente de una interfaz.</td></tr>
+          <tr><td><code>show interfaces serial 0/0/0</code></td><td class="desc">Muestra estado, encapsulación y estadísticas de una interfaz WAN serial.</td></tr>
+          <tr><td><code>debug ppp authentication</code></td><td class="desc">Depura en tiempo real el proceso de autenticación PPP (usar con cuidado en producción).</td></tr>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ COMANDOS - BLOQUE AVANZADO ============ -->
+  <section id="switching-avanzado">
+    <h2>Comandos: nivel profesional / avanzado</h2>
+    <p class="desc">Alta disponibilidad, escalabilidad y diagnóstico estructurado para redes empresariales — el siguiente escalón después de dominar los fundamentos.</p>
+
+    <details class="course" open>
+      <summary>
+        <div class="titlewrap"><span class="kicker">Bloque 5</span>Switching avanzado y alta disponibilidad</div>
+        <span class="badge">VTP, STP avanzado, HSRP/VRRP/GLBP, seguridad L2</span>
+      </summary>
+      <div class="course-body">
+        <table class="cmdtable">
+          <tr><th>Comando</th><th>Significado</th></tr>
+          <tr><td><code>vtp mode server / client / transparent</code></td><td class="desc">Define el rol VTP del switch para propagar (o no) la base de datos de VLANs.</td></tr>
+          <tr><td><code>vtp domain &lt;nombre&gt;</code></td><td class="desc">Define el dominio VTP; solo switches del mismo dominio sincronizan VLANs.</td></tr>
+          <tr><td><code>spanning-tree mode rapid-pvst</code></td><td class="desc">Cambia el modo STP a Rapid PVST+ (convergencia mucho más rápida que PVST clásico).</td></tr>
+          <tr><td><code>spanning-tree mode mst</code></td><td class="desc">Habilita Multiple Spanning Tree (mapea varias VLANs a una sola instancia STP).</td></tr>
+          <tr><td><code>spanning-tree guard root</code></td><td class="desc">Evita que un switch no autorizado se convierta en Root Bridge en ese puerto.</td></tr>
+          <tr><td><code>spanning-tree bpduguard enable</code></td><td class="desc">Apaga el puerto si recibe una BPDU (protege puertos de acceso tipo PortFast).</td></tr>
+          <tr><td><code>standby 1 ip &lt;ip virtual&gt;</code></td><td class="desc">Configura HSRP grupo 1 con una IP virtual compartida entre routers.</td></tr>
+          <tr><td><code>standby 1 priority 110</code></td><td class="desc">Define la prioridad HSRP (mayor valor = más probable ser el activo).</td></tr>
+          <tr><td><code>standby 1 preempt</code></td><td class="desc">Permite que un router recupere el rol activo automáticamente al volver online.</td></tr>
+          <tr><td><code>vrrp 1 ip &lt;ip virtual&gt;</code></td><td class="desc">Configura VRRP (estándar abierto, equivalente a HSRP) grupo 1.</td></tr>
+          <tr><td><code>glbp 1 ip &lt;ip virtual&gt;</code></td><td class="desc">Configura GLBP: balancea carga entre varios gateways activos simultáneamente.</td></tr>
+          <tr><td><code>interface port-channel 1</code></td><td class="desc">Crea la interfaz lógica de EtherChannel para configurarla como trunk/access.</td></tr>
+          <tr><td><code>udld aggressive</code></td><td class="desc">Detecta enlaces unidireccionales (fibra) para evitar bucles por fallo de un solo sentido.</td></tr>
+          <tr><td><code>storm-control broadcast level 5</code></td><td class="desc">Limita el tráfico broadcast al 5% del ancho de banda para prevenir tormentas.</td></tr>
+          <tr><td><code>show standby brief</code></td><td class="desc">Resume el estado HSRP (activo/standby) de todos los grupos.</td></tr>
+          <tr><td><code>show etherchannel summary</code></td><td class="desc">Muestra el estado de los EtherChannels y sus puertos miembro.</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <details class="course" id="enrutamiento-avanzado">
+      <summary>
+        <div class="titlewrap"><span class="kicker">Bloque 6</span>Enrutamiento avanzado y BGP</div>
+        <span class="badge">EIGRP/OSPF multi-área, BGP, redistribución, PBR</span>
+      </summary>
+      <div class="course-body">
+        <table class="cmdtable">
+          <tr><th>Comando</th><th>Significado</th></tr>
+          <tr><td><code>router eigrp 100</code></td><td class="desc">Habilita EIGRP con número de sistema autónomo 100 (debe coincidir en todos los routers vecinos).</td></tr>
+          <tr><td><code>eigrp router-id &lt;ip&gt;</code></td><td class="desc">Fija manualmente el Router ID de EIGRP.</td></tr>
+          <tr><td><code>variance 2</code></td><td class="desc">Habilita balanceo de carga desigual en EIGRP usando rutas hasta 2x la métrica mínima.</td></tr>
+          <tr><td><code>router ospf 1 (multi-área)</code></td><td class="desc">Base para diseño jerárquico OSPF con múltiples áreas conectadas al Area 0.</td></tr>
+          <tr><td><code>area 1 stub</code></td><td class="desc">Convierte el área 1 en "stub": bloquea rutas externas (Tipo 5) para reducir el tamaño de la tabla.</td></tr>
+          <tr><td><code>area 1 nssa</code></td><td class="desc">Área "Not-So-Stubby": permite redistribuir rutas externas limitadas dentro de un área stub.</td></tr>
+          <tr><td><code>router bgp 65001</code></td><td class="desc">Habilita BGP con el número de Sistema Autónomo local 65001.</td></tr>
+          <tr><td><code>neighbor &lt;ip&gt; remote-as 65002</code></td><td class="desc">Define un vecino BGP y el AS remoto al que pertenece (eBGP si difiere del local).</td></tr>
+          <tr><td><code>network &lt;red&gt; mask &lt;máscara&gt;</code> (BGP)</td><td class="desc">Anuncia una red vía BGP (debe existir exactamente en la tabla de rutas).</td></tr>
+          <tr><td><code>redistribute ospf 1 metric 100</code></td><td class="desc">Redistribuye rutas aprendidas por OSPF hacia otro protocolo (ej. EIGRP), asignando métrica inicial.</td></tr>
+          <tr><td><code>route-map SET-NEXTHOP permit 10</code></td><td class="desc">Crea una route-map (regla condicional) usada en redistribución o PBR.</td></tr>
+          <tr><td><code>ip policy route-map &lt;nombre&gt;</code></td><td class="desc">Aplica Policy-Based Routing en una interfaz (enruta según criterios distintos al destino).</td></tr>
+          <tr><td><code>ip sla</code></td><td class="desc">Configura IP SLA para monitorear latencia/disponibilidad y activar rutas de respaldo.</td></tr>
+          <tr><td><code>show ip route</code></td><td class="desc">Muestra la tabla de enrutamiento completa con el origen de cada ruta (código de protocolo).</td></tr>
+          <tr><td><code>show ip bgp summary</code></td><td class="desc">Resume las sesiones BGP activas y su estado.</td></tr>
+          <tr><td><code>show ip eigrp topology</code></td><td class="desc">Muestra la tabla topológica de EIGRP (sucesores y sucesores factibles).</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <details class="course" id="diagnostico-red">
+      <summary>
+        <div class="titlewrap"><span class="kicker">Bloque 7</span>Diagnóstico y resolución de problemas</div>
+        <span class="badge">Metodología estructurada + comandos show/debug</span>
+      </summary>
+      <div class="course-body">
+        <p style="font-size:0.9rem;">Este bloque no introduce protocolos nuevos: enseña <b>metodología estructurada</b> (definir síntomas → recolectar info → aislar la causa → resolver → documentar) apoyada en los comandos <code>show</code>/<code>debug</code> aprendidos en los bloques anteriores.</p>
+        <table class="cmdtable">
+          <tr><th>Comando</th><th>Significado</th></tr>
+          <tr><td><code>show tech-support</code></td><td class="desc">Vuelca un reporte masivo de diagnóstico (combina decenas de show) útil para soporte técnico avanzado.</td></tr>
+          <tr><td><code>show processes cpu</code></td><td class="desc">Identifica procesos que consumen CPU alta, causa común de degradación.</td></tr>
+          <tr><td><code>show memory statistics</code></td><td class="desc">Revisa el uso de memoria y posibles fugas.</td></tr>
+          <tr><td><code>show interfaces | include error</code></td><td class="desc">Filtra la salida para encontrar rápidamente contadores de error en interfaces.</td></tr>
+          <tr><td><code>show logging</code></td><td class="desc">Revisa el buffer de mensajes del sistema (syslog local) para eventos recientes.</td></tr>
+          <tr><td><code>debug ip routing</code></td><td class="desc">Muestra en tiempo real cambios en la tabla de enrutamiento (usar con moderación, alto impacto en CPU).</td></tr>
+          <tr><td><code>debug ip packet</code></td><td class="desc">Depura paquetes IP procesados (extremadamente verboso, solo en labs controlados).</td></tr>
+          <tr><td><code>traceroute</code> / <code>extended ping</code></td><td class="desc">Extended ping permite definir IP origen, tamaño, y repeticiones para aislar problemas de ruta/MTU.</td></tr>
+          <tr><td><code>show cdp/lldp neighbors detail</code></td><td class="desc">Detalle de vecinos directos: plataforma, IP, capacidades — clave para mapear la topología real.</td></tr>
+          <tr><td><code>show controllers</code></td><td class="desc">Diagnóstico de bajo nivel (Capa 1) de una interfaz: cable conectado, tipo de señal.</td></tr>
+          <tr><td><code>show ip interface</code></td><td class="desc">Detalle extendido por interfaz: ACLs aplicadas, MTU, estado de proxy-ARP, etc.</td></tr>
+          <tr><td><code>show vlan / show spanning-tree / show ip route</code></td><td class="desc">La tríada básica para aislar si un problema es de Capa 2 (VLAN/STP) o Capa 3 (enrutamiento).</td></tr>
+        </table>
+        <div class="callout">
+          <b>Metodologías clásicas de troubleshooting:</b> Bottom-up (de Capa 1 hacia arriba), Top-down (de Capa 7 hacia abajo), Divide-and-conquer (empezar en una capa media, ej. Capa 3, y avanzar según el resultado).
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PACKET TRACER ============ -->
+  <section id="packet-tracer">
+    <h2>Packet Tracer: qué es y cómo se usa</h2>
+    <p class="desc">El simulador de redes gratuito que te permite armar y probar todo lo de esta guía sin comprar hardware real.</p>
+
+    <div class="card">
+      <p style="font-size:0.92rem;margin-bottom:10px;"><b>¿Qué es?</b> Un simulador visual de redes gratuito, desarrollado por Cisco, que permite arrastrar routers, switches, PCs, servidores y otros dispositivos a un lienzo, cablearlos, configurarlos con el mismo CLI que un equipo real (IOS simulado), y ver el tráfico circular en tiempo real o paso a paso (modo simulación con paquetes visibles capa por capa).</p>
+      <p style="font-size:0.92rem;margin-bottom:0;"><b>¿Para qué sirve?</b> Es la herramienta de práctica estándar en cualquier curso de networking: no reemplaza un lab real 100%, pero permite equivocarse, repetir y experimentar sin romper nada ni gastar en equipos. Todos los conceptos de esta guía (VLAN, OSPF, NAT, ACLs, etc.) se pueden armar y probar ahí.</p>
+    </div>
+
+
+    <h3>Vista general de la interfaz</h3>
+    <div class="pt-mock">
+      <div class="bar">Packet Tracer — Untitled Project*</div>
+      <div class="body">
+        <div class="tools">🖱️<span style="font-size:0.9rem;">🔗</span><span style="font-size:0.9rem;">📶</span><span style="font-size:0.9rem;">✏️</span></div>
+        <div class="canvas">Lienzo de topología (Logical Workspace)<br>— arrastrás dispositivos desde la barra inferior y los cableás acá —</div>
+      </div>
+    </div>
+
+    <h3>Flujo de trabajo básico</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <div class="body"><h4>Elegir dispositivos</h4><p>En la barra inferior izquierda seleccionás la categoría (Routers, Switches, End Devices, WAN Emulation...) y arrastrás el modelo al lienzo (ej. Router 2911, Switch 2960).</p></div>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <div class="body"><h4>Cablear (Connections)</h4><p>Elegís el tipo de cable (cobre directo/cruzado, consola, fibra, serial) y hacés clic en cada dispositivo para seleccionar el puerto de origen y destino. Un punto verde en ambos extremos confirma el enlace activo.</p></div>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <div class="body"><h4>Configurar</h4><p>Clic en el dispositivo → pestaña <b>CLI</b> para escribir comandos IOS reales (los mismos de esta guía), o pestaña <b>Config</b> para hacerlo con menús gráficos sin tipear.</p></div>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <div class="body"><h4>Probar conectividad</h4><p>Desde una PC: Desktop → Command Prompt → <code style="font-family:var(--font-mono);background:var(--bg-alt);padding:1px 5px;border-radius:4px;">ping</code>. O usá el ícono de sobre ("Add Simple PDU") para enviar un paquete de prueba y verlo viajar por la topología.</p></div>
+      </div>
+      <div class="step">
+        <div class="num">5</div>
+        <div class="body"><h4>Modo Simulación</h4><p>Cambiás de <b>Realtime</b> a <b>Simulation</b> (esquina inferior derecha) para congelar el tiempo y avanzar paquete por paquete, viendo exactamente qué pasa en cada capa OSI — ideal para entender ARP, STP o el proceso DORA de DHCP en cámara lenta.</p></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>Tip:</b> todo lo que armamos en esta conversación con NetPilot para Packet Tracer se entrega como archivo <code style="font-family:var(--font-mono);">.pkt</code> — lo abrís directamente haciendo doble clic con Packet Tracer ya instalado, con la topología y configuraciones pre-cargadas.
+    </div>
+  </section>
+
+  <!-- ============ NETACAD ============ -->
+  <section id="netacad-cuenta">
+    <h2>Cómo crear tu cuenta en NetAcad y descargar Packet Tracer</h2>
+    <p class="desc">Packet Tracer es gratuito, pero para descargarlo necesitás una cuenta en la Networking Academy de Cisco (NetAcad) e inscribirte a un curso corto y gratuito que habilita la descarga.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <div class="body"><h4>Entrá al sitio de NetAcad</h4><p>Andá a <b>netacad.com</b> y hacé clic en "Create an Account" / "Registrarse".</p></div>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <div class="body"><h4>Completá el registro</h4><p>Nombre, correo electrónico, país y una contraseña. Vas a recibir un correo de verificación: hacé clic en el enlace para activar la cuenta.</p></div>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <div class="body"><h4>Inscribite al curso "Introduction to Packet Tracer"</h4><p>Dentro del catálogo de cursos gratuitos, buscá <b>"Introduction to Packet Tracer"</b> (curso corto) e inscribite. Este curso es el que habilita el botón de descarga del programa.</p></div>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <div class="body"><h4>Descargá Packet Tracer</h4><p>Ya inscripto, dentro del curso vas a encontrar la sección de descarga con instaladores para Windows, macOS y Linux. Elegí el de tu sistema operativo y descargalo.</p></div>
+      </div>
+      <div class="step">
+        <div class="num">5</div>
+        <div class="body"><h4>Instalá e iniciá sesión</h4><p>Instalalo como cualquier programa. Al abrirlo por primera vez te va a pedir loguearte con la misma cuenta de NetAcad — es obligatorio para poder usarlo (valida la licencia gratuita).</p></div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <b>Importante:</b> Cisco actualiza ocasionalmente los nombres/URLs de sus portales (NetAcad, Skills for All). Si algún paso no coincide exactamente, buscá "Cisco Packet Tracer download" — siempre te va a redirigir al registro gratuito oficial. Desconfiá de sitios de descarga que no sean netacad.com o skillsforall.com.
+    </div>
+  </section>
+
+
+</main>
 </div>
-
 </body>
 </html>
